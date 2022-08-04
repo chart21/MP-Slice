@@ -1,0 +1,2 @@
+/usr/bin/ar qc libcircuitProcessor.a CMakeFiles/circuitProcessor.dir/circuitReader.cpp.o
+/usr/bin/ranlib libcircuitProcessor.a

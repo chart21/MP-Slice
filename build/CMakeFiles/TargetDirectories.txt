@@ -1,0 +1,15 @@
+/home/christopher/workspace/mp-slice/build/CMakeFiles/MP-Slice.dir
+/home/christopher/workspace/mp-slice/build/CMakeFiles/edit_cache.dir
+/home/christopher/workspace/mp-slice/build/CMakeFiles/rebuild_cache.dir
+/home/christopher/workspace/mp-slice/build/src/circuitProcessor/CMakeFiles/circuitProcessor.dir
+/home/christopher/workspace/mp-slice/build/src/circuitProcessor/CMakeFiles/edit_cache.dir
+/home/christopher/workspace/mp-slice/build/src/circuitProcessor/CMakeFiles/rebuild_cache.dir
+/home/christopher/workspace/mp-slice/build/src/network/CMakeFiles/network.dir
+/home/christopher/workspace/mp-slice/build/src/network/CMakeFiles/edit_cache.dir
+/home/christopher/workspace/mp-slice/build/src/network/CMakeFiles/rebuild_cache.dir
+/home/christopher/workspace/mp-slice/build/src/players/CMakeFiles/players.dir
+/home/christopher/workspace/mp-slice/build/src/players/CMakeFiles/edit_cache.dir
+/home/christopher/workspace/mp-slice/build/src/players/CMakeFiles/rebuild_cache.dir
+/home/christopher/workspace/mp-slice/build/src/protocols/CMakeFiles/protocols.dir
+/home/christopher/workspace/mp-slice/build/src/protocols/CMakeFiles/edit_cache.dir
+/home/christopher/workspace/mp-slice/build/src/protocols/CMakeFiles/rebuild_cache.dir
