@@ -11,8 +11,8 @@ void print_num(DATATYPE var)
 {
     uint8_t v8val[sizeof(DATATYPE)];
     std::memcpy(v8val, &var, sizeof(v8val));
-    for (uint i = 0; i < sizeof(DATATYPE); i++)
-        std::cout << std::bitset<sizeof(uint8_t)*8>(v8val[i]) << std::endl;
+    for (uint i = sizeof(DATATYPE); i > 0; i--)
+        std::cout << std::bitset<sizeof(uint8_t)*8>(v8val[i-1]) << std::endl;
         //std::cout << v8val[i]<< std::endl;
 }
 
@@ -77,7 +77,7 @@ randomizeInputs(dataset, elements);
 
 
 //modify certain data to test functionality
-insertManually(dataset, elements, origData, origElements, 1, 0, 200, 200);
+insertManually(dataset, elements, origData, origElements, 0,0 , 200, 200);
 
 
 DATATYPE* found = new DATATYPE;
