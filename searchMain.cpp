@@ -36,7 +36,7 @@ for (int i = 0; i < n; i++) {
 void randomizeInputs(DATATYPE dataset[n][BITLENGTH], DATATYPE elements[n])
 {
     // init randomization
-uint64_t* iseed = new (std::align_val_t(BITLENGTH << 3)) uint64_t[BITS_PER_REG];
+uint64_t* iseed = new (std::align_val_t(BITS_PER_REG << 8)) uint64_t[BITS_PER_REG];
 for (int i = 0; i < BITS_PER_REG; i++) {
     iseed[i] = rand();
 }
@@ -56,8 +56,8 @@ int main(int argc, char *argv[])
 
 /// Processing Inputs ///
 
-uint64_t (*origData)[BITS_PER_REG] = new (std::align_val_t(BITLENGTH << 3)) uint64_t[n][BITS_PER_REG];
-uint64_t* origElements = new (std::align_val_t(BITLENGTH << 3)) uint64_t[BITS_PER_REG];
+uint64_t (*origData)[BITS_PER_REG] = new (std::align_val_t(BITS_PER_REG << 8)) uint64_t[n][BITS_PER_REG];
+uint64_t* origElements = new (std::align_val_t(BITS_PER_REG << 8)) uint64_t[BITS_PER_REG];
 
 
 // read inputs ///
