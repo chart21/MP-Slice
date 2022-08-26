@@ -78,6 +78,8 @@
 #define UNORTHOGONALIZE(in,out) unorthogonalize(in,out)
 
 #define ALLOC(size) aligned_alloc(32,size * sizeof(__m128i))
+#define NEW(var) new (std::align_val_t(sizeof(__m128i))) var;
+
 
 
 #ifdef RUNTIME
@@ -233,7 +235,7 @@ void orthogonalize_128x64(uint64_t* data, __m128i* out) {
 
 void unorthogonalize_64x128(__m128i *in, uint64_t* data) {
   for (int i = 0; i < 64; i++) {
-    uint64_t tmp[2];
+    alignas(16) uint64_t tmp[2];
     _mm_store_si128 ((__m128i*)tmp, in[i]);
     data[i] = tmp[1];
     data[64+i] = tmp[0];
@@ -251,7 +253,7 @@ void orthogonalize_128x128(uint64_t* data, __m128i* out) {
 void unorthogonalize_128x128(__m128i *in, uint64_t* data) {
   real_ortho_128x128(in);
   for (int i = 0; i < 128; i++) {
-    uint64_t tmp[2];
+    alignas(16) uint64_t tmp[2];
     _mm_store_si128 ((__m128i*)tmp, in[i]);
     data[i] = tmp[1];
     data[128+i] = tmp[0];

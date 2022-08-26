@@ -95,8 +95,7 @@
 #define UNORTHOGONALIZE(in,out) unorthogonalize(in,out)
 
 #define ALLOC(size) aligned_alloc(64,size * sizeof(__m512i))
-
-
+#define NEW(var) new (std::align_val_t(sizeof(__m512i))) var;
 #ifdef RUNTIME
 
 
@@ -209,7 +208,7 @@ void orthogonalize_512x64(uint64_t* data, __m512i* out) {
 
 void unorthogonalize_64x512(__m512i *in, uint64_t* data) {
   for (int i = 0; i < 64; i++) {
-    uint64_t tmp[8];
+    alignas(64) uint64_t tmp[8];
     _mm512_store_si512 ((__m512i*)tmp, in[i]);
     data[i] = tmp[7];
     data[64+i] = tmp[6];
@@ -241,7 +240,7 @@ void orthogonalize_512x512(uint64_t* data, __m512i* out) {
 void unorthogonalize_512x512(__m512i *in, uint64_t* data) {
   real_ortho_512x512(in);
   for (int i = 0; i < 512; i++) {
-    uint64_t tmp[8];
+    alignas(64) uint64_t tmp[8];
     _mm512_store_si512 ((__m512i*)tmp, in[i]);
     data[i]      = tmp[7];
     data[512+i]  = tmp[6];
@@ -255,10 +254,10 @@ void unorthogonalize_512x512(__m512i *in, uint64_t* data) {
 }
 
 void orthogonalize(uint64_t* data, __m512i* out) {
-  orthogonalize_512x512(data,out);
+  orthogonalize_512x64(data,out);
 }
 void unorthogonalize(__m512i *in, uint64_t* data) {
-  unorthogonalize_512x512(in,data);
+  unorthogonalize_64x512(in,data);
 }
 
 #else

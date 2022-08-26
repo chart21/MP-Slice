@@ -92,7 +92,7 @@
 #define UNORTHOGONALIZE(in,out) unorthogonalize(in,out)
 
 #define ALLOC(size) malloc(size * sizeof(uint64_t))
-
+#define NEW(var) new var;
 
 
 #ifdef RUNTIME

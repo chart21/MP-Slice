@@ -5,6 +5,6 @@
 #ifndef ORTHO
 #define ORTHO
 #endif
-#include "SSE.h"
+#include "BOOL.h"
 #define n 4
 #define BITLENGTH 64

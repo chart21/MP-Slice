@@ -44,6 +44,7 @@
 #define UNORTHOGONALIZE(in,out) unorthogonalize(in,out)
 
 #define ALLOC(size) malloc(size * sizeof(bool))
+#define NEW(var) new var;
 
 
 void orthogonalize(uint64_t* num, bool* out) {
