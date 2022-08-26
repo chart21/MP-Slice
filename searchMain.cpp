@@ -9,6 +9,24 @@
 #include "circuits/searchBitSlice.c"
 #include "circuits/xorshift.c"
 #include "utils/timing.hpp"
+void print_bool(uint8_t* found)
+{
+     for (int j = 0; j < BITS_PER_REG; j++)
+         std::cout << +found[j];
+    std::cout << '\n';
+}
+
+
+void search_Compare(uint64_t origData[n][BITS_PER_REG], uint64_t origElements[], uint8_t* found)
+{
+ for (int i = 0; i < n; i++) {
+    for (int j = 0; j < BITS_PER_REG; j++) {
+        if(origData[i][j] == origElements[j])
+            found[j] = 1;
+    }   
+}
+}
+
 void print_num(DATATYPE var) 
 {
     uint8_t v8val[sizeof(DATATYPE)];
@@ -28,6 +46,15 @@ for (int i = 0; i < n; i++) {
 origData[c][b] = numDataset;
 origElements[b] = numElement;
 std::cout << origData[c][b] << origElements[b] << std::endl;
+
+
+uint8_t* cfound = new uint8_t[BITS_PER_REG]{0};
+funcTime("Plain search", search_Compare, origData, origElements, cfound);
+print_bool(cfound);
+
+
+
+
 orthogonalize(origElements, elements);
 
 for (int i = 0; i < n; i++) {
@@ -81,9 +108,11 @@ funcTime("generating random inputs",randomizeInputs,dataset,elements);
 insertManually(dataset, elements, origData, origElements, 1,7 , 200, 200);
 
 
+
 DATATYPE* found = NEW(DATATYPE);
 funcTime("evaluating", search__,dataset, elements, found);
 
 print_num(*found);
 }
+
 
