@@ -6,5 +6,6 @@
 #define ORTHO
 #endif
 #include "BOOL.h"
-#define n 4
+#define n 1 << 20
 #define BITLENGTH 64
+#define US

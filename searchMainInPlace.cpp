@@ -8,7 +8,6 @@
 #include "arch/DATATYPE.h"
 #include "circuits/searchBitSlice.c"
 #include "circuits/xorshift.c"
-#include "utils/timing.hpp"
 void print_num(DATATYPE var) 
 {
     uint8_t v8val[sizeof(DATATYPE)];
@@ -18,20 +17,27 @@ void print_num(DATATYPE var)
         //std::cout << v8val[i]<< std::endl;
 }
 
-void insertManually(DATATYPE dataset[n][BITLENGTH], DATATYPE elements[n], uint64_t origData[n][BITS_PER_REG], uint64_t origElements[], int c, int b, uint64_t numElement, uint64_t numDataset ){
+void insertManually(DATATYPE dataset[n][BITLENGTH], DATATYPE elements[n], uint64_t origData[n][BITS_PER_REG], uint64_t origElements[BITS_PER_REG], int c, int b, uint64_t numElement, uint64_t numDataset ){
 
-unorthogonalize(elements, origElements);
-
+//unorthogonalize(elements, origElements);
+real_ortho_128x64( reinterpret_cast<__m128i*>(origElements));
 for (int i = 0; i < n; i++) {
- unorthogonalize(dataset[i], origData[i]);   
+    
+    real_ortho_128x64( reinterpret_cast<__m128i(*)[BITLENGTH]>(origData)[i]);
+   // unorthogonalize(dataset[i], origData[i]);   
 }
 origData[c][b] = numDataset;
 origElements[b] = numElement;
 std::cout << origData[c][b] << origElements[b] << std::endl;
-orthogonalize(origElements, elements);
+/* orthogonalize(origElements, elements); */
 
+/* for (int i = 0; i < n; i++) { */
+/*  orthogonalize(origData[i], dataset[i]); */   
+real_ortho_128x64( reinterpret_cast<__m128i*>(origElements)); 
 for (int i = 0; i < n; i++) {
- orthogonalize(origData[i], dataset[i]);   
+    
+    real_ortho_128x64( reinterpret_cast<__m128i(*)[BITLENGTH]>(origData)[i]);
+   // unorthogonalize(dataset[i], origData[i]);   
 }
 }
 void randomizeInputs(DATATYPE dataset[n][BITLENGTH], DATATYPE elements[n])
@@ -42,13 +48,13 @@ for (int i = 0; i < BITS_PER_REG; i++) {
     iseed[i] = rand();
 }
 DATATYPE* seed = new DATATYPE[BITLENGTH];
-funcTime("single ortho", orthogonalize,iseed, seed);
+orthogonalize(iseed, seed);
 
 //generate random data
 for (int i = 0; i < n; i++) {
      xor_shift__(seed, dataset[i]);
  }
- funcTime("xor_shift",xor_shift__,seed, elements);
+    xor_shift__(seed, elements);
 }
 
 
@@ -68,12 +74,14 @@ uint64_t *origElements = NEW(uint64_t[BITS_PER_REG]);
 DATATYPE (*dataset)[BITLENGTH] = NEW(DATATYPE[n][BITLENGTH]);
 DATATYPE* elements = NEW(DATATYPE[BITLENGTH]);
 for (int i = 0; i < n; i++) {
- orthogonalize(origData[i], dataset[i]);   
+// orthogonalize(origData[i], dataset[i]);   
+real_ortho_128x64( reinterpret_cast<__m128i(*)[BITLENGTH]>(origData)[i]);
 }
-orthogonalize(origElements, elements);
+real_ortho_128x64( reinterpret_cast<__m128i*>(origElements));
+//orthogonalize(origElements, elements);
 
 // generate random input data instead of reading from file
-funcTime("generating random inputs",randomizeInputs,dataset,elements);
+randomizeInputs(reinterpret_cast<__m128i(*)[BITLENGTH]>(origData), reinterpret_cast<__m128i*>(origElements));
 
 
 
@@ -82,7 +90,8 @@ insertManually(dataset, elements, origData, origElements, 1,7 , 200, 200);
 
 
 DATATYPE* found = NEW(DATATYPE);
-funcTime("evaluating", search__,dataset, elements, found);
+search__(reinterpret_cast<__m128i(*)[BITLENGTH]>(origData), reinterpret_cast<__m128i*>(origElements), found);
+auto newFound = __builtin_bswap64(reinterpret_cast<uint64_t>(found));
 
 print_num(*found);
 }
