@@ -1,3 +1,4 @@
+#include <cstddef>
 #include <cstdint>
 #include <iostream>
 #include <cstring>
@@ -7,8 +8,13 @@
 #include <memory>
 #include "arch/DATATYPE.h"
 #include "circuits/searchBitSlice.c"
+#include "circuits/searchBitSliceWithComm.cpp"
 #include "circuits/xorshift.c"
 #include "utils/timing.hpp"
+#include "networking/client.c"
+#include "networking/server.c"
+#include "networking/sockethelper.h"
+
 void print_bool(uint8_t* found)
 {
      for (int j = 0; j < BITS_PER_REG; j++)
@@ -82,6 +88,96 @@ for (int i = 0; i < n; i++) {
 int main(int argc, char *argv[])
 {
 
+int player_id = atoi(argv[1]);
+
+/// Connecting to other Players
+int INPUTSLENGTH[] = {4,1};
+char* ips[input_players-1];
+
+//char* hostnames[input_players-1];
+for(int i=0; i < input_players -1; i++)
+{
+    if(i < (argc - 1))
+        ips[i] = argv[i+2];
+    else
+        ips[i] = (char*) "127.0.0.1";
+}
+pthread_mutex_init(&mtx_connection_established, NULL);
+pthread_mutex_init(&mtx_start_communicating, NULL);
+pthread_cond_init(&cond_successful_connection, NULL);
+//DATATYPE** inputs = new DATATYPE*[input_players]; //create n pointers, each to hold a player's input
+//int inputLength[] = INPUTSLENGTH;
+/* for (int i = 0; i < input_players; i++) { */
+/*    inputs[i] = new DATATYPE[inputLength[i]]; // initialize arrays of each player with a size */ 
+/* } */
+
+
+/* std::vector<DATATYPE> inputs[input_players]; */    
+pthread_t receiving_threads[input_players-1];
+thargs_t thrgs[input_players];
+int ret;
+/* printf("creating receiving servers\n"); */
+for(int t=0;t<(input_players-1);t++) {
+    int offset = 0;
+    if(t >= player_id)
+        offset = 1; // player should not receive from itself
+    thrgs[t].num_players = input_players;
+    thrgs[t].inputs = NULL;
+    thrgs[t].inputs_size = 0;
+    thrgs[t].threadID = t;
+    thrgs[t].ip = ips[t];
+    thrgs[t].hostname = (char*)"hostname";
+        thrgs[t].port = (int) base_port + player_id * (input_players-1) + t; //e.g. P0 receives on base port from P1, P2 on base port + num_players from P0 6000,6002
+    /* std::cout << "In main: creating thread " << t << "\n"; */
+    ret = pthread_create(&receiving_threads[t], NULL, receiver, &thrgs[t]);
+    if (ret){
+        printf("ERROR; return code from pthread_create() is %d\n", ret);
+        exit(-1);
+        }
+}
+
+/// Creating sending threads
+
+pthread_t sending_Threads[input_players];
+thargs_p s_thrgs[input_players-1];
+/* printf("creating receiving servers\n"); */
+for(int t=0;t<(input_players-1);t++) {
+    int offset = 0;
+    if(t >= player_id)
+        offset = 1; // player should not send to itself
+     s_thrgs[t].inputs = NULL;
+    s_thrgs[t].inputs_size = 0;
+    s_thrgs[t].port = (int) base_port + (t+offset) * (input_players -1) + player_id - 1 + offset; //e.g. P0 sends on base port + num_players  for P1, P2 on base port + num_players for P0 (6001,6000)
+    /* std::cout << "In main: creating thread " << t << "\n"; */
+    ret = pthread_create(&receiving_threads[t], NULL, sender, &s_thrgs[t]);
+    if (ret){
+        printf("ERROR; return code from pthread_create() is %d\n", ret);
+        exit(-1);
+        }
+}
+
+
+
+// waiting until all threads connected
+
+/* printf("m: locking conn \n"); */
+pthread_mutex_lock(&mtx_connection_established);
+/* printf("m: locked conn \n"); */
+while (num_successful_connections < (input_players -1)) {
+/* printf("m: unlocking conn and waiting \n"); */
+pthread_cond_wait(&cond_successful_connection, &mtx_connection_established);
+}
+/* printf("m: done waiting, modifying conn \n"); */
+num_successful_connections = 0; 
+pthread_cond_broadcast(&cond_successful_connection); //signal all threads to start receiving
+printf("All clients connected sucessfully, starting protocol and timer! \n");
+pthread_mutex_unlock(&mtx_connection_established);
+/* printf("m: unlocked conn \n"); */
+
+clock_t time_application_start = clock ();
+
+
+
 /// Processing Inputs ///
 
 uint64_t (*origData)[BITS_PER_REG] = NEW(uint64_t[n][BITS_PER_REG]);
@@ -105,12 +201,13 @@ funcTime("generating random inputs",randomizeInputs,dataset,elements);
 
 
 //modify certain data to test functionality
+//
 insertManually(dataset, elements, origData, origElements, 1,7 , 200, 200);
 
 
 
 DATATYPE* found = NEW(DATATYPE);
-funcTime("evaluating", search__,dataset, elements, found);
+funcTime("evaluating", searchComm__,dataset, elements, found);
 
 print_num(*found);
 }

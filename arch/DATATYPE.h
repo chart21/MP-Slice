@@ -6,6 +6,9 @@
 #define ORTHO
 #endif
 #include "SSE.h"
-#define n 1 << 20
+#define n 4
 #define BITLENGTH 64
 #define US
+#define base_port 6000
+#define num_inputs 4
+#define input_players 2
