@@ -1,5 +1,7 @@
+#include <pthread.h>
 #include <stdint.h>
 #include <stdio.h>
+#include "../networking/sockethelper.h"
 /* Do NOT change the order of those define/include */
 
 /* #ifndef BITS_PER_REG */
@@ -8,14 +10,12 @@
 /* /1* including the architecture specific .h *1/ */
 #include "../arch/DATATYPE.h"
 
-
+#include "../protocols/dummy_Protocol.hpp"
 
 /* auxiliary functions */
-
-
 /* main function */
-void searchComm__ (/*inputs*/ DATATYPE dataset__[n][BITLENGTH],DATATYPE element__[BITLENGTH], /*outputs*/ DATATYPE found__[BITLENGTH]) {
-
+void searchComm__ (/*inputs*/ DATATYPE dataset__[n][BITLENGTH],DATATYPE element__[BITLENGTH], /*outputs*/ DATATYPE found__[BITLENGTH], thargs_t receiving_threads_info[], thargs_p sending_threads_info[]) {
+int rounds = 0;
   // Variables declaration
   //;
 
@@ -42,18 +42,45 @@ void searchComm__ (/*inputs*/ DATATYPE dataset__[n][BITLENGTH],DATATYPE element_
   int buffer_length = 0;
   for (int k__ = BITLENGTH >> 1; k__ > 0; k__ = k__ >> 1) {
     int k = k__;
-    DATATYPE* send_buffer = NEW(DATATYPE[k*n]);
-    DATATYPE* receive_buffer = NEW(DATATYPE[k*n]);
+//    DATATYPE* send_buffer = NEW(DATATYPE[k*n]);
+ //   DATATYPE* receive_buffer = NEW(DATATYPE[k*n]);
+   
+    for(int t = 0; t < num_players-1; t++)
+        sending_threads_info[t].sent_elements[sending_rounds] = NEW(DATATYPE[k*n]); // Allocate memory for all sending buffers
     int sb = 0;
     int rb = 0;
     for (int i__ = 0; i__ < k__; i__++) {
         int j__ = i__ * 2;
       for (int s__ = 0; s__ < n; s__++) {
         dataset__[s__][i__] = NOT(AND(dataset__[s__][j__],dataset__[s__][j__ +1]));
-        send_buffer[sb] = dataset__[s__][i__]; 
+        for(int t = 0; t < num_players-1; t++) // for other protocols, sending buffers may be different for each player
+            sending_threads_info[t].sent_elements[sending_rounds][sb] = dataset__[s__][i__];
         sb += 1;
       }
     }
+
+      
+    
+      //send
+      pthread_mutex_lock(&mtx_send_next); 
+     sending_rounds +=1;
+      pthread_cond_broadcast(&cond_send_next); //signal all threads that sending buffer contains next data
+      pthread_mutex_unlock(&mtx_send_next); 
+      
+        
+      //receive
+        rounds+=1;  
+      
+
+        // receive_data
+      //wait until all sockets have finished received their last data
+      pthread_mutex_lock(&mtx_receive_next);
+      while(rounds > receiving_rounds) //wait until all threads received their data
+          pthread_cond_wait(&cond_receive_next, &mtx_receive_next);
+      pthread_mutex_unlock(&mtx_receive_next);
+
+
+      //reset
     
     //send_AND(buffer,b)
     // receive_AND(buffer,b)
@@ -62,9 +89,14 @@ void searchComm__ (/*inputs*/ DATATYPE dataset__[n][BITLENGTH],DATATYPE element_
         int j__ = i__ * 2;
       for (int s__ = 0; s__ < n; s__++) {
         //dataset__[s__][i__] = NOT(dataset__[s__][i__]);
-        dataset__[s__][i__] = NOT(XOR(dataset__[s__][i__],receive_buffer[rb]));
+        for(int t = 0; t < num_players-1; t++) // for other protocols, sending buffers may be different for each player
+            dataset__[s__][i__] = NOT(AND(dataset__[s__][i__],receiving_threads_info[t].received_elements[rounds-1][rb]));
         rb += 1;
       }
+      
+    /// DELETE received data to free memory! 
+
+
     }
 
     //delete[] (send_buffer, sizeof(DATATYPE));

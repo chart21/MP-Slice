@@ -5,10 +5,10 @@
 #ifndef ORTHO
 #define ORTHO
 #endif
-#include "SSE.h"
+#include "BOOL.h"
 #define n 4
 #define BITLENGTH 64
 #define US
 #define base_port 6000
 #define num_inputs 4
-#define input_players 2
+#define num_players 2

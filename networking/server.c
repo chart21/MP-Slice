@@ -17,14 +17,14 @@
 
 #define BACKLOG 1	 // how many pending connections queue will hold
 
-int sendall(int s, char *buf, int *len)
+int sendall(int s, DATATYPE *buf, int *len)
 {
     int total = 0;        // how many bytes we've sent
     int bytesleft = *len; // how many we have left to send
     int n_send;
 
     while(total < *len) {
-        n_send = send(s, buf+total, bytesleft, 0);
+        n_send = send(s, ((char*) buf)+total, bytesleft, 0);
         if (n_send == -1) { break; }
         total += n_send;
         bytesleft -= n_send;
@@ -138,12 +138,60 @@ void *sender(void* threadParameters)
 		/* 	exit(0); */
 		/* } */
 		
-        //char buf[1024] = { 0 };
-        //recv(new_fd, buf, 32, MSG_WAITALL);
-            if (sendall(new_fd, ((thargs_p*) threadParameters)->inputs, &((thargs_p*) threadParameters)->inputs_size) == -1) {
-            perror("sendall");
-            printf("We only sent %d bytes because of the error!\n", ((thargs_p*) threadParameters)->inputs_size);
-} 
+        pthread_mutex_lock(&mtx_connection_established);
+        num_successful_connections += 1; 
+    /* printf("Player: Modyfied conn \n"); */
+    /* pthread_mutex_unlock(&mtx_connection_established); */
+    /* printf("Player: Unlocked conn \n"); */
+    /* pthread_cond_signal(&cond_successful_connection); */
+    /* printf("Player: Signal conn \n"); */
+    /* //get start signal from main */
+    /* printf("Player: Locking conn \n"); */
+    /* pthread_mutex_lock(&mtx_connection_established); */
+    /* printf("Player: Locked conn \n"); */
+    if(num_successful_connections == 2 * (((thargs_t*) threadParameters)->player_count -1)) {
+        pthread_cond_signal(&cond_successful_connection); //signal main thread that all threads have connected
+        /* printf("Player: Signal conn \n"); */
+    }
+    pthread_mutex_unlock(&mtx_connection_established);
+    /* printf("Player: Unlocked conn \n"); */
+
+    pthread_mutex_lock(&mtx_start_communicating); 
+    while (num_successful_connections != -1) { // wait for start signal from main thread
+        /* printf("Player: Unlocking conn and waiting for signal \n"); */ 
+        pthread_cond_wait(&cond_successful_connection, &mtx_start_communicating);
+    }
+        /* printf("Player: Done waiting, unlocking \n"); */
+        pthread_mutex_unlock(&mtx_start_communicating);
+    
+        int rounds = 0;
+
+        while (rounds < ((thargs_p*) threadParameters)->send_rounds) //continue until all data is sent
+        {
+            while(rounds < sending_rounds)
+                    pthread_cond_wait(&cond_send_next, &mtx_send_next); //make sure that there is new data to send, singaled by main
+            pthread_mutex_unlock(&mtx_send_next);
+            //char buf[1024] = { 0 };
+            //recv(new_fd, buf, 32, MSG_WAITALL);
+                if (sendall(new_fd, ((thargs_p*) threadParameters)->sent_elements[rounds], &((thargs_p*) threadParameters)->elements_to_send[rounds]) == -1) {
+                perror("sendall");
+                printf("We only sent %d bytes because of the error!\n", ((thargs_p*) threadParameters)->inputs_size);
+            }
+           //Delete sent data
+           //free(((thargs_p*) threadParameters)->sent_elements[rounds]);
+
+            rounds += 1;
+        
+
+        } 
+        //main thread should not be interested if data was sent, but only make new data available, increase rounds and signal
+        /* pthread_mutex_lock(&mtx_data_sent); */
+        /* sockets_sent += 1; */
+        /* if(sockets_sent == ((thargs_t*) threadParameters)->num_players -1) */ 
+        /*     pthread_cond_signal(&cond_data_sent); // signal main thread that sending is finished */
+        /* pthread_mutex_unlock(&mtx_data_sent); */
+        /* } */
+
         close(new_fd);  // parent doesn't need this
         shutdown(sockfd, SHUT_RDWR);
 	    
@@ -152,4 +200,3 @@ void *sender(void* threadParameters)
 	
 pthread_exit( NULL );
 }
-

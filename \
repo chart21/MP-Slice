@@ -12,7 +12,6 @@
 #include <arpa/inet.h>
 #include "sockethelper.h"
 
-#include "../arch/DATATYPE.h"
 #define MAXDATASIZE 100 // max number of bytes we can get at once -> currently not used 
 
  
@@ -81,7 +80,7 @@ void *receiver(void* threadParameters)
     /* printf("Player: Locking conn \n"); */
     /* pthread_mutex_lock(&mtx_connection_established); */
     /* printf("Player: Locked conn \n"); */
-    if(num_successful_connections == 2 * (((thargs_t*) threadParameters)->player_count -1)) {
+    if(num_successful_connections == 2 * (((thargs_t*) threadParameters)->num_players -1)) {
         pthread_cond_signal(&cond_successful_connection); //signal main thread that all threads have connected
         /* printf("Player: Signal conn \n"); */
     }
@@ -100,11 +99,8 @@ void *receiver(void* threadParameters)
         /* pthread_mutex_lock(&mtx_receive_next); */
         /* while(receiving_rounds != -1) */
         while(rounds < ((thargs_t*) threadParameters)->rec_rounds)
-        {
-            // Allocate new memory for received data, check correctness
-            ((thargs_t*) threadParameters)->received_elements[rounds] = NEW(DATATYPE[((thargs_t*) threadParameters)->elements_to_rec[rounds]]);
-            /* printf("start rec \n"); */
-            if ((recv(sockfd, ((char*) ((thargs_t*) threadParameters)->received_elements[rounds]), ((thargs_t*) threadParameters)->elements_to_rec[rounds], MSG_WAITALL)) == -1) {
+        {    /* printf("start rec \n"); */
+            if ((recv(sockfd, ((thargs_t*) threadParameters)->received_elements[rounds], ((thargs_t*) threadParameters)->elements_to_rec[rounds], MSG_WAITALL)) == -1) {
                 perror("recv");
                 exit(1);
             }
@@ -113,13 +109,11 @@ void *receiver(void* threadParameters)
             
             //If all sockets received, signal main_thread
             pthread_mutex_lock(&mtx_data_received);
-            sockets_received[rounds] += 1;
-            if(sockets_received[rounds] == ((thargs_t*) threadParameters)->player_count -1) 
+            sockets_received += 1;
+            if(sockets_received == ((thargs_t*) threadParameters)->num_players -1) 
             {
-                pthread_mutex_lock(&mtx_receive_next); // Mutex probably neccessary if one thread is alrady one round further
                 receiving_rounds += 1; //increase global receiving_rounds
-                pthread_cond_signal(&cond_receive_next); // signal main thread that receiving is finished
-                pthread_mutex_unlock(&mtx_receive_next);
+                pthread_cond_signal(&cond_data_received); // signal main thread that receiving is finished
             }
                 pthread_mutex_unlock(&mtx_data_received);
             //signal main thread that data was received
