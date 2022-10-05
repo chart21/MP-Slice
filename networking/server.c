@@ -168,7 +168,8 @@ void *sender(void* threadParameters)
 
         while (rounds < ((thargs_p*) threadParameters)->send_rounds) //continue until all data is sent
         {
-            while(rounds < sending_rounds)
+            pthread_mutex_lock(&mtx_send_next); 
+            while(rounds >= sending_rounds)
                     pthread_cond_wait(&cond_send_next, &mtx_send_next); //make sure that there is new data to send, singaled by main
             pthread_mutex_unlock(&mtx_send_next);
             //char buf[1024] = { 0 };

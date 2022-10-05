@@ -84,7 +84,6 @@ int rounds = 0;
     
     //send_AND(buffer,b)
     // receive_AND(buffer,b)
-    sb = 0;
     for (int i__ = 0; i__ < k__; i__++) {
         int j__ = i__ * 2;
       for (int s__ = 0; s__ < n; s__++) {

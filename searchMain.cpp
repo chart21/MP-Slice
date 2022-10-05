@@ -175,6 +175,7 @@ for(int t=0;t<(num_players-1);t++) {
     if(t >= player_id)
         offset = 1; // player should not send to itself
     s_thrgs[t].sent_elements = new DATATYPE*[*total_comm];
+    s_thrgs[t].send_rounds = *total_comm;
     s_thrgs[t].elements_to_send = *elements_per_round;
     s_thrgs[t].player_id = player_id;
     s_thrgs[t].connected_to = t+offset;

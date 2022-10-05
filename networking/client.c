@@ -107,10 +107,7 @@ void *receiver(void* threadParameters)
             if ((recv(sockfd, ((char*) ((thargs_t*) threadParameters)->received_elements[rounds]), ((thargs_t*) threadParameters)->elements_to_rec[rounds], MSG_WAITALL)) == -1) {
                 perror("recv");
                 exit(1);
-            }
-            
-            rounds += 1;
-            
+            } 
             //If all sockets received, signal main_thread
             pthread_mutex_lock(&mtx_data_received);
             sockets_received[rounds] += 1;
@@ -122,6 +119,7 @@ void *receiver(void* threadParameters)
                 pthread_mutex_unlock(&mtx_receive_next);
             }
                 pthread_mutex_unlock(&mtx_data_received);
+                rounds += 1;
             //signal main thread that data was received
             /* pthread_mutex_lock(&mtx_data_received); */
             /* num_data_received += 1; */ 
