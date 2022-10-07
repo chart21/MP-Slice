@@ -62,5 +62,3 @@ typedef struct player_arguments {
   int *elements_to_send;
   //char *data;
 } thargs_p;
-
-

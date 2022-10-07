@@ -14,7 +14,7 @@
 #include "networking/client.c"
 #include "networking/server.c"
 #include "networking/sockethelper.h"
-
+#include "networking/buffers.h"
 void print_bool(uint8_t* found)
 {
      for (int j = 0; j < BITS_PER_REG; j++)
@@ -85,27 +85,49 @@ for (int i = 0; i < n; i++) {
 }
 
 
-void init_comm(int* total_comm, int** len)
+void init_comm()
 {
-*total_comm = 0;
+
+
+// sharing
+
+// revealing
+
+total_comm = 2;
+// function
+
 for (int k = BITLENGTH >> 1; k > 0; k = k >> 1)
 {
-    *total_comm = *total_comm + 1;
+    total_comm = total_comm + 1;
 }
-*len = new int[*total_comm];
-int i = 0;
+elements_per_round = new int[total_comm];
+
+
+//sharing -> Problem, different for different players
+if(player_id == 0)
+    elements_per_round[0] = BITLENGTH*n;
+else if(player_id == 1)
+    elements_per_round[0] = BITLENGTH;
+
+//function
+
+int i = 1;
 for (int k = BITLENGTH >> 1; k > 0; k = k >> 1)
 {
-    (*len)[i] = k*n;
+    elements_per_round[i] = k*n;
     i+=1;
 }
+
+
+// reveal
+ elements_per_round[total_comm - 1] = 1;
+
+
 }
 
 int main(int argc, char *argv[])
 {
-int* total_comm = new int;
-int** elements_per_round = new int*;
-init_comm(total_comm,elements_per_round);
+init_comm();
 /* *total_comm = 8; */
 
 for(int i = 0; i < *total_comm; i++)
@@ -115,7 +137,7 @@ for(int i = 0; i < *total_comm; i++)
 
 sockets_received = new int[*total_comm];
 
-int player_id = atoi(argv[1]);
+player_id = atoi(argv[1]);
 
 /// Connecting to other Players
 int INPUTSLENGTH[] = {4,1};
@@ -239,7 +261,7 @@ insertManually(dataset, elements, origData, origElements, 1,7 , 200, 200);
 
 
 DATATYPE* found = NEW(DATATYPE);
-funcTime("evaluating", searchComm__,dataset, elements, found, thrgs, s_thrgs);
+funcTime("evaluating", searchComm__,dataset, elements, found, thrgs, s_thrgs, player_id);
 
 print_num(*found);
 }

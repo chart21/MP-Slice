@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "../networking/sockethelper.h"
+#include "../networking/buffers.h"
 /* Do NOT change the order of those define/include */
 
 /* #ifndef BITS_PER_REG */
@@ -14,61 +15,18 @@
 
 /* auxiliary functions */
 /* main function */
-void searchComm__ (/*inputs*/ DATATYPE dataset__[n][BITLENGTH],DATATYPE element__[BITLENGTH], /*outputs*/ DATATYPE found__[BITLENGTH], thargs_t receiving_threads_info[], thargs_p sending_threads_info[]) {
-int rounds = 0;
-  // Variables declaration
-  //;
 
-  // Instructions (body)
-  for (int i__ = 0; i__ < n; i__++) {
-    for (int j__ = 0; j__ < BITLENGTH; j__++) {
-      dataset__[i__][j__] = NOT(XOR(dataset__[i__][j__],element__[j__]));
-    }
-  }
-  
-  /* for (int i__ = 0; i__ < n; i__++) { */
-    /* for (int j__ = 0; j__ < BITLENGTH; j__++) { */
-    /*     fputs(dataset__[i__][j__] ? "1" : "0", stdout); */
-    /* } */
-    /* printf("\n"); */
-  /* } */
+void send()
+{
 
-    /* for (int j__ = 0; j__ < BITLENGTH; j__++) { */
-    /*     fputs(element__[j__] ? "1" : "0", stdout); */
-    /* } */
-    /* printf("\n"); */
-
-
-  int buffer_length = 0;
-  for (int k__ = BITLENGTH >> 1; k__ > 0; k__ = k__ >> 1) {
-    int k = k__;
-//    DATATYPE* send_buffer = NEW(DATATYPE[k*n]);
- //   DATATYPE* receive_buffer = NEW(DATATYPE[k*n]);
-   
-    for(int t = 0; t < num_players-1; t++)
-        sending_threads_info[t].sent_elements[sending_rounds] = NEW(DATATYPE[k*n]); // Allocate memory for all sending buffers
-    int sb = 0;
-    int rb = 0;
-    for (int i__ = 0; i__ < k__; i__++) {
-        int j__ = i__ * 2;
-      for (int s__ = 0; s__ < n; s__++) {
-        dataset__[s__][i__] = NOT(AND(dataset__[s__][j__],dataset__[s__][j__ +1]));
-        for(int t = 0; t < num_players-1; t++) // for other protocols, sending buffers may be different for each player
-            sending_threads_info[t].sent_elements[sending_rounds][sb] = dataset__[s__][i__];
-        sb += 1;
-      }
-    }
-
-      
-    
-      //send
       pthread_mutex_lock(&mtx_send_next); 
      sending_rounds +=1;
       pthread_cond_broadcast(&cond_send_next); //signal all threads that sending buffer contains next data
       pthread_mutex_unlock(&mtx_send_next); 
-      
-        
-      //receive
+sb = 0;      
+}
+
+void receive(){
         rounds+=1;  
       
 
@@ -79,18 +37,120 @@ int rounds = 0;
           pthread_cond_wait(&cond_receive_next, &mtx_receive_next);
       pthread_mutex_unlock(&mtx_receive_next);
 
+rb = 0;
+}
 
-      //reset
+void send_and_receive()
+{
+    send();
+    receive();
+}
+
+DATATYPE receive_from(int id)
+{
+DATATYPE result = receiving_threads_info[id].received_elements[rounds-1][rb];
+rb+=1;
+return result;
+}
+
+void searchComm__ (/*inputs*/ DATATYPE dataset[n][BITLENGTH],DATATYPE element[BITLENGTH], /*outputs*/ DATATYPE found[BITLENGTH])
+{
+  //;
+
+//create own shares
+
+if(player_id == 0)
+{
+auto shares = new DATATYPE[n][BITLENGTH][num_players]; 
+for (int i = 0; i < n; i++) {
+    for (int j = 0; j < BITLENGTH; j++) {
+      dataset[i][j] = P_share(dataset[i][j], shares[i][j]);
+  }
+}
+}
+else if(player_id == 1)
+{
+
+auto shares = new DATATYPE[BITLENGTH][num_players]; 
+    for (int j = 0; j < BITLENGTH; j++) {
+      element[j] = P_share(element[j], shares[j]);
+           
+}
+}
+
+
+send_and_receive();
+
+// change to receive from
+if(player_id != 0)
+{
+int rb = 1;
+for (int i = 0; i < n; i++) {
+  for (int j = 0; j < BITLENGTH; j++) {
+dataset[i][j] = receiving_threads_info[0].received_elements[rounds-1][rb];
+rb+=1;
+  }
+}
+
+if(player_id != 1)
+{
+int offset = 0;
+if(player_id < 1)
+    offset = 1;
+int rb = 1;
+  for (int j = 0; j < BITLENGTH; j++) {
+element[j] = receiving_threads_info[1- offset].received_elements[rounds-1][rb];
+rb+=1;
+  }
+}
+
+// Players received all elements
+
+  // Instructions (body)
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < BITLENGTH; j++) {
+      dataset[i][j] = P_xor(dataset[i][j],element[j]);
+    }
+  }
+  
+  /* for (int i = 0; i < n; i++) { */
+    /* for (int j = 0; j < BITLENGTH; j++) { */
+    /*     fputs(dataset[i][j] ? "1" : "0", stdout); */
+    /* } */
+    /* printf("\n"); */
+  /* } */
+
+    /* for (int j = 0; j < BITLENGTH; j++) { */
+    /*     fputs(element[j] ? "1" : "0", stdout); */
+    /* } */
+    /* printf("\n"); */
+
+
+  int buffer_length = 0;
+  for (int k = BITLENGTH >> 1; k > 0; k = k >> 1) {
+//    DATATYPE* send_buffer = NEW(DATATYPE[k*n]);
+ //   DATATYPE* receive_buffer = NEW(DATATYPE[k*n]);
+   
+    for(int t = 0; t < num_players-1; t++)
+        sending_threads_info[t].sent_elements[sending_rounds] = NEW(DATATYPE[k*n]); // Allocate memory for all sending buffers
+    for (int i = 0; i < k; i++) {
+        int j = i * 2;
+      for (int s = 0; s < n; s++) {
+        dataset[s][i] = P_prepare_and(dataset[s][j],dataset[s][j +1]);
+      }
+    }
+
+    send_and_receive(); 
+    
     
     //send_AND(buffer,b)
     // receive_AND(buffer,b)
-    for (int i__ = 0; i__ < k__; i__++) {
-        int j__ = i__ * 2;
-      for (int s__ = 0; s__ < n; s__++) {
-        //dataset__[s__][i__] = NOT(dataset__[s__][i__]);
+    for (int i = 0; i < k; i++) {
+        int j = i * 2;
+      for (int s = 0; s < n; s++) {
+        //dataset[s][i] = NOT(dataset[s][i]);
         for(int t = 0; t < num_players-1; t++) // for other protocols, sending buffers may be different for each player
-            dataset__[s__][i__] = NOT(AND(dataset__[s__][i__],receiving_threads_info[t].received_elements[rounds-1][rb]));
-        rb += 1;
+            dataset[s][i] = P_complete_and(dataset[s][i]); 
       }
       
     /// DELETE received data to free memory! 
@@ -102,12 +162,21 @@ int rounds = 0;
     //delete[] (receive_buffer, sizeof(DATATYPE));
   }
  
-  *found__ = SET_ALL_ZERO();
-  for (int i__ = 0; i__ < n; i__++) {
-    *found__ = XOR(*found__,dataset__[i__][0]);
+  *found = SET_ALL_ZERO();
+  for (int i = 0; i < n; i++) {
+    *found = P_xor(*found,dataset[i][0]);
   }
 
 }
+
+P_prepare_reveal(*found);
+send_and_receive();
+*found = P_complete_Reveal(*found);
+
+// Reveal
+
+
+
 
 /* Additional functions */
 

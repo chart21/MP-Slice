@@ -1,0 +1,10 @@
+#pragma once
+#include "sockethelper.h"
+int player_id;
+thargs_p* sending_threads_info;
+thargs_t* receiving_threads_info;
+int rounds;
+int rb;
+int sb;
+int total_comm;
+int* elements_per_round;  
