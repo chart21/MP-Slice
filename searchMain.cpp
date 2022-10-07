@@ -217,6 +217,7 @@ for(int t=0;t<(num_players-1);t++) {
     sending_args[t].elements_to_send[0] = input_length[player_id]; // player needs to send a share of its inputs to each other player
     sending_args[t].elements_to_send[total_comm -1] = reveal_length[t - offset]; //number of elements to send to that player
     sending_args[t].player_id = player_id;
+    sending_args[t].player_count = num_players;
     sending_args[t].connected_to = t+offset;
     sending_args[t].port = (int) base_port + (t+offset) * (num_players -1) + player_id - 1 + offset; //e.g. P0 sends on base port + num_players  for P1, P2 on base port + num_players for P0 (6001,6000)
     /* std::cout << "In main: creating thread " << t << "\n"; */

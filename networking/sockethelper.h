@@ -57,6 +57,7 @@ typedef struct sender_arguments {
   int inputs_size;
   int port;
   int player_id;
+  int player_count;
   int connected_to;
   int send_rounds;
   int *elements_to_send;

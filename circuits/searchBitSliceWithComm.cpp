@@ -73,7 +73,7 @@ if(player_id == 0)
 {
 for (int i = 0; i < n; i++) {
     for (int j = 0; j < BITLENGTH; j++) {
-      dataset[i][j] = P_share(dataset[i][j], shares[i][j]);
+      dataset[i][j] = P_share(dataset[i][j]);
   }
 }
 }
@@ -81,7 +81,7 @@ else if(player_id == 1)
 {
 
     for (int j = 0; j < BITLENGTH; j++) {
-      element[j] = P_share(element[j], shares[j]);
+      element[j] = P_share(element[j]);
            
 }
 }
