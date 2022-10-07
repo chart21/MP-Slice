@@ -57,7 +57,7 @@ if(id == player_id)
 result = player_input[share_buffer[id]];
 }
 else{
-int offset = {player_id > id ? 1 : 0};
+int offset = {id > player_id ? 1 : 0};
 result = receiving_args[id - offset].received_elements[rounds-1][share_buffer[id]];
 }
 share_buffer[id]+=1;
@@ -107,7 +107,7 @@ element[j] = receive_from(1);
   // Instructions (body)
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < BITLENGTH; j++) {
-      dataset[i][j] = P_xor(dataset[i][j],element[j]);
+      dataset[i][j] = NOT(P_xor(dataset[i][j],element[j]));
     }
   }
   
@@ -158,9 +158,10 @@ element[j] = receive_from(1);
     //delete[] (receive_buffer, sizeof(DATATYPE));
   }
  
-  *found = SET_ALL_ZERO();
+  *found = SET_ALL_ZERO(); 
+  *found = NOT(*found); //public value, therefore needs to be notted for dummy Protocol;
   for (int i = 0; i < n; i++) {
-    *found = P_xor(*found,dataset[i][0]);
+    *found = P_xor(*found,dataset[i][0]); 
   }
 
 
@@ -170,39 +171,3 @@ send_and_receive();
 
 }
 // Reveal
-
-
-
-
-/* Additional functions */
-
-
-/* **************************************************************** */
-/*                            Usuba source                          */
-/*                                                                  */
-/*
-
-
-node search(dataset :  b4[4],element :  b4) returns found :  b1
-  let
-    forall i in [0,3] {
-      forall j in [0,3] {
-        (dataset[i][j]) = (dataset[i][j] ^ element[j])
-      }
-    };
-    forall k in [1,0] {
-      forall i in [0,1] {
-        forall s in [0,3] {
-          (dataset[s][i]) = (dataset[s][(i * 2)] & dataset[s][(i * 2)])
-        }
-      }
-    };
-    (found) = 0x0:b<B>1;
-    forall i in [0,3] {
-      (found) = (found ^ dataset[i][0])
-    }
-  tel
-
-
-*/
- 

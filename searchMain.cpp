@@ -141,10 +141,6 @@ for (int i = 0; i < num_players; i++) {
 
 /* *total_comm = 8; */
 
-for(int i = 0; i < total_comm; i++)
-{
-    elements_per_round[i] = elements_per_round[i] * sizeof(DATATYPE);
-}
 
 sockets_received = new int[total_comm];
 
@@ -183,9 +179,13 @@ for(int t=0;t<(num_players-1);t++) {
     receiving_args[t].player_count = num_players;
     receiving_args[t].received_elements = new DATATYPE*[total_comm]; //every thread gets its own pointer array for receiving elements
     receiving_args[t].rec_rounds = total_comm;
-    receiving_args[t].elements_to_rec = elements_per_round;
-    receiving_args[t].elements_to_rec[0] = input_length[t-offset]; //input shares to receive from that player
-    receiving_args[t].elements_to_rec[total_comm-1] = reveal_length[player_id]; //number of revealed values to receive from other players
+    
+    receiving_args[t].elements_to_rec = new int[total_comm];
+    for (int i = 1; i < total_comm -1; i++) {
+    receiving_args[t].elements_to_rec[i] = elements_per_round[i] * sizeof(DATATYPE);
+    }
+    receiving_args[t].elements_to_rec[0] = input_length[t+offset] * sizeof(DATATYPE); //input shares to receive from that player
+    receiving_args[t].elements_to_rec[total_comm-1] = reveal_length[player_id] * sizeof(DATATYPE); //number of revealed values to receive from other players
     receiving_args[t].player_id = player_id;
     receiving_args[t].connected_to = t+offset;
     receiving_args[t].ip = ips[t];
@@ -213,14 +213,20 @@ for(int t=0;t<(num_players-1);t++) {
         offset = 1; // player should not send to itself
     sending_args[t].sent_elements = new DATATYPE*[total_comm];
     sending_args[t].send_rounds = total_comm;
-    sending_args[t].elements_to_send = elements_per_round;
-    sending_args[t].elements_to_send[0] = input_length[player_id]; // player needs to send a share of its inputs to each other player
-    sending_args[t].elements_to_send[total_comm -1] = reveal_length[t - offset]; //number of elements to send to that player
+    sending_args[t].elements_to_send = new int[total_comm];
+    for (int i = 1; i < total_comm -1; i++) {
+    sending_args[t].elements_to_send[i] = elements_per_round[i] * sizeof(DATATYPE);
+    }
+    sending_args[t].elements_to_send[0] = input_length[player_id] * sizeof(DATATYPE); // player needs to send a share of its inputs to each other player
+    sending_args[t].elements_to_send[total_comm -1] = reveal_length[t + offset] * sizeof(DATATYPE); //number of elements to send to that player
     sending_args[t].player_id = player_id;
     sending_args[t].player_count = num_players;
     sending_args[t].connected_to = t+offset;
     sending_args[t].port = (int) base_port + (t+offset) * (num_players -1) + player_id - 1 + offset; //e.g. P0 sends on base port + num_players  for P1, P2 on base port + num_players for P0 (6001,6000)
     /* std::cout << "In main: creating thread " << t << "\n"; */
+    sending_args[t].sent_elements[0] = NEW(DATATYPE[sending_args[t].elements_to_send[0]]); // Allocate memory for sharing round
+
+
     ret = pthread_create(&sending_Threads[t], NULL, sender, &sending_args[t]);
     if (ret){
         printf("ERROR; return code from pthread_create() is %d\n", ret);

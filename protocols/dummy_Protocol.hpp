@@ -5,14 +5,15 @@
 // Share of each player is ~a
 DATATYPE P_share(DATATYPE a)
 {
-int t = 0;
 DATATYPE s[num_players];
-   for (int i = 0; i < num_players -1; i++) {
+   for (int i = 0; i < num_players; i++) {
        s[i] = NOT(a);
-       if(t != player_id){
-            sending_args[t].sent_elements[sending_rounds][sb] = s[t];
+       if(i < player_id){
+            sending_args[i].sent_elements[sending_rounds][sb] = s[i];
        }
-   t++;
+       else if (i > player_id) { //offset
+            sending_args[i-1].sent_elements[sending_rounds][sb] = s[i];
+       }
    }
    sb += 1;
    return s[player_id];

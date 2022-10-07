@@ -40,7 +40,7 @@ void *receiver(void* threadParameters)
 
 	// loop through all the results and connect to the first we can
 	p = NULL;
-    printf("Player 0: Attempting to connect to Player %i ... \n", ((receiver_args*) threadParameters)->connected_to);
+    printf("Player %i: Attempting to connect to Player %i ... \n",((receiver_args*) threadParameters)->player_id, ((receiver_args*) threadParameters)->connected_to);
     while(p == NULL){
     for(p = servinfo; p != NULL; p = p->ai_next) {
 		if ((sockfd = socket(p->ai_family, p->ai_socktype,
@@ -104,6 +104,8 @@ void *receiver(void* threadParameters)
             // Allocate new memory for received data, check correctness
             ((receiver_args*) threadParameters)->received_elements[rounds] = NEW(DATATYPE[((receiver_args*) threadParameters)->elements_to_rec[rounds]]);
             /* printf("start rec \n"); */
+        printf("receiving %i bytes \n", ((receiver_args*) threadParameters)->elements_to_rec[rounds]);  
+
             if ((recv(sockfd, ((char*) ((receiver_args*) threadParameters)->received_elements[rounds]), ((receiver_args*) threadParameters)->elements_to_rec[rounds], MSG_WAITALL)) == -1) {
                 perror("recv");
                 exit(1);
