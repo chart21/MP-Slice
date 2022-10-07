@@ -1,14 +1,16 @@
+#pragma once
 #include "../arch/DATATYPE.h"
 #include "../networking/sockethelper.h"
 #include "../networking/buffers.h"
 // Share of each player is ~a
-DATATYPE P_share(DATATYPE a, DATATYPE s[])
+DATATYPE P_share(DATATYPE a)
 {
 int t = 0;
+DATATYPE s[num_players];
    for (int i = 0; i < num_players -1; i++) {
        s[i] = NOT(a);
        if(t != player_id){
-            sending_threads_info[t].sent_elements[sending_rounds][sb] = s[t];
+            sending_args[t].sent_elements[sending_rounds][sb] = s[t];
        }
    t++;
    }
@@ -30,7 +32,7 @@ DATATYPE P_xor(DATATYPE a, DATATYPE b)
 DATATYPE P_prepare_and(DATATYPE a, DATATYPE b)
 {
     for(int t = 0; t < num_players-1; t++) // for other protocols, sending buffers may be different for each player
-        sending_threads_info[t].sent_elements[sending_rounds][sb] = AND(NOT(a),NOT(b));
+        sending_args[t].sent_elements[sending_rounds][sb] = AND(NOT(a),NOT(b));
     sb += 1;
   return AND(NOT(a),NOT(b));
 }
@@ -40,26 +42,38 @@ DATATYPE P_complete_and(DATATYPE a)
 {
 DATATYPE result;
 for(int t = 0; t < num_players-1; t++) // for other protocols, sending buffers may be different for each player
-    result = NOT(AND(a,receiving_threads_info[t].received_elements[rounds-1][rb]));
+    result = NOT(AND(a,receiving_args[t].received_elements[rounds-1][rb]));
 rb+=1;
 return result;
 }
 
-void P_prepare_reveal(DATATYPE a)
+void P_prepare_reveal_to_all(DATATYPE a)
 {
     for(int t = 0; t < num_players-1; t++) // for other protocols, sending buffers may be different for each player
-        sending_threads_info[t].sent_elements[sending_rounds][sb] = a;
+        sending_args[t].sent_elements[sending_rounds][sb] = a;
     sb += 1;
     //add to send buffer
 }    
 
+
+//reveal to specific player
+void P_prepare_reveal_to(DATATYPE a, int id)
+{
+    if(player_id != id)
+    {
+    int offset = {player_id > id ? 1 : 0};
+        sending_args[id - offset].sent_elements[sending_rounds][reveal_buffer[id]] = a;
+    reveal_buffer[id] += 1;
+    //add to send buffer
+}
+}
 // These functions need to be somewhere else
 
 DATATYPE P_complete_Reveal(DATATYPE a)
 {
 DATATYPE result;
 for(int t = 0; t < num_players-1; t++) // for other protocols, sending buffers may be different for each player
-    result = NOT(AND(a,receiving_threads_info[t].received_elements[rounds-1][rb]));
+    result = NOT(AND(a,receiving_args[t].received_elements[rounds-1][rb]));
 rb+=1;
 return result;
 }

@@ -24,6 +24,8 @@ void send()
       pthread_cond_broadcast(&cond_send_next); //signal all threads that sending buffer contains next data
       pthread_mutex_unlock(&mtx_send_next); 
 sb = 0;      
+    for(int t = 0; t < num_players-1; t++)
+        sending_args[t].sent_elements[sending_rounds] = NEW(DATATYPE[sending_args[t].elements_to_send[sending_rounds]]); // Allocate memory for all sending buffers for next round
 }
 
 void receive(){
@@ -48,20 +50,27 @@ void send_and_receive()
 
 DATATYPE receive_from(int id)
 {
-DATATYPE result = receiving_threads_info[id].received_elements[rounds-1][rb];
-rb+=1;
+DATATYPE result;
+if(id == player_id)
+{
+/* result = receiving_args[num_players-1].received_elements[rounds - 1][share_buffer[id]]; */
+result = player_input[share_buffer[id]];
+}
+else{
+int offset = {player_id > id ? 1 : 0};
+result = receiving_args[id - offset].received_elements[rounds-1][share_buffer[id]];
+}
+share_buffer[id]+=1;
 return result;
 }
 
-void searchComm__ (/*inputs*/ DATATYPE dataset[n][BITLENGTH],DATATYPE element[BITLENGTH], /*outputs*/ DATATYPE found[BITLENGTH])
+void searchComm__ (DATATYPE dataset[n][BITLENGTH],DATATYPE element[BITLENGTH], /*outputs*/ DATATYPE found[BITLENGTH])
 {
   //;
-
 //create own shares
 
 if(player_id == 0)
 {
-auto shares = new DATATYPE[n][BITLENGTH][num_players]; 
 for (int i = 0; i < n; i++) {
     for (int j = 0; j < BITLENGTH; j++) {
       dataset[i][j] = P_share(dataset[i][j], shares[i][j]);
@@ -71,7 +80,6 @@ for (int i = 0; i < n; i++) {
 else if(player_id == 1)
 {
 
-auto shares = new DATATYPE[BITLENGTH][num_players]; 
     for (int j = 0; j < BITLENGTH; j++) {
       element[j] = P_share(element[j], shares[j]);
            
@@ -82,27 +90,17 @@ auto shares = new DATATYPE[BITLENGTH][num_players];
 send_and_receive();
 
 // change to receive from
-if(player_id != 0)
-{
-int rb = 1;
+
+
 for (int i = 0; i < n; i++) {
   for (int j = 0; j < BITLENGTH; j++) {
-dataset[i][j] = receiving_threads_info[0].received_elements[rounds-1][rb];
-rb+=1;
+dataset[i][j] = receive_from(0);
   }
 }
-
-if(player_id != 1)
-{
-int offset = 0;
-if(player_id < 1)
-    offset = 1;
-int rb = 1;
   for (int j = 0; j < BITLENGTH; j++) {
-element[j] = receiving_threads_info[1- offset].received_elements[rounds-1][rb];
-rb+=1;
+element[j] = receive_from(1);
   }
-}
+
 
 // Players received all elements
 
@@ -131,8 +129,6 @@ rb+=1;
 //    DATATYPE* send_buffer = NEW(DATATYPE[k*n]);
  //   DATATYPE* receive_buffer = NEW(DATATYPE[k*n]);
    
-    for(int t = 0; t < num_players-1; t++)
-        sending_threads_info[t].sent_elements[sending_rounds] = NEW(DATATYPE[k*n]); // Allocate memory for all sending buffers
     for (int i = 0; i < k; i++) {
         int j = i * 2;
       for (int s = 0; s < n; s++) {
@@ -167,12 +163,12 @@ rb+=1;
     *found = P_xor(*found,dataset[i][0]);
   }
 
-}
 
-P_prepare_reveal(*found);
+P_prepare_reveal_to_all(*found);
 send_and_receive();
 *found = P_complete_Reveal(*found);
 
+}
 // Reveal
 
 

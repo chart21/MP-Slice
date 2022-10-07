@@ -37,7 +37,7 @@ void *get_in_addr(struct sockaddr *sa)
 	return &(((struct sockaddr_in6*)sa)->sin6_addr);
 }
 
-typedef struct thread_arguments {
+typedef struct receiver_arguments {
   int player_count;
   int player_id;
   int connected_to;
@@ -50,9 +50,9 @@ typedef struct thread_arguments {
   int *elements_to_rec;
   //char *data;
   //char *length
-} thargs_t;
+} receiver_args;
 
-typedef struct player_arguments {
+typedef struct sender_arguments {
   DATATYPE **sent_elements;
   int inputs_size;
   int port;
@@ -61,4 +61,4 @@ typedef struct player_arguments {
   int send_rounds;
   int *elements_to_send;
   //char *data;
-} thargs_p;
+} sender_args;

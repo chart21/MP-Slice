@@ -67,7 +67,7 @@ void *sender(void* threadParameters)
 	hints.ai_flags = AI_PASSIVE; // use my IP
     
     char port[4];
-    sprintf(port, "%d", ((thargs_p*) threadParameters)->port);
+    sprintf(port, "%d", ((sender_args*) threadParameters)->port);
 	if ((rv = getaddrinfo(NULL, port, &hints, &servinfo)) != 0) {
 		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
 		exit(1);
@@ -149,7 +149,7 @@ void *sender(void* threadParameters)
     /* printf("Player: Locking conn \n"); */
     /* pthread_mutex_lock(&mtx_connection_established); */
     /* printf("Player: Locked conn \n"); */
-    if(num_successful_connections == 2 * (((thargs_t*) threadParameters)->player_count -1)) {
+    if(num_successful_connections == 2 * (((sender_args*) threadParameters)->player_count -1)) {
         pthread_cond_signal(&cond_successful_connection); //signal main thread that all threads have connected
         /* printf("Player: Signal conn \n"); */
     }
@@ -166,7 +166,7 @@ void *sender(void* threadParameters)
     
         int rounds = 0;
 
-        while (rounds < ((thargs_p*) threadParameters)->send_rounds) //continue until all data is sent
+        while (rounds < ((sender_args*) threadParameters)->send_rounds) //continue until all data is sent
         {
             pthread_mutex_lock(&mtx_send_next); 
             while(rounds >= sending_rounds)
@@ -174,9 +174,9 @@ void *sender(void* threadParameters)
             pthread_mutex_unlock(&mtx_send_next);
             //char buf[1024] = { 0 };
             //recv(new_fd, buf, 32, MSG_WAITALL);
-                if (sendall(new_fd, ((thargs_p*) threadParameters)->sent_elements[rounds], &((thargs_p*) threadParameters)->elements_to_send[rounds]) == -1) {
+                if (sendall(new_fd, ((sender_args*) threadParameters)->sent_elements[rounds], &((sender_args*) threadParameters)->elements_to_send[rounds]) == -1) {
                 perror("sendall");
-                printf("We only sent %d bytes because of the error!\n", ((thargs_p*) threadParameters)->inputs_size);
+                printf("We only sent %d bytes because of the error!\n", ((sender_args*) threadParameters)->inputs_size);
             }
            //Delete sent data
            //free(((thargs_p*) threadParameters)->sent_elements[rounds]);

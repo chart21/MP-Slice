@@ -7,6 +7,7 @@
 #include <new>
 #include <memory>
 #include "arch/DATATYPE.h"
+#include "arch/SSE.h"
 #include "circuits/searchBitSlice.c"
 #include "circuits/searchBitSliceWithComm.cpp"
 #include "circuits/xorshift.c"
@@ -90,10 +91,16 @@ void init_comm()
 
 
 // sharing
+input_length[0] = BITLENGTH * n;
+input_length[1] = BITLENGTH;
 
 // revealing
+reveal_length[0] = 1;
+reveal_length[1] = 1;
+
 
 total_comm = 2;
+
 // function
 
 for (int k = BITLENGTH >> 1; k > 0; k = k >> 1)
@@ -103,11 +110,6 @@ for (int k = BITLENGTH >> 1; k > 0; k = k >> 1)
 elements_per_round = new int[total_comm];
 
 
-//sharing -> Problem, different for different players
-if(player_id == 0)
-    elements_per_round[0] = BITLENGTH*n;
-else if(player_id == 1)
-    elements_per_round[0] = BITLENGTH;
 
 //function
 
@@ -119,8 +121,6 @@ for (int k = BITLENGTH >> 1; k > 0; k = k >> 1)
 }
 
 
-// reveal
- elements_per_round[total_comm - 1] = 1;
 
 
 }
@@ -128,14 +128,25 @@ for (int k = BITLENGTH >> 1; k > 0; k = k >> 1)
 int main(int argc, char *argv[])
 {
 init_comm();
-/* *total_comm = 8; */
 
-for(int i = 0; i < *total_comm; i++)
-{
-    (*elements_per_round)[i] = (*elements_per_round)[i] * sizeof(DATATYPE);
+int receive_input_length = 0;
+int receive_reveal_length = 0;
+for (int i = 0; i < num_players; i++) {
+    if(i != player_id)
+    {
+    receive_input_length += input_length[i];
+    receive_reveal_length += reveal_length[i];
+    }
 }
 
-sockets_received = new int[*total_comm];
+/* *total_comm = 8; */
+
+for(int i = 0; i < total_comm; i++)
+{
+    elements_per_round[i] = elements_per_round[i] * sizeof(DATATYPE);
+}
+
+sockets_received = new int[total_comm];
 
 player_id = atoi(argv[1]);
 
@@ -163,24 +174,29 @@ pthread_cond_init(&cond_successful_connection, NULL);
 
 /* std::vector<DATATYPE> inputs[num_players]; */    
 pthread_t receiving_threads[num_players-1];
-thargs_t thrgs[num_players];
 int ret;
 /* printf("creating receiving servers\n"); */
 for(int t=0;t<(num_players-1);t++) {
     int offset = 0;
     if(t >= player_id)
         offset = 1; // player should not receive from itself
-    thrgs[t].player_count = num_players;
-    thrgs[t].received_elements = new DATATYPE*[*total_comm]; //every thread gets its own pointer array for receiving elements
-    thrgs[t].rec_rounds = *total_comm;
-    thrgs[t].elements_to_rec = *elements_per_round;
-    thrgs[t].player_id = player_id;
-    thrgs[t].connected_to = t+offset;
-    thrgs[t].ip = ips[t];
-    thrgs[t].hostname = (char*)"hostname";
-    thrgs[t].port = (int) base_port + player_id * (num_players-1) + t; //e.g. P0 receives on base port from P1, P2 on base port + num_players from P0 6000,6002
+    receiving_args[t].player_count = num_players;
+    receiving_args[t].received_elements = new DATATYPE*[total_comm]; //every thread gets its own pointer array for receiving elements
+    receiving_args[t].rec_rounds = total_comm;
+    receiving_args[t].elements_to_rec = elements_per_round;
+    receiving_args[t].elements_to_rec[0] = input_length[t-offset]; //input shares to receive from that player
+    receiving_args[t].elements_to_rec[total_comm-1] = reveal_length[player_id]; //number of revealed values to receive from other players
+    receiving_args[t].player_id = player_id;
+    receiving_args[t].connected_to = t+offset;
+    receiving_args[t].ip = ips[t];
+    receiving_args[t].hostname = (char*)"hostname";
+    receiving_args[t].port = (int) base_port + player_id * (num_players-1) + t; //e.g. P0 receives on base port from P1, P2 on base port + num_players from P0 6000,6002
     /* std::cout << "In main: creating thread " << t << "\n"; */
-    ret = pthread_create(&receiving_threads[t], NULL, receiver, &thrgs[t]);
+    
+    
+
+
+    ret = pthread_create(&receiving_threads[t], NULL, receiver, &receiving_args[t]);
     if (ret){
         printf("ERROR; return code from pthread_create() is %d\n", ret);
         exit(-1);
@@ -189,21 +205,22 @@ for(int t=0;t<(num_players-1);t++) {
 
 /// Creating sending threads
 
-pthread_t sending_Threads[num_players];
-thargs_p s_thrgs[num_players-1];
+pthread_t sending_Threads[num_players-1];
 /* printf("creating receiving servers\n"); */
 for(int t=0;t<(num_players-1);t++) {
     int offset = 0;
     if(t >= player_id)
         offset = 1; // player should not send to itself
-    s_thrgs[t].sent_elements = new DATATYPE*[*total_comm];
-    s_thrgs[t].send_rounds = *total_comm;
-    s_thrgs[t].elements_to_send = *elements_per_round;
-    s_thrgs[t].player_id = player_id;
-    s_thrgs[t].connected_to = t+offset;
-    s_thrgs[t].port = (int) base_port + (t+offset) * (num_players -1) + player_id - 1 + offset; //e.g. P0 sends on base port + num_players  for P1, P2 on base port + num_players for P0 (6001,6000)
+    sending_args[t].sent_elements = new DATATYPE*[total_comm];
+    sending_args[t].send_rounds = total_comm;
+    sending_args[t].elements_to_send = elements_per_round;
+    sending_args[t].elements_to_send[0] = input_length[player_id]; // player needs to send a share of its inputs to each other player
+    sending_args[t].elements_to_send[total_comm -1] = reveal_length[t - offset]; //number of elements to send to that player
+    sending_args[t].player_id = player_id;
+    sending_args[t].connected_to = t+offset;
+    sending_args[t].port = (int) base_port + (t+offset) * (num_players -1) + player_id - 1 + offset; //e.g. P0 sends on base port + num_players  for P1, P2 on base port + num_players for P0 (6001,6000)
     /* std::cout << "In main: creating thread " << t << "\n"; */
-    ret = pthread_create(&receiving_threads[t], NULL, sender, &s_thrgs[t]);
+    ret = pthread_create(&sending_Threads[t], NULL, sender, &sending_args[t]);
     if (ret){
         printf("ERROR; return code from pthread_create() is %d\n", ret);
         exit(-1);
@@ -258,10 +275,17 @@ funcTime("generating random inputs",randomizeInputs,dataset,elements);
 //
 insertManually(dataset, elements, origData, origElements, 1,7 , 200, 200);
 
+//player_input = NEW(DATATYPE[input_length[player_id]]);
+if(player_id == 0)
+{
+    player_input = (DATATYPE*) dataset;
+}
+else if(player_id == 1)
+    player_input = elements;
 
 
 DATATYPE* found = NEW(DATATYPE);
-funcTime("evaluating", searchComm__,dataset, elements, found, thrgs, s_thrgs, player_id);
+funcTime("evaluating", searchComm__,dataset, elements, found);
 
 print_num(*found);
 }

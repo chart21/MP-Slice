@@ -31,16 +31,16 @@ void *receiver(void* threadParameters)
 	hints.ai_socktype = SOCK_STREAM;
    
     char port[4];
-    sprintf(port, "%d", ((thargs_t*) threadParameters)->port);
+    sprintf(port, "%d", ((receiver_args*) threadParameters)->port);
 
-	if ((rv = getaddrinfo(((thargs_t*) threadParameters)->ip, port, &hints, &servinfo)) != 0) {
+	if ((rv = getaddrinfo(((receiver_args*) threadParameters)->ip, port, &hints, &servinfo)) != 0) {
 		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
 		exit(1);
 	}
 
 	// loop through all the results and connect to the first we can
 	p = NULL;
-    printf("Player 0: Attempting to connect to Player %i ... \n", ((thargs_t*) threadParameters)->connected_to);
+    printf("Player 0: Attempting to connect to Player %i ... \n", ((receiver_args*) threadParameters)->connected_to);
     while(p == NULL){
     for(p = servinfo; p != NULL; p = p->ai_next) {
 		if ((sockfd = socket(p->ai_family, p->ai_socktype,
@@ -63,7 +63,7 @@ void *receiver(void* threadParameters)
 
 	inet_ntop(p->ai_family, get_in_addr((struct sockaddr *)p->ai_addr),
 			s, sizeof s);
-	printf("Player %i: Connected to Player %i \n",  ((thargs_t*) threadParameters)->player_id, ((thargs_t*) threadParameters)->connected_to);
+	printf("Player %i: Connected to Player %i \n",  ((receiver_args*) threadParameters)->player_id, ((receiver_args*) threadParameters)->connected_to);
 
 	freeaddrinfo(servinfo); // all done with this structure
    
@@ -81,7 +81,7 @@ void *receiver(void* threadParameters)
     /* printf("Player: Locking conn \n"); */
     /* pthread_mutex_lock(&mtx_connection_established); */
     /* printf("Player: Locked conn \n"); */
-    if(num_successful_connections == 2 * (((thargs_t*) threadParameters)->player_count -1)) {
+    if(num_successful_connections == 2 * (((receiver_args*) threadParameters)->player_count -1)) {
         pthread_cond_signal(&cond_successful_connection); //signal main thread that all threads have connected
         /* printf("Player: Signal conn \n"); */
     }
@@ -99,19 +99,19 @@ void *receiver(void* threadParameters)
         int rounds = 0;
         /* pthread_mutex_lock(&mtx_receive_next); */
         /* while(receiving_rounds != -1) */
-        while(rounds < ((thargs_t*) threadParameters)->rec_rounds)
+        while(rounds < ((receiver_args*) threadParameters)->rec_rounds)
         {
             // Allocate new memory for received data, check correctness
-            ((thargs_t*) threadParameters)->received_elements[rounds] = NEW(DATATYPE[((thargs_t*) threadParameters)->elements_to_rec[rounds]]);
+            ((receiver_args*) threadParameters)->received_elements[rounds] = NEW(DATATYPE[((receiver_args*) threadParameters)->elements_to_rec[rounds]]);
             /* printf("start rec \n"); */
-            if ((recv(sockfd, ((char*) ((thargs_t*) threadParameters)->received_elements[rounds]), ((thargs_t*) threadParameters)->elements_to_rec[rounds], MSG_WAITALL)) == -1) {
+            if ((recv(sockfd, ((char*) ((receiver_args*) threadParameters)->received_elements[rounds]), ((receiver_args*) threadParameters)->elements_to_rec[rounds], MSG_WAITALL)) == -1) {
                 perror("recv");
                 exit(1);
             } 
             //If all sockets received, signal main_thread
             pthread_mutex_lock(&mtx_data_received);
             sockets_received[rounds] += 1;
-            if(sockets_received[rounds] == ((thargs_t*) threadParameters)->player_count -1) 
+            if(sockets_received[rounds] == ((receiver_args*) threadParameters)->player_count -1) 
             {
                 pthread_mutex_lock(&mtx_receive_next); // Mutex probably neccessary if one thread is alrady one round further
                 receiving_rounds += 1; //increase global receiving_rounds
