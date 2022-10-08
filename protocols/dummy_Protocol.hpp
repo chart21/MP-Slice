@@ -20,6 +20,33 @@ DATATYPE s[num_players];
       }
 
 
+void P_share(DATATYPE a[], int length)
+{
+DATATYPE s[num_players][length];
+auto initial_sb = sb;
+auto initial_rb = rb;
+for (int i = 0; i < num_players; i++) {
+       sb = initial_sb;
+       rb = initial_rb;
+       if(i < player_id){
+            for (int l = 0; l < length; l++) {
+            s[i][l] = NOT(a[l]);
+            sending_args[i].sent_elements[sending_rounds][sb] = s[i][l];
+            sb+=1;
+            }
+       }
+       else if (i > player_id) { //offset
+            for (int l = 0; l < length; l++) {
+            s[i][l] = NOT(a[l]);
+            sending_args[i-1].sent_elements[sending_rounds][sb] = s[i][l];
+            sb+=1;
+            }
+       }
+   }
+    for (int l = 0; l < length; l++) {
+    a[l] = NOT(a[l]);
+    }
+      }
 
 
 
@@ -30,32 +57,34 @@ DATATYPE P_xor(DATATYPE a, DATATYPE b)
 }
 
 //prepare AND -> send real value a&b to other P
-DATATYPE P_prepare_and(DATATYPE a, DATATYPE b)
+void P_prepare_and(DATATYPE a, DATATYPE b)
 {
     for(int t = 0; t < num_players-1; t++) // for other protocols, sending buffers may be different for each player
-        sending_args[t].sent_elements[sending_rounds][sb] = AND(NOT(a),NOT(b));
-    sb += 1;
-  return AND(NOT(a),NOT(b));
-}
+            sending_args[t].sent_elements[sending_rounds][sb] = AND(NOT(a),NOT(b));
+ // return AND(NOT(a),NOT(b));
 
+    sb += 1;
+}
 // NAND both real Values to receive sharing of ~ (a&b) 
-DATATYPE P_complete_and(DATATYPE a)
+DATATYPE P_complete_and(DATATYPE a, DATATYPE b)
 {
-DATATYPE result;
-for(int t = 0; t < num_players-1; t++) // for other protocols, sending buffers may be different for each player
-    result = NOT(AND(a,receiving_args[t].received_elements[rounds-1][rb]));
+DATATYPE result = AND(NOT(a),NOT(b));
+for(int t = 0; t < num_players-1; t++) 
+    result = NOT(AND(result,receiving_args[t].received_elements[rounds-1][rb]));
+
 rb+=1;
 return result;
 }
 
 void P_prepare_reveal_to_all(DATATYPE a)
 {
-    for(int t = 0; t < num_players-1; t++) // for other protocols, sending buffers may be different for each player
+    for(int t = 0; t < num_players-1; t++)
+    {
         sending_args[t].sent_elements[sending_rounds][sb] = a;
-    sb += 1;
     //add to send buffer
-}    
-
+    }    
+    sb += 1;
+}
 
 //reveal to specific player
 void P_prepare_reveal_to(DATATYPE a, int id)
@@ -72,12 +101,14 @@ void P_prepare_reveal_to(DATATYPE a, int id)
 
 DATATYPE P_complete_Reveal(DATATYPE a)
 {
-DATATYPE result;
-for(int t = 0; t < num_players-1; t++) // for other protocols, sending buffers may be different for each player
-    result = NOT(AND(a,receiving_args[t].received_elements[rounds-1][rb]));
-rb+=1;
-return result;
+    DATATYPE result = a;
+    for(int t = 0; t < num_players-1; t++) 
+        result = NOT(AND(result,receiving_args[t].received_elements[rounds-1][rb]));
+    
+    rb+=1;
+    return result;
 }
+
 
 void P_communicate_AND()
 {
@@ -89,3 +120,21 @@ void P_communicate_Shares()
     // send all reveals
 }
 
+//old functions for verifying
+
+DATATYPE P_complete_and(DATATYPE a)
+{
+DATATYPE result;
+for(int t = 0; t < num_players-1; t++) // for other protocols, sending buffers may be different for each player
+    result = NOT(AND(a,receiving_args[t].received_elements[rounds-1][rb]));
+rb+=1;
+return result;
+}
+
+DATATYPE P_prepare_and_old(DATATYPE a, DATATYPE b)
+{
+    for(int t = 0; t < num_players-1; t++) // for other protocols, sending buffers may be different for each player
+        sending_args[t].sent_elements[sending_rounds][sb] = AND(NOT(a),NOT(b));
+    sb += 1;
+  return AND(NOT(a),NOT(b));
+}

@@ -7,7 +7,6 @@
 #include <new>
 #include <memory>
 #include "arch/DATATYPE.h"
-#include "arch/SSE.h"
 #include "circuits/searchBitSlice.c"
 #include "circuits/searchBitSliceWithComm.cpp"
 #include "circuits/xorshift.c"
@@ -129,25 +128,56 @@ int main(int argc, char *argv[])
 {
 init_comm();
 
-int receive_input_length = 0;
-int receive_reveal_length = 0;
-for (int i = 0; i < num_players; i++) {
-    if(i != player_id)
-    {
-    receive_input_length += input_length[i];
-    receive_reveal_length += reveal_length[i];
-    }
-}
-
-/* *total_comm = 8; */
 
 
 sockets_received = new int[total_comm];
+uint64_t (*origData)[BITS_PER_REG] = NEW(uint64_t[n][BITS_PER_REG]);
+uint64_t *origElements = NEW(uint64_t[BITS_PER_REG]);
+
+// read inputs ///
+
+
+// Processing inputs
+
+
+
+//Slicing inputs
+//DATATYPE (*dataset)[BITLENGTH] = malloc(sizeof(DATATYPE[n][BITLENGTH]));
+DATATYPE (*dataset)[BITLENGTH] = NEW(DATATYPE[n][BITLENGTH]);
+DATATYPE* elements = NEW(DATATYPE[BITLENGTH]);
+for (int i = 0; i < n; i++) {
+ orthogonalize(origData[i], dataset[i]);   
+}
+orthogonalize(origElements, elements);
+
+// generate random input data instead of reading from file
+funcTime("generating random inputs",randomizeInputs,dataset,elements);
+
+
+
+//modify certain data to test functionality
+//
+insertManually(dataset, elements, origData, origElements, 1,7 , 200, 200);
+
+
+
+
+
+
+//player_input = NEW(DATATYPE[input_length[player_id]]);
+if(player_id == 0)
+{
+    player_input = (DATATYPE*) dataset;
+}
+else if(player_id == 1)
+    player_input = elements;
+
+
+DATATYPE* found = NEW(DATATYPE);
 
 player_id = atoi(argv[1]);
 
 /// Connecting to other Players
-int INPUTSLENGTH[] = {4,1};
 char* ips[num_players-1];
 
 //char* hostnames[num_players-1];
@@ -252,49 +282,17 @@ printf("All parties connected sucessfully, starting protocol and timer! \n");
 pthread_mutex_unlock(&mtx_connection_established);
 /* printf("m: unlocked conn \n"); */
 
-clock_t time_application_start = clock ();
 
 
 
 /// Processing Inputs ///
 
-uint64_t (*origData)[BITS_PER_REG] = NEW(uint64_t[n][BITS_PER_REG]);
-uint64_t *origElements = NEW(uint64_t[BITS_PER_REG]);
-
-// read inputs ///
-
-
-//Slicing inputs
-//DATATYPE (*dataset)[BITLENGTH] = malloc(sizeof(DATATYPE[n][BITLENGTH]));
-DATATYPE (*dataset)[BITLENGTH] = NEW(DATATYPE[n][BITLENGTH]);
-DATATYPE* elements = NEW(DATATYPE[BITLENGTH]);
-for (int i = 0; i < n; i++) {
- orthogonalize(origData[i], dataset[i]);   
-}
-orthogonalize(origElements, elements);
-
-// generate random input data instead of reading from file
-funcTime("generating random inputs",randomizeInputs,dataset,elements);
-
-
-
-//modify certain data to test functionality
-//
-insertManually(dataset, elements, origData, origElements, 1,7 , 200, 200);
-
-//player_input = NEW(DATATYPE[input_length[player_id]]);
-if(player_id == 0)
-{
-    player_input = (DATATYPE*) dataset;
-}
-else if(player_id == 1)
-    player_input = elements;
-
-
-DATATYPE* found = NEW(DATATYPE);
-funcTime("evaluating", searchComm__,dataset, elements, found);
+clock_t time_function_start = clock ();
+searchComm__(dataset, elements, found);
 
 print_num(*found);
+clock_t time_function_finished = clock ();
+/* printf("Time measured to read and receive inputs: %fs \n", double((time_data_received - time_application_start)) / CLOCKS_PER_SEC); */
+printf("Time measured to perform computation: %fs \n", double((time_function_finished - time_function_start)) / CLOCKS_PER_SEC);
+/* printf("Time measured in total: %fs \n", double((time_computation_finished - time_application_start)) / CLOCKS_PER_SEC); */
 }
-
-

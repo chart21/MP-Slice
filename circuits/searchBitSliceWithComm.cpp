@@ -1,3 +1,4 @@
+#include <iostream>
 #include <pthread.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -47,6 +48,24 @@ void send_and_receive()
     send();
     receive();
 }
+void receive_from(DATATYPE a[], int id, int l)
+{
+if(id == player_id)
+{
+/* result = receiving_args[num_players-1].received_elements[rounds - 1][share_buffer[id]]; */
+for (int i = 0; i < l; i++) {
+  a[i] = player_input[share_buffer[id]];
+    share_buffer[id]+=1;
+}
+}
+else{
+int offset = {id > player_id ? 1 : 0};
+for (int i = 0; i < l; i++) {
+a[i] = receiving_args[id - offset].received_elements[rounds-1][share_buffer[id]];
+    share_buffer[id]+=1;
+}
+}
+}
 
 DATATYPE receive_from(int id)
 {
@@ -76,15 +95,16 @@ for (int i = 0; i < n; i++) {
       dataset[i][j] = P_share(dataset[i][j]);
   }
 }
+/* P_share( (DATATYPE*) dataset,n*BITLENGTH); */
 }
 else if(player_id == 1)
 {
 
-    for (int j = 0; j < BITLENGTH; j++) {
+    for (int j = 0; j < BITLENGTH; j++) 
       element[j] = P_share(element[j]);
-           
+/* P_share(element,BITLENGTH); */
 }
-}
+
 
 
 send_and_receive();
@@ -100,7 +120,8 @@ dataset[i][j] = receive_from(0);
   for (int j = 0; j < BITLENGTH; j++) {
 element[j] = receive_from(1);
   }
-
+/* receive_from((DATATYPE*) dataset,0,BITLENGTH*n); */
+/* receive_from(element,1,BITLENGTH); */
 
 // Players received all elements
 
@@ -124,7 +145,6 @@ element[j] = receive_from(1);
     /* printf("\n"); */
 
 
-  int buffer_length = 0;
   for (int k = BITLENGTH >> 1; k > 0; k = k >> 1) {
 //    DATATYPE* send_buffer = NEW(DATATYPE[k*n]);
  //   DATATYPE* receive_buffer = NEW(DATATYPE[k*n]);
@@ -132,7 +152,8 @@ element[j] = receive_from(1);
     for (int i = 0; i < k; i++) {
         int j = i * 2;
       for (int s = 0; s < n; s++) {
-        dataset[s][i] = P_prepare_and(dataset[s][j],dataset[s][j +1]);
+        /* P_prepare_and(dataset[s][j],dataset[s][j +1]); */
+        dataset[s][i] = P_prepare_and_old(dataset[s][j],dataset[s][j +1]);
       }
     }
 
@@ -145,11 +166,12 @@ element[j] = receive_from(1);
         int j = i * 2;
       for (int s = 0; s < n; s++) {
         //dataset[s][i] = NOT(dataset[s][i]);
-        for(int t = 0; t < num_players-1; t++) // for other protocols, sending buffers may be different for each player
-            dataset[s][i] = P_complete_and(dataset[s][i]); 
+        /* for(int t = 0; t < num_players-1; t++) // for other protocols, sending buffers may be different for each player */
+          dataset[s][i] = P_complete_and(dataset[s][i]);
+            /* dataset[s][i] = P_complete_and(dataset[s][j], dataset[s][j+1]); */
       }
       
-    /// DELETE received data to free memory! 
+    /// DELETE received data to free memory! (should maybe happen in next round, or when receive buffer is at length) 
 
 
     }
@@ -162,9 +184,14 @@ element[j] = receive_from(1);
   *found = NOT(*found); //public value, therefore needs to be notted for dummy Protocol;
   for (int i = 0; i < n; i++) {
     *found = P_xor(*found,dataset[i][0]); 
+    /* std::cout << dataset[i][0]; */
+
   }
 
+  /* for (int i = 0; i < BITLENGTH; i++) */ 
+  /*   std::cout << element[i]; */
 
+/* std::cout << "\n"; */
 P_prepare_reveal_to_all(*found);
 send_and_receive();
 *found = P_complete_Reveal(*found);

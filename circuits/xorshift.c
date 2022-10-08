@@ -19,7 +19,7 @@
 void xor_shift__ (/*inputs*/ DATATYPE x__[64], /*outputs*/ DATATYPE z__[64]) {
 
   // Variables declaration
-  ;
+  //;
 
   // Instructions (body)
   x__[0] = XOR(x__[0],x__[13]);
