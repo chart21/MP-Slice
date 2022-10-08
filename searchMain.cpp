@@ -162,6 +162,7 @@ insertManually(dataset, elements, origData, origElements, 1,7 , 200, 200);
 
 
 
+player_id = atoi(argv[1]);
 
 
 //player_input = NEW(DATATYPE[input_length[player_id]]);
@@ -175,7 +176,6 @@ else if(player_id == 1)
 
 DATATYPE* found = NEW(DATATYPE);
 
-player_id = atoi(argv[1]);
 
 /// Connecting to other Players
 char* ips[num_players-1];
