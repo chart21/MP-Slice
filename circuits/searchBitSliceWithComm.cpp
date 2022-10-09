@@ -12,8 +12,8 @@
 /* /1* including the architecture specific .h *1/ */
 #include "../arch/DATATYPE.h"
 
-#include "../protocols/dummy_Protocol.hpp"
-
+/* #include "../protocols/dummy_Protocol.hpp" */
+#include "../protocols/sharemind.hpp"
 /* auxiliary functions */
 /* main function */
 
@@ -100,9 +100,9 @@ for (int i = 0; i < n; i++) {
 else if(player_id == 1)
 {
 
-    for (int j = 0; j < BITLENGTH; j++) 
-      element[j] = P_share(element[j]);
-/* P_share(element,BITLENGTH); */
+    /* for (int j = 0; j < BITLENGTH; j++) */ 
+    /*   element[j] = P_share(element[j]); */
+P_share(element,BITLENGTH);
 }
 
 
@@ -112,16 +112,16 @@ send_and_receive();
 // change to receive from
 
 
-for (int i = 0; i < n; i++) {
-  for (int j = 0; j < BITLENGTH; j++) {
-dataset[i][j] = receive_from(0);
-  }
-}
-  for (int j = 0; j < BITLENGTH; j++) {
-element[j] = receive_from(1);
-  }
-/* receive_from((DATATYPE*) dataset,0,BITLENGTH*n); */
-/* receive_from(element,1,BITLENGTH); */
+/* for (int i = 0; i < n; i++) { */
+/*   for (int j = 0; j < BITLENGTH; j++) { */
+/* dataset[i][j] = receive_from(0); */
+/*   } */
+/* } */
+/*   for (int j = 0; j < BITLENGTH; j++) { */
+/* element[j] = receive_from(1); */
+/*   } */
+receive_from((DATATYPE*) dataset,0,BITLENGTH*n);
+receive_from(element,1,BITLENGTH);
 
 // Players received all elements
 
@@ -152,8 +152,8 @@ element[j] = receive_from(1);
     for (int i = 0; i < k; i++) {
         int j = i * 2;
       for (int s = 0; s < n; s++) {
-        /* P_prepare_and(dataset[s][j],dataset[s][j +1]); */
-        dataset[s][i] = P_prepare_and_old(dataset[s][j],dataset[s][j +1]);
+        P_prepare_and(dataset[s][j],dataset[s][j +1]);
+        /* dataset[s][i] = P_prepare_and_old(dataset[s][j],dataset[s][j +1]); */
       }
     }
 
@@ -167,8 +167,8 @@ element[j] = receive_from(1);
       for (int s = 0; s < n; s++) {
         //dataset[s][i] = NOT(dataset[s][i]);
         /* for(int t = 0; t < num_players-1; t++) // for other protocols, sending buffers may be different for each player */
-          dataset[s][i] = P_complete_and(dataset[s][i]);
-            /* dataset[s][i] = P_complete_and(dataset[s][j], dataset[s][j+1]); */
+          /* dataset[s][i] = P_complete_and(dataset[s][i]); */
+            dataset[s][i] = P_complete_and(dataset[s][j], dataset[s][j+1]);
       }
       
     /// DELETE received data to free memory! (should maybe happen in next round, or when receive buffer is at length) 

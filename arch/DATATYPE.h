@@ -11,4 +11,4 @@
 #define US
 #define base_port 6000
 #define num_inputs 4
-#define num_players 2
+#define num_players 3

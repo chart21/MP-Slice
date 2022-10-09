@@ -104,13 +104,18 @@ void *receiver(void* threadParameters)
             // Allocate new memory for received data, check correctness
             ((receiver_args*) threadParameters)->received_elements[rounds] = NEW(DATATYPE[((receiver_args*) threadParameters)->elements_to_rec[rounds]]);
             /* printf("start rec \n"); */
-        printf("receiving %i bytes \n", ((receiver_args*) threadParameters)->elements_to_rec[rounds]);  
+        
+if(((receiver_args*) threadParameters)->elements_to_rec[rounds] > 0) //should data be received in this round?
+{
+
+            printf("receiving %i bytes \n", ((receiver_args*) threadParameters)->elements_to_rec[rounds]);  
 
             if ((recv(sockfd, ((char*) ((receiver_args*) threadParameters)->received_elements[rounds]), ((receiver_args*) threadParameters)->elements_to_rec[rounds], MSG_WAITALL)) == -1) {
                 perror("recv");
                 exit(1);
             } 
-            //If all sockets received, signal main_thread
+}
+//If all sockets received, signal main_thread
             pthread_mutex_lock(&mtx_data_received);
             sockets_received[rounds] += 1;
             if(sockets_received[rounds] == ((receiver_args*) threadParameters)->player_count -1) 

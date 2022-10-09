@@ -7,11 +7,14 @@
 #define pprev player_id == 0 ? 1 : player_id == 1 ? 0 : 1 
 /* #define pprev (player_id - 1)%3 */
 // Share of each player is ~a
+
+
+
 DATATYPE P_share(DATATYPE a)
 {
 DATATYPE s[3];
-s[pprev] = 0; // change to SRNG
-s[pnext] = 0;
+s[pprev] = SET_ALL_ZERO();
+s[pnext] = SET_ALL_ZERO();
 s[player_id] = XOR(s[pprev],s[pnext]);
 s[player_id] = XOR(a,s[player_id]);
 sending_args[pprev].sent_elements[sending_rounds][sb] = s[pprev];
@@ -43,8 +46,8 @@ inline DATATYPE P_xor(DATATYPE a, DATATYPE b)
 
 void reshare(DATATYPE a, DATATYPE u[])
 {
-u[pprev] = 0; //replace with SRNG
-u[pnext] = 0;
+u[pprev] = SET_ALL_ZERO(); //replace with SRNG
+u[pnext] = SET_ALL_ZERO();
 u[player_id] = XOR(u[pprev],u[pnext]);
 u[player_id] = XOR(a,u[player_id]);
  
@@ -69,8 +72,8 @@ DATATYPE P_complete_and(DATATYPE a, DATATYPE b)
 DATATYPE w = AND(a,b);
 DATATYPE u_p = receiving_args[pprev].received_elements[rounds-1][rb];
 DATATYPE v_n = receiving_args[pnext].received_elements[rounds-1][rb];
-DATATYPE u_i;
-DATATYPE v_i; 
+/* DATATYPE u_i = a; */
+DATATYPE v_i = b; 
 w = XOR (w,   XOR ( AND(u_p,v_i) , AND(u_p,v_n) ));
 rb+=1;
 return w;

@@ -13,3 +13,4 @@ int* elements_per_round;
 int input_length[num_players] = {0};
 int reveal_length[num_players] = {0};
 DATATYPE* player_input;
+DATATYPE* seed;

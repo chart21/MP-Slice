@@ -74,7 +74,7 @@ uint64_t* iseed = NEW(uint64_t[BITS_PER_REG]);
 for (int i = 0; i < BITS_PER_REG; i++) {
     iseed[i] = rand();
 }
-DATATYPE* seed = new DATATYPE[BITLENGTH];
+seed = new DATATYPE[BITLENGTH];
 funcTime("single ortho", orthogonalize,iseed, seed);
 
 //generate random data
