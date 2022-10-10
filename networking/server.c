@@ -20,7 +20,7 @@
 int sendall(int s, DATATYPE *buf, int *len)
 {
     int total = 0;        // how many bytes we've sent
-    int bytesleft = *len; // how many we have left to send
+    int bytesleft = *len * sizeof(DATATYPE); // how many we have left to send
     int n_send;
 
     while(total < *len) {

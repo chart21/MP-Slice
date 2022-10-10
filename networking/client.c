@@ -1,3 +1,4 @@
+#include <iterator>
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -107,10 +108,11 @@ void *receiver(void* threadParameters)
         
 if(((receiver_args*) threadParameters)->elements_to_rec[rounds] > 0) //should data be received in this round?
 {
+    int elements_to_rec =  ((receiver_args*) threadParameters)->elements_to_rec[rounds];
+    elements_to_rec = elements_to_rec * sizeof(DATATYPE);
+    printf("receiving %i bytes \n", elements_to_rec);
 
-            printf("receiving %i bytes \n", ((receiver_args*) threadParameters)->elements_to_rec[rounds]);  
-
-            if ((recv(sockfd, ((char*) ((receiver_args*) threadParameters)->received_elements[rounds]), ((receiver_args*) threadParameters)->elements_to_rec[rounds], MSG_WAITALL)) == -1) {
+            if ((recv(sockfd, ((char*) ((receiver_args*) threadParameters)->received_elements[rounds]), elements_to_rec, MSG_WAITALL)) == -1) {
                 perror("recv");
                 exit(1);
             } 

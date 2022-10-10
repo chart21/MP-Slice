@@ -109,7 +109,7 @@ reveal_length[0] = 1;
 reveal_length[1] = 1;
 reveal_length[2] = 1;
 
-total_comm = 2;
+total_comm = 2 - use_srng_for_inputs;
 
 // function
 
@@ -123,7 +123,7 @@ elements_per_round = new int[total_comm];
 
 //function
 
-int i = 1;
+int i = 1 - use_srng_for_inputs;
 for (int k = BITLENGTH >> 1; k > 0; k = k >> 1)
 {
     elements_per_round[i] = k*n;
@@ -250,12 +250,13 @@ for(int t=0;t<(num_players-1);t++) {
     receiving_args[t].rec_rounds = total_comm;
     
     receiving_args[t].elements_to_rec = new int[total_comm];
-    for (int i = 1; i < total_comm -1; i++) {
-    receiving_args[t].elements_to_rec[i] = elements_per_round[i] * sizeof(DATATYPE);
+    for (int i = 1 - use_srng_for_inputs; i < total_comm -1; i++) {
+    receiving_args[t].elements_to_rec[i] = elements_per_round[i];
     }
-    receiving_args[t].elements_to_rec[0] = 0; // input sharing with SRNG 
-    /* receiving_args[t].elements_to_rec[0] = input_length[t+offset] * sizeof(DATATYPE); //input shares to receive from that player */
-    receiving_args[t].elements_to_rec[total_comm-1] = reveal_length[player_id] * sizeof(DATATYPE); //number of revealed values to receive from other players
+    /* receiving_args[t].elements_to_rec[0] = 0; // input sharing with SRNG */ 
+    if(use_srng_for_inputs == 0)
+        receiving_args[t].elements_to_rec[0] = input_length[t+offset]; //input shares to receive from that player
+    receiving_args[t].elements_to_rec[total_comm-1] = reveal_length[player_id]; //number of revealed values to receive from other players
     receiving_args[t].player_id = player_id;
     receiving_args[t].connected_to = t+offset;
     receiving_args[t].ip = ips[t];
@@ -283,18 +284,19 @@ for(int t=0;t<(num_players-1);t++) {
     sending_args[t].sent_elements = new DATATYPE*[total_comm];
     sending_args[t].send_rounds = total_comm;
     sending_args[t].elements_to_send = new int[total_comm];
-    for (int i = 1; i < total_comm -1; i++) {
-    sending_args[t].elements_to_send[i] = elements_per_round[i] * sizeof(DATATYPE);
+    for (int i = 1 - use_srng_for_inputs; i < total_comm -1; i++) {
+    sending_args[t].elements_to_send[i] = elements_per_round[i];
     }
-    sending_args[t].elements_to_send[0] = 0; //input sharing with SRNGs 
-    /* sending_args[t].elements_to_send[0] = input_length[player_id] * sizeof(DATATYPE); // player needs to send a share of its inputs to each other player */
-    sending_args[t].elements_to_send[total_comm -1] = reveal_length[t + offset] * sizeof(DATATYPE); //number of elements to send to that player
+    /* sending_args[t].elements_to_send[0] = 0; //input sharing with SRNGs */ 
+    if(use_srng_for_inputs == 0)
+        sending_args[t].elements_to_send[0] = input_length[player_id]; // player needs to send a share of its inputs to each other player
+    sending_args[t].elements_to_send[total_comm -1] = reveal_length[t + offset]; //number of elements to send to that player
     sending_args[t].player_id = player_id;
     sending_args[t].player_count = num_players;
     sending_args[t].connected_to = t+offset;
     sending_args[t].port = (int) base_port + (t+offset) * (num_players -1) + player_id - 1 + offset; //e.g. P0 sends on base port + num_players  for P1, P2 on base port + num_players for P0 (6001,6000)
     /* std::cout << "In main: creating thread " << t << "\n"; */
-    sending_args[t].sent_elements[0] = NEW(DATATYPE[sending_args[t].elements_to_send[0]]); // Allocate memory for sharing round
+    sending_args[t].sent_elements[0] = NEW(DATATYPE[sending_args[t].elements_to_send[0]]); // Allocate memory for first round
 
 
     ret = pthread_create(&sending_Threads[t], NULL, sender, &sending_args[t]);

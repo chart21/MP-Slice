@@ -20,13 +20,13 @@
 void send()
 {
 
-      pthread_mutex_lock(&mtx_send_next); 
+sb = 0;      
+    for(int t = 0; t < num_players-1; t++)
+        sending_args[t].sent_elements[sending_rounds + 1] = NEW(DATATYPE[sending_args[t].elements_to_send[sending_rounds + 1]]); // Allocate memory for all sending buffers for next round
+    pthread_mutex_lock(&mtx_send_next); 
      sending_rounds +=1;
       pthread_cond_broadcast(&cond_send_next); //signal all threads that sending buffer contains next data
       pthread_mutex_unlock(&mtx_send_next); 
-sb = 0;      
-    for(int t = 0; t < num_players-1; t++)
-        sending_args[t].sent_elements[sending_rounds] = NEW(DATATYPE[sending_args[t].elements_to_send[sending_rounds]]); // Allocate memory for all sending buffers for next round
 }
 
 void receive(){
@@ -125,7 +125,7 @@ void searchComm__ (DATATYPE dataset[n][BITLENGTH],DATATYPE element[BITLENGTH], /
 
 
 
-send_and_receive();
+/* send_and_receive(); */
 
 // change to receive from
 
