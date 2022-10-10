@@ -2,6 +2,9 @@
 #include "../arch/DATATYPE.h"
 #include "../networking/sockethelper.h"
 #include "../networking/buffers.h"
+#include "../utils/randomizer.h"
+// Share of each player is ~a
+
 // Share of each player is ~a
 DATATYPE P_share(DATATYPE a)
 {

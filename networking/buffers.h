@@ -13,4 +13,11 @@ int* elements_per_round;
 int input_length[num_players] = {0};
 int reveal_length[num_players] = {0};
 DATATYPE* player_input;
-DATATYPE* seed;
+DATATYPE(*srng)[BITLENGTH];
+//DATATYPE srng[num_players -1] = {0};
+//DATATYPE* input_seed;
+int num_generated[num_players] = {0};
+int pnext;
+int pprev;
+
+//int seeds[] = {10000,20000,12000}; // seeds shared between 1-0,2-0,1-2

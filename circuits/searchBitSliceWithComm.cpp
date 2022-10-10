@@ -100,9 +100,9 @@ for (int i = 0; i < n; i++) {
 else if(player_id == 1)
 {
 
-    /* for (int j = 0; j < BITLENGTH; j++) */ 
-    /*   element[j] = P_share(element[j]); */
-P_share(element,BITLENGTH);
+    for (int j = 0; j < BITLENGTH; j++) 
+      element[j] = P_share(element[j]);
+/* P_share(element,BITLENGTH); */
 }
 
 
@@ -152,7 +152,7 @@ receive_from(element,1,BITLENGTH);
     for (int i = 0; i < k; i++) {
         int j = i * 2;
       for (int s = 0; s < n; s++) {
-        P_prepare_and(dataset[s][j],dataset[s][j +1]);
+        P_prepare_and(&dataset[s][j],&dataset[s][j +1]);
         /* dataset[s][i] = P_prepare_and_old(dataset[s][j],dataset[s][j +1]); */
       }
     }
@@ -181,7 +181,7 @@ receive_from(element,1,BITLENGTH);
   }
  
   *found = SET_ALL_ZERO(); 
-  *found = NOT(*found); //public value, therefore needs to be notted for dummy Protocol;
+  //*found = NOT(*found); //public value, therefore needs to be notted for dummy Protocol;
   for (int i = 0; i < n; i++) {
     *found = P_xor(*found,dataset[i][0]); 
     /* std::cout << dataset[i][0]; */

@@ -7,14 +7,23 @@
 #include <new>
 #include <memory>
 #include "arch/DATATYPE.h"
+#include "arch/SSE.h"
 #include "circuits/searchBitSlice.c"
 #include "circuits/searchBitSliceWithComm.cpp"
-#include "circuits/xorshift.c"
+#include "circuits/xorshift.h"
 #include "utils/timing.hpp"
 #include "networking/client.c"
 #include "networking/server.c"
 #include "networking/sockethelper.h"
 #include "networking/buffers.h"
+#include "utils/printing.hpp"
+
+
+int modulo(int x,int N){
+    return (x % N + N) %N;
+}
+
+
 void print_bool(uint8_t* found)
 {
      for (int j = 0; j < BITS_PER_REG; j++)
@@ -33,14 +42,6 @@ void search_Compare(uint64_t origData[n][BITS_PER_REG], uint64_t origElements[],
 }
 }
 
-void print_num(DATATYPE var) 
-{
-    uint8_t v8val[sizeof(DATATYPE)];
-    std::memcpy(v8val, &var, sizeof(v8val));
-    for (uint i = sizeof(DATATYPE); i > 0; i--)
-        std::cout << std::bitset<sizeof(uint8_t)*8>(v8val[i-1]) << std::endl;
-        //std::cout << v8val[i]<< std::endl;
-}
 
 void insertManually(DATATYPE dataset[n][BITLENGTH], DATATYPE elements[n], uint64_t origData[n][BITS_PER_REG], uint64_t origElements[], int c, int b, uint64_t numElement, uint64_t numDataset ){
 
@@ -74,7 +75,7 @@ uint64_t* iseed = NEW(uint64_t[BITS_PER_REG]);
 for (int i = 0; i < BITS_PER_REG; i++) {
     iseed[i] = rand();
 }
-seed = new DATATYPE[BITLENGTH];
+DATATYPE* seed = new DATATYPE[BITLENGTH];
 funcTime("single ortho", orthogonalize,iseed, seed);
 
 //generate random data
@@ -84,6 +85,17 @@ for (int i = 0; i < n; i++) {
  funcTime("xor_shift",xor_shift__,seed, elements);
 }
 
+//init 1 srng per link
+void init_srng(uint64_t link_id, uint64_t link_seed)
+{
+    uint64_t gen_seeds[BITS_PER_REG];
+   for (int i = 0; i < BITS_PER_REG; i++) {
+      gen_seeds[i] = link_seed * (i+1); // replace with independant seeds in the future
+   }
+
+//DATATYPE (*srngl)[BITLENGTH] = NEW(DATATYPE[num_players-1][BITLENGTH]);
+orthogonalize(gen_seeds, srng[link_id]);
+}
 
 void init_comm()
 {
@@ -96,7 +108,7 @@ input_length[1] = BITLENGTH;
 // revealing
 reveal_length[0] = 1;
 reveal_length[1] = 1;
-
+reveal_length[2] = 1;
 
 total_comm = 2;
 
@@ -163,8 +175,36 @@ insertManually(dataset, elements, origData, origElements, 1,7 , 200, 200);
 
 
 player_id = atoi(argv[1]);
+pnext = (player_id == 1);
+pprev = (player_id != 1);
+//pnext = player_id == 0 ? 0 : player_id == 1 ? 1 : 0;
+/* pprev = player_id == 0 ? 1 : player_id == 1 ? 0 : 1; */
+//init_srng(0,pprev+5000);
+//init_srng(1,player_id+5000);
+srng = NEW(DATATYPE[num_players][BITLENGTH]);
+
+/* if(player_id == 0) */
+/* { */
+/* init_srng(pprev, 5002); */
+/* init_srng(pnext, 5000); */
+/* } */
+/* if(player_id == 1) */
+/* { */
+/* init_srng(pprev, 5000); */
+/* init_srng(pnext, 5001); */
+/* } */
+/* if(player_id == 2) */
+/* { */
+/* init_srng(pprev, 5001); */
+/* init_srng(pnext, 5002); */
+/* } */
 
 
+init_srng(pprev, modulo((player_id - 1),  num_players) + 5000);
+init_srng(pnext,player_id + 5000);
+init_srng(num_players-1, player_id+6000); // used for sharing inputs
+
+/* printf("%i",((player_id - 1) % num_players)); */
 //player_input = NEW(DATATYPE[input_length[player_id]]);
 if(player_id == 0)
 {
@@ -222,8 +262,7 @@ for(int t=0;t<(num_players-1);t++) {
     receiving_args[t].hostname = (char*)"hostname";
     receiving_args[t].port = (int) base_port + player_id * (num_players-1) + t; //e.g. P0 receives on base port from P1, P2 on base port + num_players from P0 6000,6002
     /* std::cout << "In main: creating thread " << t << "\n"; */
-    
-    
+    //init_srng(t, (t+offset) + player_id); 
 
 
     ret = pthread_create(&receiving_threads[t], NULL, receiver, &receiving_args[t]);
