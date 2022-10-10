@@ -10,6 +10,16 @@
 #include "../utils/printing.hpp"
 #include "../utils/randomizer.h"
 
+DATATYPE P_share_SRNG(DATATYPE a)
+{
+DATATYPE s[3]; //last share always belongs to player itself
+s[pprev] = getRandomVal(pprev);
+s[pnext] = getRandomVal(pnext);
+s[2] = XOR(s[pprev],s[pnext]);
+s[2] = XOR(a,s[2]);
+return s[2];
+}
+
 DATATYPE P_share(DATATYPE a)
 {
 DATATYPE s[3]; //last share always belongs to player itself

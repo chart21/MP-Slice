@@ -67,6 +67,24 @@ a[i] = receiving_args[id - offset].received_elements[rounds-1][share_buffer[id]]
 }
 }
 
+void receive_from_SRNG(DATATYPE a[], int id, int l)
+{
+if(id == player_id)
+{
+for (int i = 0; i < l; i++) {
+  a[i] = player_input[share_buffer[id]];
+  a[i] = P_share_SRNG(a[i]);  
+  share_buffer[id]+=1;
+}
+}
+else{
+int offset = {id > player_id ? 1 : 0};
+for (int i = 0; i < l; i++) {
+    a[i] = getRandomVal(id - offset);
+}
+}
+}
+
 DATATYPE receive_from(int id)
 {
 DATATYPE result;
@@ -88,22 +106,22 @@ void searchComm__ (DATATYPE dataset[n][BITLENGTH],DATATYPE element[BITLENGTH], /
   //;
 //create own shares
 
-if(player_id == 0)
-{
-for (int i = 0; i < n; i++) {
-    for (int j = 0; j < BITLENGTH; j++) {
-      dataset[i][j] = P_share(dataset[i][j]);
-  }
-}
-/* P_share( (DATATYPE*) dataset,n*BITLENGTH); */
-}
-else if(player_id == 1)
-{
+/* if(player_id == 0) */
+/* { */
+/* for (int i = 0; i < n; i++) { */
+/*     for (int j = 0; j < BITLENGTH; j++) { */
+/*       dataset[i][j] = P_share(dataset[i][j]); */
+/*   } */
+/* } */
+/* /1* P_share( (DATATYPE*) dataset,n*BITLENGTH); *1/ */
+/* } */
+/* else if(player_id == 1) */
+/* { */
 
-    for (int j = 0; j < BITLENGTH; j++) 
-      element[j] = P_share(element[j]);
-/* P_share(element,BITLENGTH); */
-}
+/*     for (int j = 0; j < BITLENGTH; j++) */ 
+/*       element[j] = P_share(element[j]); */
+/* /1* P_share(element,BITLENGTH); *1/ */
+/* } */
 
 
 
@@ -120,8 +138,10 @@ send_and_receive();
 /*   for (int j = 0; j < BITLENGTH; j++) { */
 /* element[j] = receive_from(1); */
 /*   } */
-receive_from((DATATYPE*) dataset,0,BITLENGTH*n);
-receive_from(element,1,BITLENGTH);
+receive_from_SRNG((DATATYPE*) dataset,0,BITLENGTH*n);
+receive_from_SRNG(element,1,BITLENGTH);
+/* receive_from((DATATYPE*) dataset,0,BITLENGTH*n); */
+/* receive_from(element,1,BITLENGTH); */
 
 // Players received all elements
 

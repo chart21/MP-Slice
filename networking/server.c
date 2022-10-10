@@ -174,11 +174,14 @@ void *sender(void* threadParameters)
             pthread_mutex_unlock(&mtx_send_next);
             //char buf[1024] = { 0 };
             //recv(new_fd, buf, 32, MSG_WAITALL);
+            if(((sender_args*) threadParameters)->elements_to_send[rounds] > 0)
+            {
                 if (sendall(new_fd, ((sender_args*) threadParameters)->sent_elements[rounds], &((sender_args*) threadParameters)->elements_to_send[rounds]) == -1) {
                 perror("sendall");
                 printf("We only sent %d bytes because of the error!\n", ((sender_args*) threadParameters)->inputs_size);
             }
-           //Delete sent data
+            }
+                //Delete sent data
            //free(((thargs_p*) threadParameters)->sent_elements[rounds]);
 
             rounds += 1;

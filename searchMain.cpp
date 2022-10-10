@@ -7,7 +7,6 @@
 #include <new>
 #include <memory>
 #include "arch/DATATYPE.h"
-#include "arch/SSE.h"
 #include "circuits/searchBitSlice.c"
 #include "circuits/searchBitSliceWithComm.cpp"
 #include "circuits/xorshift.h"
@@ -254,7 +253,8 @@ for(int t=0;t<(num_players-1);t++) {
     for (int i = 1; i < total_comm -1; i++) {
     receiving_args[t].elements_to_rec[i] = elements_per_round[i] * sizeof(DATATYPE);
     }
-    receiving_args[t].elements_to_rec[0] = input_length[t+offset] * sizeof(DATATYPE); //input shares to receive from that player
+    receiving_args[t].elements_to_rec[0] = 0; // input sharing with SRNG 
+    /* receiving_args[t].elements_to_rec[0] = input_length[t+offset] * sizeof(DATATYPE); //input shares to receive from that player */
     receiving_args[t].elements_to_rec[total_comm-1] = reveal_length[player_id] * sizeof(DATATYPE); //number of revealed values to receive from other players
     receiving_args[t].player_id = player_id;
     receiving_args[t].connected_to = t+offset;
@@ -286,7 +286,8 @@ for(int t=0;t<(num_players-1);t++) {
     for (int i = 1; i < total_comm -1; i++) {
     sending_args[t].elements_to_send[i] = elements_per_round[i] * sizeof(DATATYPE);
     }
-    sending_args[t].elements_to_send[0] = input_length[player_id] * sizeof(DATATYPE); // player needs to send a share of its inputs to each other player
+    sending_args[t].elements_to_send[0] = 0; //input sharing with SRNGs 
+    /* sending_args[t].elements_to_send[0] = input_length[player_id] * sizeof(DATATYPE); // player needs to send a share of its inputs to each other player */
     sending_args[t].elements_to_send[total_comm -1] = reveal_length[t + offset] * sizeof(DATATYPE); //number of elements to send to that player
     sending_args[t].player_id = player_id;
     sending_args[t].player_count = num_players;
