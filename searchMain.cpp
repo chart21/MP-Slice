@@ -330,7 +330,7 @@ pthread_mutex_unlock(&mtx_connection_established);
 /// Processing Inputs ///
 
 clock_t time_function_start = clock ();
-searchComm__(dataset, elements, found);
+searchComm__(found);
 
 print_num(*found);
 clock_t time_function_finished = clock ();

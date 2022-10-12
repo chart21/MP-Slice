@@ -13,7 +13,8 @@
 #include "../arch/DATATYPE.h"
 
 /* #include "../protocols/dummy_Protocol.hpp" */
-#include "../protocols/sharemind.hpp"
+/* #include "../protocols/sharemind.hpp" */
+#include "../protocols/replicated.hpp"
 /* auxiliary functions */
 /* main function */
 
@@ -67,23 +68,39 @@ a[i] = receiving_args[id - offset].received_elements[rounds-1][share_buffer[id]]
 }
 }
 
-void receive_from_SRNG(DATATYPE a[], int id, int l)
+void receive_from_SRNG(Share a[], int id, int l)
 {
 if(id == player_id)
 {
 for (int i = 0; i < l; i++) {
-  a[i] = player_input[share_buffer[id]];
-  a[i] = P_share_SRNG(a[i]);  
+  a[i] = P_share_SRNG(player_input[share_buffer[id]]);  
   share_buffer[id]+=1;
 }
 }
 else{
 int offset = {id > player_id ? 1 : 0};
 for (int i = 0; i < l; i++) {
-    a[i] = getRandomVal(id - offset);
+    a[i] = P_receive_share_SRNG(id - offset);
 }
 }
 }
+/* void receive_from_SRNG(DATATYPE a[], int id, int l) */
+/* { */
+/* if(id == player_id) */
+/* { */
+/* for (int i = 0; i < l; i++) { */
+/*   a[i] = player_input[share_buffer[id]]; */
+/*   a[i] = P_share_SRNG(a[i]); */  
+/*   share_buffer[id]+=1; */
+/* } */
+/* } */
+/* else{ */
+/* int offset = {id > player_id ? 1 : 0}; */
+/* for (int i = 0; i < l; i++) { */
+/*     a[i] = getRandomVal(id - offset); */
+/* } */
+/* } */
+/* } */
 
 DATATYPE receive_from(int id)
 {
@@ -101,9 +118,13 @@ share_buffer[id]+=1;
 return result;
 }
 
-void searchComm__ (DATATYPE dataset[n][BITLENGTH],DATATYPE element[BITLENGTH], /*outputs*/ DATATYPE found[BITLENGTH])
+void searchComm__ (/*outputs*/ DATATYPE found[BITLENGTH])
 {
-  //;
+
+// allocate memory for shares
+Share (*dataset)[BITLENGTH] = new Share[n][BITLENGTH];
+Share* element = new Share[BITLENGTH];
+    //;
 //create own shares
 
 /* if(player_id == 0) */
@@ -138,7 +159,7 @@ void searchComm__ (DATATYPE dataset[n][BITLENGTH],DATATYPE element[BITLENGTH], /
 /*   for (int j = 0; j < BITLENGTH; j++) { */
 /* element[j] = receive_from(1); */
 /*   } */
-receive_from_SRNG((DATATYPE*) dataset,0,BITLENGTH*n);
+receive_from_SRNG((Share*) dataset,0,BITLENGTH*n);
 receive_from_SRNG(element,1,BITLENGTH);
 /* receive_from((DATATYPE*) dataset,0,BITLENGTH*n); */
 /* receive_from(element,1,BITLENGTH); */
@@ -148,7 +169,7 @@ receive_from_SRNG(element,1,BITLENGTH);
   // Instructions (body)
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < BITLENGTH; j++) {
-      dataset[i][j] = NOT(P_xor(dataset[i][j],element[j]));
+      dataset[i][j] = P_not(P_xor(dataset[i][j],element[j]));
     }
   }
   
@@ -201,9 +222,11 @@ receive_from_SRNG(element,1,BITLENGTH);
   }
  
   *found = SET_ALL_ZERO(); 
+  Share sfound = P_public_val(*found);
+
   //*found = NOT(*found); //public value, therefore needs to be notted for dummy Protocol;
   for (int i = 0; i < n; i++) {
-    *found = P_xor(*found,dataset[i][0]); 
+    sfound = P_xor(dataset[i][0],sfound); 
     /* std::cout << dataset[i][0]; */
 
   }
@@ -212,9 +235,9 @@ receive_from_SRNG(element,1,BITLENGTH);
   /*   std::cout << element[i]; */
 
 /* std::cout << "\n"; */
-P_prepare_reveal_to_all(*found);
+P_prepare_reveal_to_all(sfound);
 send_and_receive();
-*found = P_complete_Reveal(*found);
+*found = P_complete_Reveal(sfound);
 
 }
 // Reveal
