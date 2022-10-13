@@ -9,7 +9,13 @@
 // Share of each player is ~a
 #include "../utils/printing.hpp"
 #include "../utils/randomizer.h"
-#define Share DATATYPE
+#include "Protocol_inheritance.hpp"
+#include "Sharemind_Share.hpp"
+//#include "sharemind_init_inheritance.hpp"
+//#define Share DATATYPE
+class Sharemind : public Protocol
+{
+
 DATATYPE P_share_SRNG(DATATYPE a)
 {
 DATATYPE s[3]; //last share always belongs to player itself
@@ -20,7 +26,7 @@ s[2] = XOR(a,s[2]);
 return s[2];
 }
 
-Share P_receive_share_SRNG(int player)
+DATATYPE P_receive_share_SRNG(int player)
 {
     return getRandomVal(player);
 }
@@ -63,9 +69,10 @@ Share P_public_val(DATATYPE a)
     return a;
 }
 
-DATATYPE P_not(DATATYPE a)
+Share* Not(Sharemind_Share::Share &a) override
 {
-   return NOT(a);
+   a.Not(a);
+   return &a;
 }
 
 // Receive sharing of ~XOR(a,b) locally
@@ -186,3 +193,4 @@ void send_and_receive()
     send();
     receive();
 }
+};

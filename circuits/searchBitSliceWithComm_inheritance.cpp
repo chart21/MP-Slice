@@ -11,9 +11,11 @@
 /* #endif */
 /* /1* including the architecture specific .h *1/ */
 #include "../arch/DATATYPE.h"
-
+/* #include "../protocols/Protocol.hpp" */
+#include "../protocols/Protocol_inheritance.hpp"
 /* #include "../protocols/dummy_Protocol.hpp" */
-#include "../protocols/sharemind.hpp"
+/* #include "../protocols/dummy_Protocol.hpp" */
+/* #include "../protocols/sharemind.hpp" */
 /* #include "../protocols/replicated.hpp" */
 /* auxiliary functions */
 /* main function */
@@ -86,13 +88,12 @@ result = receiving_args[id - offset].received_elements[rounds-1][share_buffer[id
 share_buffer[id]+=1;
 return result;
 }
-
-void searchComm__ (/*outputs*/ DATATYPE* found)
+void searchComm__ (Protocol &P,/*outputs*/ DATATYPE found[BITLENGTH])
 {
 
 // allocate memory for shares
-Share (*dataset)[BITLENGTH] = new Share[n][BITLENGTH];
-Share* element = new Share[BITLENGTH];
+Share (*dataset)[BITLENGTH] = (Share ((*)[BITLENGTH])) P.alloc_Share(((int) n)*BITLENGTH);
+Share* element = P.alloc_Share(BITLENGTH);
     //;
 //create own shares
 
@@ -128,8 +129,8 @@ Share* element = new Share[BITLENGTH];
 /*   for (int j = 0; j < BITLENGTH; j++) { */
 /* element[j] = receive_from(1); */
 /*   } */
-receive_from_SRNG((Share*) dataset,0,BITLENGTH*n);
-receive_from_SRNG(element,1,BITLENGTH);
+P.receive_from_SRNG((Share*) dataset,0,BITLENGTH*n);
+P.receive_from_SRNG(element,1,BITLENGTH);
 /* receive_from((DATATYPE*) dataset,0,BITLENGTH*n); */
 /* receive_from(element,1,BITLENGTH); */
 
@@ -138,7 +139,7 @@ receive_from_SRNG(element,1,BITLENGTH);
   // Instructions (body)
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < BITLENGTH; j++) {
-      dataset[i][j] = P_not(P_xor(dataset[i][j],element[j]));
+      dataset[i][j] = P.Not(P.Xor(dataset[i][j], element[j]));
     }
   }
   
@@ -162,12 +163,12 @@ receive_from_SRNG(element,1,BITLENGTH);
     for (int i = 0; i < k; i++) {
         int j = i * 2;
       for (int s = 0; s < n; s++) {
-        P_prepare_and(&dataset[s][j],&dataset[s][j +1]);
+          P.prepare_and(dataset[s][j],dataset[s][j +1]);
         /* dataset[s][i] = P_prepare_and_old(dataset[s][j],dataset[s][j +1]); */
       }
     }
 
-    send_and_receive(); 
+    P.communicate(); 
     
     
     //send_AND(buffer,b)
@@ -178,7 +179,7 @@ receive_from_SRNG(element,1,BITLENGTH);
         //dataset[s][i] = NOT(dataset[s][i]);
         /* for(int t = 0; t < num_players-1; t++) // for other protocols, sending buffers may be different for each player */
           /* dataset[s][i] = P_complete_and(dataset[s][i]); */
-            dataset[s][i] = P_complete_and(dataset[s][j], dataset[s][j+1]);
+            dataset[s][i] = P.complete_and(dataset[s][j], dataset[s][j+1]);
       }
       
     /// DELETE received data to free memory! (should maybe happen in next round, or when receive buffer is at length) 
@@ -191,11 +192,11 @@ receive_from_SRNG(element,1,BITLENGTH);
   }
  
   *found = SET_ALL_ZERO(); 
-  Share sfound = P_public_val(*found);
+  Share sfound = P.public_val(*found);
 
   //*found = NOT(*found); //public value, therefore needs to be notted for dummy Protocol;
   for (int i = 0; i < n; i++) {
-    sfound = P_xor(dataset[i][0],sfound); 
+    sfound = P.Xor(dataset[i][0],sfound); 
     /* std::cout << dataset[i][0]; */
 
   }
@@ -204,9 +205,9 @@ receive_from_SRNG(element,1,BITLENGTH);
   /*   std::cout << element[i]; */
 
 /* std::cout << "\n"; */
-P_prepare_reveal_to_all(sfound);
-send_and_receive();
-*found = P_complete_Reveal(sfound);
+P.prepare_reveal_to_all(sfound);
+P.communicate();
+*found = P.complete_Reveal(sfound);
 
 }
 // Reveal

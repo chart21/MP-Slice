@@ -10,7 +10,11 @@
 #include "../utils/printing.hpp"
 #include "../utils/randomizer.h"
 #define Share DATATYPE
-DATATYPE P_share_SRNG(DATATYPE a)
+
+class Sharemind
+{
+    public:
+Share share_SRNG(DATATYPE a)
 {
 DATATYPE s[3]; //last share always belongs to player itself
 s[pprev] = getRandomVal(pprev);
@@ -20,12 +24,12 @@ s[2] = XOR(a,s[2]);
 return s[2];
 }
 
-Share P_receive_share_SRNG(int player)
+Share receive_share_SRNG(int player)
 {
     return getRandomVal(player);
 }
 
-DATATYPE P_share(DATATYPE a)
+DATATYPE share(DATATYPE a)
 {
 DATATYPE s[3]; //last share always belongs to player itself
 /* s[pprev] = getRandomVal(pprev); */ 
@@ -52,24 +56,24 @@ return s[2];
 
 
 
-void P_share(DATATYPE a[], int length)
+void share(DATATYPE a[], int length)
 {
     for(int l = 0; l < length; l++)
-        a[l] = P_share(a[l]);
+        a[l] = share(a[l]);
                                            //
 }
-Share P_public_val(DATATYPE a)
+Share public_val(DATATYPE a)
 {
     return a;
 }
 
-DATATYPE P_not(DATATYPE a)
+DATATYPE Not(DATATYPE a)
 {
    return NOT(a);
 }
 
 // Receive sharing of ~XOR(a,b) locally
-DATATYPE P_xor(DATATYPE a, DATATYPE b)
+DATATYPE Xor(DATATYPE a, DATATYPE b)
 {
    return XOR(a, b);
 }
@@ -78,43 +82,28 @@ DATATYPE P_xor(DATATYPE a, DATATYPE b)
 
 void reshare(DATATYPE a, DATATYPE u[])
 {
-//u[pprev] = getRandomVal(pprev); //replace with SRNG
-//u[pnext] = getRandomVal(pnext);
 u[pprev] = getRandomVal(pprev);
 u[pnext] = getRandomVal(pnext);
-
-/* u[pprev] = SET_ALL_ONE(); */
-/* u[pnext] = SET_ALL_ONE(); */
-/* if(player_id == 0) */
-/*     u[pnext] = SET_ALL_ZERO(); */
-/* if(player_id == 1) */
-/*     u[pprev] = SET_ALL_ZERO(); */
-
-    /* u[pprev] = SET_ALL_ZERO(); //replace with SRNG */
-/* u[pnext] = SET_ALL_ONE(); */
 u[2] = XOR(u[pprev],u[pnext]);
 u[2] = XOR(a,u[2]);
  
 }
 //prepare AND -> send real value a&b to other P
-void P_prepare_and(DATATYPE* a, DATATYPE* b)
+void prepare_and(Share &a, Share &b)
 {
 DATATYPE u[3];
 DATATYPE v[3];
-reshare(*a,u);
-reshare(*b,v);
-*a = u[2];
-*b = v[2];
-/* sending_args[pnext].sent_elements[sending_rounds][sb] = a; */
-/* sending_args[pprev].sent_elements[sending_rounds][sb] = b; */
+reshare(a,u);
+reshare(b,v);
+a = u[2];
+b = v[2];
 sending_args[pnext].sent_elements[sending_rounds][sb] = u[2]; //last share always belongs to player itself
 sending_args[pprev].sent_elements[sending_rounds][sb] = v[2];
 sb+=1;
-//return u[player_id] * v[player_id];
 }
 
 // NAND both real Values to receive sharing of ~ (a&b) 
-DATATYPE P_complete_and(DATATYPE a, DATATYPE b)
+Share complete_and(Share a, Share b)
 {
 DATATYPE w = AND(a,b);
 DATATYPE u_p = receiving_args[pprev].received_elements[rounds-1][rb];
@@ -126,7 +115,7 @@ rb+=1;
 return w;
 }
 
-void P_prepare_reveal_to_all(DATATYPE a)
+void prepare_reveal_to_all(DATATYPE a)
 {
     for(int t = 0; t < num_players-1; t++) // for other protocols, sending buffers may be different for each player
         sending_args[t].sent_elements[sending_rounds][sb] = a;
@@ -136,7 +125,7 @@ void P_prepare_reveal_to_all(DATATYPE a)
 
 
 //reveal to specific player
-void P_prepare_reveal_to(DATATYPE a, int id)
+void prepare_reveal_to(DATATYPE a, int id)
 {
     if(player_id != id)
     {
@@ -148,7 +137,7 @@ void P_prepare_reveal_to(DATATYPE a, int id)
 }
 // These functions need to be somewhere else
 
-DATATYPE P_complete_Reveal(DATATYPE a)
+DATATYPE complete_Reveal(DATATYPE a)
 {
 DATATYPE result = a;
 for(int t = 0; t < num_players-1; t++) // for other protocols, sending buffers may be different for each player
@@ -166,6 +155,7 @@ sb = 0;
     pthread_mutex_lock(&mtx_send_next); 
      sending_rounds +=1;
       pthread_cond_broadcast(&cond_send_next); //signal all threads that sending buffer contains next data
+      printf("boradcasted round %i \n", sending_rounds);
       pthread_mutex_unlock(&mtx_send_next); 
 }
 
@@ -176,6 +166,7 @@ void receive(){
       pthread_mutex_lock(&mtx_receive_next);
       while(rounds > receiving_rounds) //wait until all threads received their data
           pthread_cond_wait(&cond_receive_next, &mtx_receive_next);
+      printf("finished waiting for receive in round %i \n", rounds - 1);
       pthread_mutex_unlock(&mtx_receive_next);
 
 rb = 0;
@@ -186,3 +177,57 @@ void send_and_receive()
     send();
     receive();
 }
+void receive_from_SRNG(Share a[], int id, int l)
+{
+if(id == player_id)
+{
+for (int i = 0; i < l; i++) {
+  a[i] = share_SRNG(player_input[share_buffer[id]]);  
+  share_buffer[id]+=1;
+}
+}
+else{
+int offset = {id > player_id ? 1 : 0};
+for (int i = 0; i < l; i++) {
+    a[i] = receive_share_SRNG(id - offset);
+}
+}
+}
+void receive_from(DATATYPE a[], int id, int l)
+{
+if(id == player_id)
+{
+/* result = receiving_args[num_players-1].received_elements[rounds - 1][share_buffer[id]]; */
+for (int i = 0; i < l; i++) {
+  a[i] = player_input[share_buffer[id]];
+    share_buffer[id]+=1;
+}
+}
+else{
+int offset = {id > player_id ? 1 : 0};
+for (int i = 0; i < l; i++) {
+a[i] = receiving_args[id - offset].received_elements[rounds-1][share_buffer[id]];
+    share_buffer[id]+=1;
+}
+}
+}
+
+Share* alloc_Share(int l)
+{
+    return new DATATYPE[l];
+}
+
+void communicate()
+{
+    send();
+    receive();
+}   
+
+
+void finalize()
+{
+
+}
+
+
+};

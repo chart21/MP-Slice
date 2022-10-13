@@ -48,6 +48,7 @@ typedef struct receiver_arguments {
   char *hostname;
   int rec_rounds;
   int *elements_to_rec;
+  int total_rounds;
   //char *data;
   //char *length
 } receiver_args;
@@ -61,5 +62,6 @@ typedef struct sender_arguments {
   int connected_to;
   int send_rounds;
   int *elements_to_send;
+  int total_rounds;
   //char *data;
 } sender_args;
