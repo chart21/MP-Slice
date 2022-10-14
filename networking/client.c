@@ -110,12 +110,12 @@ if(((receiver_args*) threadParameters)->elements_to_rec[rounds] > 0) //should da
 {
     int elements_to_rec =  ((receiver_args*) threadParameters)->elements_to_rec[rounds];
     elements_to_rec = elements_to_rec * sizeof(DATATYPE);
-    printf("receiving %i bytes \n", elements_to_rec);
 
             if ((recv(sockfd, ((char*) ((receiver_args*) threadParameters)->received_elements[rounds]), elements_to_rec, MSG_WAITALL)) == -1) {
                 perror("recv");
                 exit(1);
             } 
+printf("received %i bytes from player %i in round %i out of %i \n", elements_to_rec, ((receiver_args*) threadParameters)->connected_to, rounds + 1, ((receiver_args*) threadParameters)->rec_rounds);
 }
 //If all sockets received, signal main_thread
             pthread_mutex_lock(&mtx_data_received);

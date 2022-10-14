@@ -12,12 +12,13 @@
 /* /1* including the architecture specific .h *1/ */
 #include "../arch/DATATYPE.h"
 /* #include "../protocols/Protocol.hpp" */
-#include "../protocols/sharemind_template.hpp"
-#include "../protocols/sharemind_init_template.hpp"
+/* #include "../protocols/sharemind_template.hpp" */
+/* #include "../protocols/sharemind_init_template.hpp" */
 /* #include "../protocols/dummy_Protocol.hpp" */
 /* #include "../protocols/dummy_Protocol.hpp" */
 /* #include "../protocols/sharemind.hpp" */
-/* #include "../protocols/replicated.hpp" */
+#include "../protocols/replicated_template.hpp"
+#include "../protocols/replicated_init_template.hpp"
 /* auxiliary functions */
 /* main function */
 
@@ -49,8 +50,36 @@ S (*dataset)[BITLENGTH] = (S ((*)[BITLENGTH])) P.alloc_Share(((int) n)*BITLENGTH
 S* element = P.alloc_Share(BITLENGTH);
 
 
-P.receive_from_SRNG((Share*) dataset,0,BITLENGTH*n);
-P.receive_from_SRNG(element,1,BITLENGTH);
+if(player_id == 0)
+{
+/* for (int i = 0; i < n; i++) { */
+/*     for (int j = 0; j < BITLENGTH; j++) { */
+/*       dataset[i][j] = P.share(dataset[i][j]); */
+/*   } */
+/* } */
+/* P_share( (DATATYPE*) dataset,n*BITLENGTH); */
+P.share( (Share*) dataset,(n)*BITLENGTH);
+}
+else if(player_id == 1)
+{
+
+P.share(element,BITLENGTH);
+    /* for (int j = 0; j < BITLENGTH; j++) */ 
+    /*   element[j] = P.share(element[j]); */
+/* P_share(element,BITLENGTH); */
+}
+
+
+
+P.communicate();
+
+// change to receive from
+
+
+P.receive_from((Share*) dataset,0,(n)*BITLENGTH);
+P.receive_from(element,1,BITLENGTH);
+/* P.receive_from_SRNG((Share*) dataset,0,BITLENGTH*n); */
+/* P.receive_from_SRNG(element,1,BITLENGTH); */
 
 
 for (int i = 0; i < n; i++) {

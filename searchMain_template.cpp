@@ -1,5 +1,6 @@
 #include <cstddef>
 #include <cstdint>
+#include <ctime>
 #include <iostream>
 #include <cstring>
 #include <random>
@@ -7,12 +8,14 @@
 #include <new>
 #include <memory>
 #include "arch/DATATYPE.h"
-#include "arch/SSE.h"
 #include "circuits/searchBitSlice.c"
 #include "circuits/searchBitSliceWithComm_template.cpp"
 #include "circuits/xorshift.h"
-#include "protocols/sharemind_init_template.hpp"
-#include "protocols/sharemind_template.hpp"
+/* #include "protocols/sharemind_init_template.hpp" */
+/* #include "protocols/sharemind_template.hpp" */
+#include "protocols/replicated_template.hpp"
+#include "protocols/replicated_init_template.hpp"
+
 #include "utils/timing.hpp"
 #include "networking/client.c"
 #include "networking/server.c"
@@ -20,7 +23,7 @@
 #include "networking/buffers.h"
 #include "utils/printing.hpp"
 
-
+struct timespec t1, t2;
 int modulo(int x,int N){
     return (x % N + N) %N;
 }
@@ -229,17 +232,18 @@ int ret;
 sockets_received = new int[10]{0};
 //replace with vector soon
 for(int t=0;t<(num_players-1);t++) {
-    receiving_args[t].elements_to_rec = new int[10];
-    sending_args[t].elements_to_send = new int[10];
+    receiving_args[t].elements_to_rec = new int[10]{0};
+    sending_args[t].elements_to_send = new int[10]{0};
 }
-    Sharemind_init init_protocol = Sharemind_init();
+Replicated_init init_protocol = Replicated_init();
+/* Sharemind_init init_protocol = Sharemind_init(); */
 DATATYPE garbage = SET_ALL_ZERO();
-
-searchComm__<Sharemind_init,DATATYPE>(init_protocol,garbage);
+clock_t time_init_start = clock ();
+searchComm__<Replicated_init,Share>(init_protocol,garbage);
 init_protocol.finalize(ips);
-
+clock_t time_init_finished = clock ();
 /* printf("creating receiving servers\n"); */
-
+printf("Time measured to initialize program: %fs \n", double((time_init_finished - time_init_start)) / CLOCKS_PER_SEC);
 
 for(int t=0;t<(num_players-1);t++) {
     ret = pthread_create(&receiving_threads[t], NULL, receiver, &receiving_args[t]);
@@ -284,14 +288,25 @@ pthread_mutex_unlock(&mtx_connection_established);
 
 
 /// Processing Inputs ///
-
-Sharemind protocol = Sharemind();
+Replicated protocol = Replicated();
+/* Sharemind protocol = Sharemind(); */
 clock_t time_function_start = clock ();
-searchComm__<Sharemind,DATATYPE>(protocol,*found);
-
+clock_gettime(CLOCK_REALTIME, &t1);
+std::chrono::high_resolution_clock::time_point c1 =
+        std::chrono::high_resolution_clock::now();
+searchComm__<Replicated,Share>(protocol,*found);
+double time = std::chrono::duration_cast<std::chrono::microseconds>(
+                     std::chrono::high_resolution_clock::now() - c1)
+                     .count();
+/* searchComm__<Sharemind,DATATYPE>(protocol,*found); */
+clock_gettime(CLOCK_REALTIME, &t2);
+double accum = ( t2.tv_sec - t1.tv_sec )
++ (double)( t2.tv_nsec - t1.tv_nsec ) / (double) 1000000000L;
 print_num(*found);
 clock_t time_function_finished = clock ();
 /* printf("Time measured to read and receive inputs: %fs \n", double((time_data_received - time_application_start)) / CLOCKS_PER_SEC); */
-printf("Time measured to perform computation: %fs \n", double((time_function_finished - time_function_start)) / CLOCKS_PER_SEC);
+printf("Time measured to perform computation clock: %fs \n", double((time_function_finished - time_function_start)) / CLOCKS_PER_SEC);
+printf("Time measured to perform computation getTime: %fs \n", accum);
+printf("Time measured to perform computation chrono: %fs \n", time / 1000000);
 /* printf("Time measured in total: %fs \n", double((time_computation_finished - time_application_start)) / CLOCKS_PER_SEC); */
 }

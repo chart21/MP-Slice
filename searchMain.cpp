@@ -18,6 +18,7 @@
 #include "utils/printing.hpp"
 
 
+struct timespec t1, t2;
 int modulo(int x,int N){
     return (x % N + N) %N;
 }
@@ -330,7 +331,17 @@ pthread_mutex_unlock(&mtx_connection_established);
 /// Processing Inputs ///
 
 clock_t time_function_start = clock ();
+
+clock_gettime(CLOCK_REALTIME, &t1);
+
 searchComm__(found);
+
+clock_gettime(CLOCK_REALTIME, &t2);
+
+double accum = ( t2.tv_sec - t1.tv_sec )
++ (double)( t2.tv_nsec - t1.tv_nsec ) / (double) 1000000000L;
+
+printf("Time measured to perform computation getTime: %fs \n", accum);
 
 print_num(*found);
 clock_t time_function_finished = clock ();

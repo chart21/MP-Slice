@@ -174,24 +174,24 @@ void *sender(void* threadParameters)
             pthread_mutex_unlock(&mtx_send_next);
             //char buf[1024] = { 0 };
             //recv(new_fd, buf, 32, MSG_WAITALL);
-            printf("sending round %i out of %i \n", rounds, ((sender_args*) threadParameters)->send_rounds);
+            /* printf("sending round %i out of %i \n", rounds, ((sender_args*) threadParameters)->send_rounds); */
             if(((sender_args*) threadParameters)->elements_to_send[rounds] > 0)
             {
 
             int elements_to_send =  ((sender_args*) threadParameters)->elements_to_send[rounds];
             elements_to_send = elements_to_send * sizeof(DATATYPE);
-            printf("sending %i bytes \n", elements_to_send);
 
                 if (sendall(new_fd, ((sender_args*) threadParameters)->sent_elements[rounds], &((sender_args*) threadParameters)->elements_to_send[rounds]) == -1) {
                 perror("sendall");
                 printf("We only sent %d bytes because of the error!\n", ((sender_args*) threadParameters)->inputs_size);
             }
+            printf("sent %i bytes to player %i in round %i out of %i \n", elements_to_send, ((sender_args*) threadParameters)->connected_to, rounds + 1, ((sender_args*) threadParameters)->send_rounds);
             }
                 //Delete sent data
            //free(((thargs_p*) threadParameters)->sent_elements[rounds]);
 
             rounds += 1;
-            printf("Next sending round \n");
+            /* printf("Next sending round \n"); */
         
 
         } 
