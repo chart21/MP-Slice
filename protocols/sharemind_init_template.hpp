@@ -6,29 +6,35 @@
 /* #define pnext (player_id + 1)%3 */
 //#define pprev player_id == 0 ? 1 : player_id == 1 ? 0 : 1 
 /* #define pprev (player_id - 1)%3 */
-// Share of each player is ~a
+// XOR_Share of each player is ~a
 #include "../utils/printing.hpp"
 #include "../utils/randomizer.h"
-#define Share DATATYPE
+#include "sharemind_base.hpp"
 class Sharemind_init
 {
+bool input_srngs;
 public:
+Sharemind_init(bool use_srngs) {input_srngs = use_srngs;}
 void send_and_receive()
 {
 for (int t = 0; t < num_players-1; t++)
 {
-if(sending_args[t].elements_to_send[sending_args[t].send_rounds] != 0)
-{
+/* if(sending_args[t].elements_to_send[sending_args[t].send_rounds] != 0) */
+/* { */
+/*     sending_args[t].total_rounds += 1; */
+/*     sending_args[t].send_rounds += 1; */
+/* } */
+/* if(receiving_args[t].elements_to_rec[receiving_args[t].rec_rounds] != 0) */
+/* { */
+/*     receiving_args[t].total_rounds += 1; */
+/*     receiving_args[t].rec_rounds +=1; */
+        
+/* } */
+
     sending_args[t].total_rounds += 1;
     sending_args[t].send_rounds += 1;
-}
-if(receiving_args[t].elements_to_rec[receiving_args[t].rec_rounds] != 0)
-{
     receiving_args[t].total_rounds += 1;
     receiving_args[t].rec_rounds +=1;
-        
-}
-
 }
 }
 DATATYPE share_SRNG(DATATYPE a)
@@ -36,9 +42,9 @@ DATATYPE share_SRNG(DATATYPE a)
     return a;
 }
 
-Share receive_share_SRNG(int player)
+XOR_Share receive_share_SRNG(int player)
 {
-Share dummy;
+XOR_Share dummy;
 return dummy;
 }
 
@@ -56,11 +62,16 @@ return dummy;
 
 void share(DATATYPE a[], int length)
 {
+if(input_srngs == true)
+{
+    return;
+}
+else{
     for(int l = 0; l < length; l++)
         a[l] = share(a[l]);
-                                           //
+}                                      //
 }
-Share public_val(DATATYPE a)
+XOR_Share public_val(DATATYPE a)
 {
     return a;
 }
@@ -87,8 +98,6 @@ void prepare_and(DATATYPE &a, DATATYPE &b)
 {
 sending_args[pnext].elements_to_send[sending_args[pnext].send_rounds] += 1;
 sending_args[pprev].elements_to_send[sending_args[pprev].send_rounds] += 1;
-receiving_args[pprev].elements_to_rec[receiving_args[pprev].rec_rounds] += 1;
-receiving_args[pnext].elements_to_rec[receiving_args[pnext].rec_rounds] += 1;
 //return u[player_id] * v[player_id];
 }
 
@@ -97,6 +106,8 @@ DATATYPE complete_and(DATATYPE a, DATATYPE b)
 {
 /* receiving_args[pprev].elements_to_rec[rounds-1] += 1; */
 /* receiving_args[pnext].elements_to_rec[rounds-1] += 1; */
+receiving_args[pprev].elements_to_rec[receiving_args[pprev].rec_rounds -1] += 1;
+receiving_args[pnext].elements_to_rec[receiving_args[pnext].rec_rounds -1] += 1;
 DATATYPE dummy;
 return dummy;
 }
@@ -106,7 +117,7 @@ void prepare_reveal_to_all(DATATYPE a)
     for(int t = 0; t < num_players-1; t++) 
     {
         sending_args[t].elements_to_send[sending_args[t].send_rounds] += 1;
-        receiving_args[t].elements_to_rec[receiving_args[t].rec_rounds]+=1;
+        /* receiving_args[t].elements_to_rec[receiving_args[t].rec_rounds -1]+=1; */
     }//add to send buffer
 }    
 
@@ -128,6 +139,10 @@ DATATYPE complete_Reveal(DATATYPE a)
 {
 /* for(int t = 0; t < num_players-1; t++) */ 
 /*     receiving_args[t].elements_to_rec[rounds-1]+=1; */
+    for(int t = 0; t < num_players-1; t++) 
+    {
+        receiving_args[t].elements_to_rec[receiving_args[t].rec_rounds -1]+=1;
+    }
 return a;
 }
 
@@ -136,18 +151,41 @@ void communicate()
     send_and_receive();
 }
 
-Share* alloc_Share(int l)
+XOR_Share* alloc_Share(int l)
 {
     return new DATATYPE[l];
 }
 
-void receive_from_SRNG(Share a[], int id, int l)
+void receive_from_SRNG(XOR_Share a[], int id, int l)
 {
 }
-void receive_from(DATATYPE a[], int id, int l)
+void receive_from_comm(DATATYPE a[], int id, int l)
 {
+if(id == player_id)
+{
+    return;
+}
+else{
+int offset = {id > player_id ? 1 : 0};
+int player = id - offset;
+for (int i = 0; i < l; i++) {
+receiving_args[player].elements_to_rec[receiving_args[player].rec_rounds -1] += 1;
+}
+}
 }
 
+
+void receive_from(DATATYPE a[], int id, int l)
+{
+if(input_srngs == true)
+{
+    receive_from_SRNG(a, id, l);
+}
+else
+{
+receive_from_comm(a, id, l);
+}
+}
 void finalize(char** ips)
 {
 for(int t=0;t<(num_players-1);t++) {

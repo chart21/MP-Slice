@@ -1,4 +1,5 @@
 #pragma once
+#include <chrono>
 #include "../arch/DATATYPE.h"
 #include "../networking/sockethelper.h"
 #include "../networking/buffers.h"
@@ -6,15 +7,18 @@
 /* #define pnext (player_id + 1)%3 */
 //#define pprev player_id == 0 ? 1 : player_id == 1 ? 0 : 1 
 /* #define pprev (player_id - 1)%3 */
-// Share of each player is ~a
+// XOR_Share of each player is ~a
 #include "../utils/printing.hpp"
 #include "../utils/randomizer.h"
-#define Share DATATYPE
+#include "sharemind_base.hpp"
+//#define XOR_Share DATATYPE
 
 class Sharemind
 {
+bool input_srngs;
     public:
-Share share_SRNG(DATATYPE a)
+Sharemind(bool use_srngs) {input_srngs = use_srngs;}
+XOR_Share share_SRNG(DATATYPE a)
 {
 DATATYPE s[3]; //last share always belongs to player itself
 s[pprev] = getRandomVal(pprev);
@@ -24,7 +28,7 @@ s[2] = XOR(a,s[2]);
 return s[2];
 }
 
-Share receive_share_SRNG(int player)
+XOR_Share receive_share_SRNG(int player)
 {
     return getRandomVal(player);
 }
@@ -58,11 +62,18 @@ return s[2];
 
 void share(DATATYPE a[], int length)
 {
-    for(int l = 0; l < length; l++)
-        a[l] = share(a[l]);
+if(input_srngs == true)
+{
+    return;
+}
+else
+{
+for(int l = 0; l < length; l++)
+    a[l] = share(a[l]);
+}
                                            //
 }
-Share public_val(DATATYPE a)
+XOR_Share public_val(DATATYPE a)
 {
     return a;
 }
@@ -89,7 +100,7 @@ u[2] = XOR(a,u[2]);
  
 }
 //prepare AND -> send real value a&b to other P
-void prepare_and(Share &a, Share &b)
+void prepare_and(XOR_Share &a, XOR_Share &b)
 {
 DATATYPE u[3];
 DATATYPE v[3];
@@ -103,7 +114,7 @@ sb+=1;
 }
 
 // NAND both real Values to receive sharing of ~ (a&b) 
-Share complete_and(Share a, Share b)
+XOR_Share complete_and(XOR_Share a, XOR_Share b)
 {
 DATATYPE w = AND(a,b);
 DATATYPE u_p = receiving_args[pprev].received_elements[rounds-1][rb];
@@ -155,7 +166,7 @@ sb = 0;
     pthread_mutex_lock(&mtx_send_next); 
      sending_rounds +=1;
       pthread_cond_broadcast(&cond_send_next); //signal all threads that sending buffer contains next data
-      printf("boradcasted round %i \n", sending_rounds);
+      /* printf("boradcasted round %i \n", sending_rounds); */
       pthread_mutex_unlock(&mtx_send_next); 
 }
 
@@ -164,10 +175,18 @@ void receive(){
         // receive_data
       //wait until all sockets have finished received their last data
       pthread_mutex_lock(&mtx_receive_next);
+      
+std::chrono::high_resolution_clock::time_point c1 =
+        std::chrono::high_resolution_clock::now();
       while(rounds > receiving_rounds) //wait until all threads received their data
           pthread_cond_wait(&cond_receive_next, &mtx_receive_next);
-      printf("finished waiting for receive in round %i \n", rounds - 1);
+      
+double time = std::chrono::duration_cast<std::chrono::microseconds>(
+                     std::chrono::high_resolution_clock::now() - c1)
+                     .count();
+      /* printf("finished waiting for receive in round %i \n", rounds - 1); */
       pthread_mutex_unlock(&mtx_receive_next);
+printf("Time spent waiting for data chrono: %fs \n", time / 1000000);
 
 rb = 0;
 }
@@ -177,7 +196,7 @@ void send_and_receive()
     send();
     receive();
 }
-void receive_from_SRNG(Share a[], int id, int l)
+void receive_from_SRNG(XOR_Share a[], int id, int l)
 {
 if(id == player_id)
 {
@@ -193,7 +212,7 @@ for (int i = 0; i < l; i++) {
 }
 }
 }
-void receive_from(DATATYPE a[], int id, int l)
+void receive_from_comm(DATATYPE a[], int id, int l)
 {
 if(id == player_id)
 {
@@ -212,7 +231,18 @@ a[i] = receiving_args[id - offset].received_elements[rounds-1][share_buffer[id]]
 }
 }
 
-Share* alloc_Share(int l)
+void receive_from(DATATYPE a[], int id, int l)
+{
+if(input_srngs == true)
+{
+    receive_from_SRNG(a, id, l);
+}
+else
+{
+receive_from_comm(a, id, l);
+}
+}
+XOR_Share* alloc_Share(int l)
 {
     return new DATATYPE[l];
 }

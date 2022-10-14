@@ -11,8 +11,8 @@
 #include "circuits/searchBitSlice.c"
 #include "circuits/searchBitSliceWithComm_template.cpp"
 #include "circuits/xorshift.h"
-/* #include "protocols/sharemind_init_template.hpp" */
-/* #include "protocols/sharemind_template.hpp" */
+#include "protocols/sharemind_init_template.hpp"
+#include "protocols/sharemind_template.hpp"
 #include "protocols/replicated_template.hpp"
 #include "protocols/replicated_init_template.hpp"
 
@@ -209,14 +209,15 @@ char* ips[num_players-1];
 //char* hostnames[num_players-1];
 for(int i=0; i < num_players -1; i++)
 {
-    if(i < (argc - 1))
-        ips[i] = argv[i+2];
+    if(i < (argc - 2))
+        ips[i] = argv[i+3];
     else
         ips[i] = (char*) "127.0.0.1";
 }
 pthread_mutex_init(&mtx_connection_established, NULL);
 pthread_mutex_init(&mtx_start_communicating, NULL);
 pthread_cond_init(&cond_successful_connection, NULL);
+pthread_cond_init(&cond_start_signal, NULL);
 //DATATYPE** inputs = new DATATYPE*[num_players]; //create n pointers, each to hold a player's input
 //int inputLength[] = INPUTSLENGTH;
 /* for (int i = 0; i < num_players; i++) { */
@@ -235,12 +236,27 @@ for(int t=0;t<(num_players-1);t++) {
     receiving_args[t].elements_to_rec = new int[10]{0};
     sending_args[t].elements_to_send = new int[10]{0};
 }
-Replicated_init init_protocol = Replicated_init();
 /* Sharemind_init init_protocol = Sharemind_init(); */
 DATATYPE garbage = SET_ALL_ZERO();
 clock_t time_init_start = clock ();
-searchComm__<Replicated_init,Share>(init_protocol,garbage);
-init_protocol.finalize(ips);
+if(argv[2] == std::string("rep"))
+{
+    Replicated_init init_protocol = Replicated_init();
+    searchComm__<Replicated_init,Share>(init_protocol,garbage);
+    init_protocol.finalize(ips);
+}
+else if(argv[2] == std::string("sharemind"))
+{
+    Sharemind_init s_init = Sharemind_init(false);
+    searchComm__<Sharemind_init,XOR_Share>(s_init,garbage);
+    s_init.finalize(ips);
+}
+else if(argv[2] == std::string("shareminds"))
+{
+    Sharemind_init s_init = Sharemind_init(true);
+    searchComm__<Sharemind_init,XOR_Share>(s_init,garbage);
+    s_init.finalize(ips);
+}
 clock_t time_init_finished = clock ();
 /* printf("creating receiving servers\n"); */
 printf("Time measured to initialize program: %fs \n", double((time_init_finished - time_init_start)) / CLOCKS_PER_SEC);
@@ -279,7 +295,7 @@ pthread_cond_wait(&cond_successful_connection, &mtx_connection_established);
 }
 /* printf("m: done waiting, modifying conn \n"); */
 num_successful_connections = -1; 
-pthread_cond_broadcast(&cond_successful_connection); //signal all threads to start receiving
+pthread_cond_broadcast(&cond_start_signal); //signal all threads to start receiving
 printf("All parties connected sucessfully, starting protocol and timer! \n");
 pthread_mutex_unlock(&mtx_connection_established);
 /* printf("m: unlocked conn \n"); */
@@ -288,13 +304,26 @@ pthread_mutex_unlock(&mtx_connection_established);
 
 
 /// Processing Inputs ///
-Replicated protocol = Replicated();
 /* Sharemind protocol = Sharemind(); */
 clock_t time_function_start = clock ();
 clock_gettime(CLOCK_REALTIME, &t1);
 std::chrono::high_resolution_clock::time_point c1 =
         std::chrono::high_resolution_clock::now();
-searchComm__<Replicated,Share>(protocol,*found);
+if(argv[2] == std::string("rep"))
+{
+    Replicated protocol = Replicated();
+    searchComm__<Replicated,Share>(protocol,*found);
+}
+else if(argv[2] == std::string("sharemind"))
+{
+    Sharemind protocol = Sharemind(false);
+    searchComm__<Sharemind,XOR_Share>(protocol,*found);
+}
+else if(argv[2] == std::string("shareminds"))
+{
+    Sharemind protocol = Sharemind(true);
+    searchComm__<Sharemind,XOR_Share>(protocol,*found);
+}
 double time = std::chrono::duration_cast<std::chrono::microseconds>(
                      std::chrono::high_resolution_clock::now() - c1)
                      .count();

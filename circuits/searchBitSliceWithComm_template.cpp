@@ -58,7 +58,7 @@ if(player_id == 0)
 /*   } */
 /* } */
 /* P_share( (DATATYPE*) dataset,n*BITLENGTH); */
-P.share( (Share*) dataset,(n)*BITLENGTH);
+P.share( (S*) dataset,(n)*BITLENGTH);
 }
 else if(player_id == 1)
 {
@@ -76,7 +76,7 @@ P.communicate();
 // change to receive from
 
 
-P.receive_from((Share*) dataset,0,(n)*BITLENGTH);
+P.receive_from((S*) dataset,0,(n)*BITLENGTH);
 P.receive_from(element,1,BITLENGTH);
 /* P.receive_from_SRNG((Share*) dataset,0,BITLENGTH*n); */
 /* P.receive_from_SRNG(element,1,BITLENGTH); */
@@ -112,7 +112,7 @@ for (int i = 0; i < n; i++) {
   }
  
   found = SET_ALL_ZERO(); 
-  Share sfound = P.public_val(found);
+  S sfound = P.public_val(found);
 
   for (int i = 0; i < n; i++) {
     sfound = P.Xor(dataset[i][0],sfound); 

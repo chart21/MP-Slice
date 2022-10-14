@@ -151,6 +151,7 @@ void *sender(void* threadParameters)
     /* printf("Player: Locked conn \n"); */
     if(num_successful_connections == 2 * (((sender_args*) threadParameters)->player_count -1)) {
         pthread_cond_signal(&cond_successful_connection); //signal main thread that all threads have connected
+        printf("server %i \n",num_successful_connections);
         /* printf("Player: Signal conn \n"); */
     }
     pthread_mutex_unlock(&mtx_connection_established);
@@ -159,7 +160,7 @@ void *sender(void* threadParameters)
     pthread_mutex_lock(&mtx_start_communicating); 
     while (num_successful_connections != -1) { // wait for start signal from main thread
         /* printf("Player: Unlocking conn and waiting for signal \n"); */ 
-        pthread_cond_wait(&cond_successful_connection, &mtx_start_communicating);
+        pthread_cond_wait(&cond_start_signal, &mtx_start_communicating);
     }
         /* printf("Player: Done waiting, unlocking \n"); */
         pthread_mutex_unlock(&mtx_start_communicating);

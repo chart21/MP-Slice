@@ -231,6 +231,7 @@ for(int i=0; i < num_players -1; i++)
 pthread_mutex_init(&mtx_connection_established, NULL);
 pthread_mutex_init(&mtx_start_communicating, NULL);
 pthread_cond_init(&cond_successful_connection, NULL);
+pthread_cond_init(&cond_start_signal, NULL);
 //DATATYPE** inputs = new DATATYPE*[num_players]; //create n pointers, each to hold a player's input
 //int inputLength[] = INPUTSLENGTH;
 /* for (int i = 0; i < num_players; i++) { */
@@ -311,16 +312,16 @@ for(int t=0;t<(num_players-1);t++) {
 
 // waiting until all threads connected
 
-/* printf("m: locking conn \n"); */
+printf("m: locking conn \n");
 pthread_mutex_lock(&mtx_connection_established);
-/* printf("m: locked conn \n"); */
+printf("m: locked conn \n");
 while (num_successful_connections < 2 * (num_players -1)) {
-/* printf("m: unlocking conn and waiting \n"); */
+printf("m: unlocking conn and waiting \n");
 pthread_cond_wait(&cond_successful_connection, &mtx_connection_established);
 }
-/* printf("m: done waiting, modifying conn \n"); */
+printf("m: done waiting, modifying conn \n");
 num_successful_connections = -1; 
-pthread_cond_broadcast(&cond_successful_connection); //signal all threads to start receiving
+pthread_cond_broadcast(&cond_start_signal); //signal all threads to start receiving
 printf("All parties connected sucessfully, starting protocol and timer! \n");
 pthread_mutex_unlock(&mtx_connection_established);
 /* printf("m: unlocked conn \n"); */

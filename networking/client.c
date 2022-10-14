@@ -43,6 +43,7 @@ void *receiver(void* threadParameters)
 	p = NULL;
     printf("Player %i: Attempting to connect to Player %i ... \n",((receiver_args*) threadParameters)->player_id, ((receiver_args*) threadParameters)->connected_to);
     while(p == NULL){
+    /* sleep(1); */	
     for(p = servinfo; p != NULL; p = p->ai_next) {
 		if ((sockfd = socket(p->ai_family, p->ai_socktype,
 				p->ai_protocol)) == -1) {
@@ -58,7 +59,7 @@ void *receiver(void* threadParameters)
 		break;
 	}
 
-    sleep(1);	
+    /* sleep(1); */	
 			
     }
 
@@ -84,7 +85,7 @@ void *receiver(void* threadParameters)
     /* printf("Player: Locked conn \n"); */
     if(num_successful_connections == 2 * (((receiver_args*) threadParameters)->player_count -1)) {
         pthread_cond_signal(&cond_successful_connection); //signal main thread that all threads have connected
-        /* printf("Player: Signal conn \n"); */
+        printf("client %i \n",num_successful_connections);
     }
     pthread_mutex_unlock(&mtx_connection_established);
     /* printf("Player: Unlocked conn \n"); */
@@ -92,7 +93,7 @@ void *receiver(void* threadParameters)
     pthread_mutex_lock(&mtx_start_communicating); 
     while (num_successful_connections != -1) { // wait for start signal from main thread
         /* printf("Player: Unlocking conn and waiting for signal \n"); */ 
-        pthread_cond_wait(&cond_successful_connection, &mtx_start_communicating);
+        pthread_cond_wait(&cond_start_signal, &mtx_start_communicating);
     }
         /* printf("Player: Done waiting, unlocking \n"); */
         pthread_mutex_unlock(&mtx_start_communicating);
