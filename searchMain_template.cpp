@@ -16,6 +16,7 @@
 #include "protocols/replicated_template.hpp"
 #include "protocols/replicated_init_template.hpp"
 
+#include "utils/randomizer.h"
 #include "utils/timing.hpp"
 #include "networking/client.c"
 #include "networking/server.c"
@@ -338,4 +339,13 @@ printf("Time measured to perform computation clock: %fs \n", double((time_functi
 printf("Time measured to perform computation getTime: %fs \n", accum);
 printf("Time measured to perform computation chrono: %fs \n", time / 1000000);
 /* printf("Time measured in total: %fs \n", double((time_computation_finished - time_application_start)) / CLOCKS_PER_SEC); */
+clock_gettime(CLOCK_REALTIME, &t1);
+DATATYPE dummy[64];
+for (uint64_t i = 0; i < 1000000000*64UL; i++) {
+next();
+}
+clock_gettime(CLOCK_REALTIME, &t2);
+accum = ( t2.tv_sec - t1.tv_sec )
++ (double)( t2.tv_nsec - t1.tv_nsec ) / (double) 1000000000L;
+printf("Time measured to perform 1B Random Values getTime: %fs \n", accum);
 }
