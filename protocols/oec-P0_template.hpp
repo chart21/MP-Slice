@@ -37,16 +37,16 @@ DATATYPE Xor(DATATYPE a, DATATYPE b)
 //prepare AND -> send real value a&b to other P
 void prepare_and(DATATYPE &a, DATATYPE &b)
 {
-DATATYPE rl = getRandomVal(1);
-DATATYPE rr = getRandomVal(1);
+DATATYPE rl = getRandomVal(0);
+DATATYPE rr = getRandomVal(0);
 
 DATATYPE rx = getRandomVal(0);
 DATATYPE ry = getRandomVal(1);
 
 DATATYPE o1 = XOR(a,rr);
 DATATYPE o2 = XOR(b,rl);
-sending_args[1].sent_elements[sending_rounds][sb] = o1; //P0 should only have a link to P3
-sending_args[1].sent_elements[sending_rounds][sb+1] = o2; //P0 should only have a link to P3
+sending_args[1].sent_elements[sending_rounds][sb] = o1; //P0 should only have a link to P2
+sending_args[1].sent_elements[sending_rounds][sb+1] = o2; //P0 should only have a link to P2
 sb+=2;
 a = AND(a,rl);
 b = XOR(AND(b,rr),AND(rl,rr));
@@ -56,7 +56,6 @@ b = XOR(rx,ry);
 
 }
 
-// NAND both real Values to receive sharing of ~ (a&b) 
 DATATYPE complete_and(DATATYPE a, DATATYPE b)
 {
 return XOR(a,b);
@@ -133,11 +132,15 @@ if(id == 0)
     {
     a[i] = player_input[share_buffer[2]];
     share_buffer[2] += 1;
-    DATATYPE r = XOR(getRandomVal(2),a[i]);
-    sending_args[0].sent_elements[sending_rounds][sb] = r;
-    sending_args[1].sent_elements[sending_rounds][sb] = r;
+    /* sending_args[0].sent_elements[sending_rounds][sb] = 0; */
+    /* sending_args[1].sent_elements[sending_rounds][sb] = 0; */
+    /* sb += 1; */
+    DATATYPE r = getRandomVal(2); //should be an SRNG shared by P0,P1,P2 to save communication
+    a[i] = XOR(r,a[i]);
+    sending_args[0].sent_elements[sending_rounds][sb] = a[i];
+    sending_args[1].sent_elements[sending_rounds][sb] = a[i];
     sb += 1;
-    /* a[i] = r; */
+    a[i] = r;
     }
 
 }

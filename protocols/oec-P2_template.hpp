@@ -40,7 +40,7 @@ DATATYPE ry = getRandomVal(0);
 DATATYPE o1 = receiving_args[0].received_elements[rounds-1][share_buffer[0]];
 DATATYPE o2 = receiving_args[0].received_elements[rounds-1][share_buffer[0]+1];
 share_buffer[0]+=2;
-a = XOR(ry, XOR(AND(a,o1),AND(a,o2)));
+a = XOR(ry, XOR(AND(a,o1),AND(b,o2)));
 sending_args[1].sent_elements[sending_rounds][sb] = a; 
 sb+=1;
 
