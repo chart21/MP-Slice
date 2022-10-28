@@ -29,13 +29,10 @@ return s[2];
 
 }
 
-Share receive_share_SRNG(int player)
+void receive_share_SRNG(Share &s, int player)
 {
-Share s;
-s.x = getRandomVal(player);
 s.a = receiving_args[player].received_elements[rounds-1][share_buffer[player]];
 share_buffer[player] += 1;
-return s;
 }
 
 Share share(DATATYPE a)
@@ -64,8 +61,8 @@ void share(Share a[], int length)
 {
     for(int l = 0; l < length; l++)
     {
-    a[l] = share_SRNG(player_input[share_buffer[player_id]]);  
-    share_buffer[player_id]+=1;
+    a[l] = share_SRNG(player_input[share_buffer[2]]);  
+    share_buffer[2]+=1;
     }                                      //
 }
 
@@ -75,14 +72,14 @@ void receive_from_SRNG(Share a[], int id, int l)
 if(id == player_id)
 {
 for (int i = 0; i < l; i++) {
-  a[i] = share_SRNG(player_input[share_buffer[id]]);  
-  share_buffer[id]+=1;
+  a[i] = share_SRNG(player_input[share_buffer[2]]);  
+  share_buffer[2]+=1;
 }
 }
 else{
 int offset = {id > player_id ? 1 : 0};
 for (int i = 0; i < l; i++) {
-    a[i] = receive_share_SRNG(id - offset);
+    receive_share_SRNG(a[i], id - offset);
 }
 }
 }
@@ -101,16 +98,46 @@ if(id == player_id)
 }
 else{
 int offset = {id > player_id ? 1 : 0};
-for (int i = 0; i < l; i++) {
 int player = id - offset;
+for (int i = 0; i < l; i++) {
 Share s;
 s.x = getRandomVal(player);
-s.a = receiving_args[player].received_elements[rounds-1][share_buffer[id]];
-share_buffer[id] += 1;
+s.a = receiving_args[player].received_elements[rounds-1][share_buffer[player]];
+share_buffer[player] += 1;
 a[i] = s;
 }
 }
 }
+
+void generate_SRNG(Share a[], int id, int length)
+{
+int offset = {id > player_id ? 1 : 0};
+int player = id - offset;
+    for(int l = 0; l < length; l++)
+    {
+        a[l].x = getRandomVal(player);
+    }
+}
+
+void prepare_receive_from(Share a[], int id, int l)
+{
+    if(id == player_id)
+        share(a,l);
+    else
+        generate_SRNG(a,id,l);
+}
+
+void complete_receive_from(Share a[], int id, int l)
+{
+if(id == player_id)
+    return;
+int offset = {id > player_id ? 1 : 0};
+for (int i = 0; i < l; i++) {
+    receive_share_SRNG(a[i],id - offset);
+
+}
+}
+
 // Receive sharing of ~XOR(a,b) locally
 Share Xor(Share a, Share b)
 {
@@ -179,15 +206,15 @@ sb+=1;
 Share complete_and(Share a, Share b)
 {
 Share result;
-result.x = a.a; 
-result.a = XOR(result.x, receiving_args[pprev].received_elements[rounds-1][rb]  );
+result.a = a.x; // c = ri 
+result.x = XOR(a.x, receiving_args[pprev].received_elements[rounds-1][rb]  ); // z = ri XOR rprev 
 rb+=1;
 return result;
 }
 
 void prepare_reveal_to_all(Share a)
 {
-    sending_args[pprev].sent_elements[sending_rounds][sb] = a.x;
+    sending_args[pnext].sent_elements[sending_rounds][sb] = a.x;
     sb += 1;
     //add to send buffer
 }    
@@ -209,7 +236,7 @@ void prepare_reveal_to(DATATYPE a, int id)
 DATATYPE complete_Reveal(Share a)
 {
 DATATYPE result;
-result = XOR(a.a,receiving_args[pnext].received_elements[rounds-1][rb]);
+result = XOR(a.a,receiving_args[pprev].received_elements[rounds-1][rb]);
 rb+=1;
 return result;
 }

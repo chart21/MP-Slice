@@ -36,6 +36,22 @@ void share(Share a[], int length)
 }
 
 
+void prepare_receive_from(Share a[], int id, int l)
+{
+    if(id == player_id)
+        share(a,l);
+}
+
+void complete_receive_from(Share a[], int id, int l)
+{
+if(id == player_id)
+    return;
+int offset = {id > player_id ? 1 : 0};
+for (int i = 0; i < l; i++) {
+    a[i] = receive_share_SRNG(id - offset);
+
+}
+}
 
 
 // Receive sharing of ~XOR(a,b) locally
@@ -76,7 +92,7 @@ return a;
 
 void prepare_reveal_to_all(Share a)
 {
-    sending_args[pprev].elements_to_send[sending_args[pprev].send_rounds] +=1;
+    sending_args[pnext].elements_to_send[sending_args[pnext].send_rounds] +=1;
     //add to send buffer
 }    
 
@@ -85,7 +101,7 @@ void prepare_reveal_to_all(Share a)
 DATATYPE complete_Reveal(Share a)
 {
 DATATYPE result;
-receiving_args[pnext].elements_to_rec[receiving_args[pnext].rec_rounds - 1] +=1;
+receiving_args[pprev].elements_to_rec[receiving_args[pprev].rec_rounds - 1] +=1;
 return result;
 }
 
@@ -105,8 +121,12 @@ for (int t = 0; t < num_players-1; t++)
         
 /* } */
     /* sending_args[t].total_rounds += 1; */
+    /* sending_args[t].send_rounds += 1; */
+    /* /1* receiving_args[t].total_rounds += 1; *1/ */
+    /* receiving_args[t].rec_rounds +=1; */
+    sending_args[t].total_rounds += 1;
     sending_args[t].send_rounds += 1;
-    /* receiving_args[t].total_rounds += 1; */
+    receiving_args[t].total_rounds += 1;
     receiving_args[t].rec_rounds +=1;
 }
 }

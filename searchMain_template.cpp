@@ -252,12 +252,12 @@ else if(argv[2] == std::string("shareminds"))
     searchComm__<Sharemind_init,XOR_Share>(s_init,garbage);
     s_init.finalize(ips);
 }
-/* else if(argv[2] == std::string("rep")) */
-/* { */
-/*     Replicated_init init_protocol = Replicated_init(); */
-/*     searchComm__<Replicated_init,Share>(init_protocol,garbage); */
-/*     init_protocol.finalize(ips); */
-/* } */
+else if(argv[2] == std::string("rep"))
+{
+    Replicated_init init_protocol = Replicated_init();
+    searchComm__<Replicated_init,Share>(init_protocol,garbage);
+    init_protocol.finalize(ips);
+}
 clock_t time_init_finished = clock ();
 /* printf("creating receiving servers\n"); */
 printf("Time measured to initialize program: %fs \n", double((time_init_finished - time_init_start)) / CLOCKS_PER_SEC);
@@ -320,11 +320,11 @@ else if(argv[2] == std::string("shareminds"))
     Sharemind protocol = Sharemind(true);
     searchComm__<Sharemind,XOR_Share>(protocol,*found);
 }
-/* else if(argv[2] == std::string("rep")) */
-/* { */
-/*     Replicated protocol = Replicated(); */
-/*     searchComm__<Replicated,Share>(protocol,*found); */
-/* } */
+else if(argv[2] == std::string("rep"))
+{
+    Replicated protocol = Replicated();
+    searchComm__<Replicated,Share>(protocol,*found);
+}
 double time = std::chrono::duration_cast<std::chrono::microseconds>(
                      std::chrono::high_resolution_clock::now() - c1)
                      .count();
