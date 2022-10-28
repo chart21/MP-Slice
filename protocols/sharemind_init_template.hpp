@@ -52,12 +52,10 @@ DATATYPE share(DATATYPE a)
 {
 sending_args[pprev].elements_to_send[sending_args[pprev].send_rounds] += 1;
 sending_args[pnext].elements_to_send[sending_args[pnext].send_rounds] +=1;
-DATATYPE dummy;
-return dummy;
-      }
-
-
-
+/* DATATYPE dummy; */
+/* return dummy; */
+return a;
+}
 
 
 void share(DATATYPE a[], int length)
@@ -186,6 +184,63 @@ else
 receive_from_comm(a, id, l);
 }
 }
+
+void complete_receive_from_comm(DATATYPE a[], int id, int l)
+{
+if(id == player_id)
+    return;
+else{
+int offset = {id > player_id ? 1 : 0};
+int player = id - offset;
+for (int i = 0; i < l; i++) {
+    receiving_args[player].elements_to_rec[receiving_args[player].rec_rounds -1] += 1;
+}
+}
+}
+
+
+void prepare_receive_from_comm(DATATYPE a[], int id, int l)
+{
+if(id == player_id)
+{
+for (int i = 0; i < l; i++) {
+    sending_args[pprev].elements_to_send[sending_args[pprev].send_rounds] += 1;
+    sending_args[pnext].elements_to_send[sending_args[pnext].send_rounds] +=1;
+    }
+}
+else {
+
+return;
+    }
+}
+
+void prepare_receive_from(DATATYPE a[], int id, int l)
+{
+if(input_srngs == true)
+{
+    return; //no sending needed
+}
+else
+{
+prepare_receive_from_comm(a, id, l);
+}
+}
+
+
+void complete_receive_from(DATATYPE a[], int id, int l)
+{
+if(input_srngs == true)
+{
+    return;
+}
+else
+{
+complete_receive_from_comm(a, id, l);
+}
+}
+
+
+
 void finalize(char** ips)
 {
 for(int t=0;t<(num_players-1);t++) {

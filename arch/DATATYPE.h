@@ -5,7 +5,7 @@
 #ifndef ORTHO
 #define ORTHO
 #endif
-#include "BOOL.h"
+#include "STD.h"
 #define n 1 << 12
 #define BITLENGTH 64
 #define US

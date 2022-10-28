@@ -240,13 +240,7 @@ for(int t=0;t<(num_players-1);t++) {
 /* Sharemind_init init_protocol = Sharemind_init(); */
 DATATYPE garbage = SET_ALL_ZERO();
 clock_t time_init_start = clock ();
-if(argv[2] == std::string("rep"))
-{
-    Replicated_init init_protocol = Replicated_init();
-    searchComm__<Replicated_init,Share>(init_protocol,garbage);
-    init_protocol.finalize(ips);
-}
-else if(argv[2] == std::string("sharemind"))
+if(argv[2] == std::string("sharemind"))
 {
     Sharemind_init s_init = Sharemind_init(false);
     searchComm__<Sharemind_init,XOR_Share>(s_init,garbage);
@@ -258,6 +252,12 @@ else if(argv[2] == std::string("shareminds"))
     searchComm__<Sharemind_init,XOR_Share>(s_init,garbage);
     s_init.finalize(ips);
 }
+/* else if(argv[2] == std::string("rep")) */
+/* { */
+/*     Replicated_init init_protocol = Replicated_init(); */
+/*     searchComm__<Replicated_init,Share>(init_protocol,garbage); */
+/*     init_protocol.finalize(ips); */
+/* } */
 clock_t time_init_finished = clock ();
 /* printf("creating receiving servers\n"); */
 printf("Time measured to initialize program: %fs \n", double((time_init_finished - time_init_start)) / CLOCKS_PER_SEC);
@@ -310,12 +310,7 @@ clock_t time_function_start = clock ();
 clock_gettime(CLOCK_REALTIME, &t1);
 std::chrono::high_resolution_clock::time_point c1 =
         std::chrono::high_resolution_clock::now();
-if(argv[2] == std::string("rep"))
-{
-    Replicated protocol = Replicated();
-    searchComm__<Replicated,Share>(protocol,*found);
-}
-else if(argv[2] == std::string("sharemind"))
+if(argv[2] == std::string("sharemind"))
 {
     Sharemind protocol = Sharemind(false);
     searchComm__<Sharemind,XOR_Share>(protocol,*found);
@@ -325,6 +320,11 @@ else if(argv[2] == std::string("shareminds"))
     Sharemind protocol = Sharemind(true);
     searchComm__<Sharemind,XOR_Share>(protocol,*found);
 }
+/* else if(argv[2] == std::string("rep")) */
+/* { */
+/*     Replicated protocol = Replicated(); */
+/*     searchComm__<Replicated,Share>(protocol,*found); */
+/* } */
 double time = std::chrono::duration_cast<std::chrono::microseconds>(
                      std::chrono::high_resolution_clock::now() - c1)
                      .count();
@@ -340,12 +340,11 @@ printf("Time measured to perform computation getTime: %fs \n", accum);
 printf("Time measured to perform computation chrono: %fs \n", time / 1000000);
 /* printf("Time measured in total: %fs \n", double((time_computation_finished - time_application_start)) / CLOCKS_PER_SEC); */
 clock_gettime(CLOCK_REALTIME, &t1);
-DATATYPE dummy[64];
-for (uint64_t i = 0; i < 1000000000*64UL; i++) {
-next();
-}
-clock_gettime(CLOCK_REALTIME, &t2);
-accum = ( t2.tv_sec - t1.tv_sec )
-+ (double)( t2.tv_nsec - t1.tv_nsec ) / (double) 1000000000L;
-printf("Time measured to perform 1B Random Values getTime: %fs \n", accum);
+/* DATATYPE dummy[64]; */
+/* for (uint64_t i = 0; i < 1000000000*64UL; i++) { */
+/* next(); */
+/* } */
+/* clock_gettime(CLOCK_REALTIME, &t2); */
+/* accum = ( t2.tv_sec - t1.tv_sec ) */
+/* + (double)( t2.tv_nsec - t1.tv_nsec ) / (double) 1000000000L; */
 }

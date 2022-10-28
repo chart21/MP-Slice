@@ -212,15 +212,20 @@ for (int i = 0; i < l; i++) {
 }
 }
 }
-void receive_from_comm(DATATYPE a[], int id, int l)
+void receive_from_comm(XOR_Share a[], int id, int l)
 {
 if(id == player_id)
 {
 /* result = receiving_args[num_players-1].received_elements[rounds - 1][share_buffer[id]]; */
-for (int i = 0; i < l; i++) {
-  a[i] = player_input[share_buffer[id]];
-    share_buffer[id]+=1;
-}
+
+    return; // input is already set in sharing phase
+
+    /* for (int i = 0; i < l; i++) { */
+/*   a[i] = player_input[share_buffer[id]]; */
+/*     share_buffer[id]+=1; */
+
+
+    /* } */
 }
 else{
 int offset = {id > player_id ? 1 : 0};
@@ -242,6 +247,55 @@ else
 receive_from_comm(a, id, l);
 }
 }
+
+
+void prepare_receive_from_comm(DATATYPE a[], int id, int length)
+{
+if(id == player_id)
+{
+    for(int l = 0; l < length; l++)
+    {
+        a[l] = share(player_input[share_buffer[id]]);  
+        share_buffer[id]+=1;
+    }
+}
+}
+
+void prepare_receive_from(DATATYPE a[], int id, int l)
+{
+if(input_srngs == true)
+{
+    return; //no sending needed
+}
+else
+{
+prepare_receive_from_comm(a, id, l);
+}
+}
+
+void complete_receive_from_comm(DATATYPE a[], int id, int l)
+{
+
+if(id != player_id)
+{
+    receive_from_comm(a,id,l);
+}
+}
+
+void complete_receive_from(DATATYPE a[], int id, int l)
+{
+if(input_srngs == true)
+{
+    receive_from_SRNG(a,id,l);
+}
+else
+{
+complete_receive_from_comm(a, id, l);
+}
+}
+
+
+
 XOR_Share* alloc_Share(int l)
 {
     return new DATATYPE[l];

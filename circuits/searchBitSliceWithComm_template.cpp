@@ -50,25 +50,27 @@ S (*dataset)[BITLENGTH] = (S ((*)[BITLENGTH])) P.alloc_Share(((int) n)*BITLENGTH
 S* element = P.alloc_Share(BITLENGTH);
 
 
-if(player_id == 0)
-{
-/* for (int i = 0; i < n; i++) { */
-/*     for (int j = 0; j < BITLENGTH; j++) { */
-/*       dataset[i][j] = P.share(dataset[i][j]); */
-/*   } */
+/* if(player_id == 0) */
+/* { */
+/* /1* for (int i = 0; i < n; i++) { *1/ */
+/* /1*     for (int j = 0; j < BITLENGTH; j++) { *1/ */
+/* /1*       dataset[i][j] = P.share(dataset[i][j]); *1/ */
+/* /1*   } *1/ */
+/* /1* } *1/ */
+/* /1* P_share( (DATATYPE*) dataset,n*BITLENGTH); *1/ */
+/* P.share( (S*) dataset,(n)*BITLENGTH); */
 /* } */
-/* P_share( (DATATYPE*) dataset,n*BITLENGTH); */
-P.share( (S*) dataset,(n)*BITLENGTH);
-}
-else if(player_id == 1)
-{
+/* else if(player_id == 1) */
+/* { */
 
-P.share(element,BITLENGTH);
-    /* for (int j = 0; j < BITLENGTH; j++) */ 
-    /*   element[j] = P.share(element[j]); */
-/* P_share(element,BITLENGTH); */
-}
+/* P.share(element,BITLENGTH); */
+/*     /1* for (int j = 0; j < BITLENGTH; j++) *1/ */ 
+/*     /1*   element[j] = P.share(element[j]); *1/ */
+/* /1* P_share(element,BITLENGTH); *1/ */
+/* } */
 
+P.prepare_receive_from((S*) dataset,0,(n)*BITLENGTH);
+P.prepare_receive_from(element,1,BITLENGTH);
 
 
 P.communicate();
@@ -76,8 +78,8 @@ P.communicate();
 // change to receive from
 
 
-P.receive_from((S*) dataset,0,(n)*BITLENGTH);
-P.receive_from(element,1,BITLENGTH);
+P.complete_receive_from((S*) dataset,0,(n)*BITLENGTH);
+P.complete_receive_from(element,1,BITLENGTH);
 /* P.receive_from_SRNG((Share*) dataset,0,BITLENGTH*n); */
 /* P.receive_from_SRNG(element,1,BITLENGTH); */
 
