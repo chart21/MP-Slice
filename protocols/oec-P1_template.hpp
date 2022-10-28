@@ -87,6 +87,8 @@ if(id == 1)
 {
 for(int i = 0; i < l; i++)
 {
+    a[i] = player_input[share_buffer[2]];
+    share_buffer[2] += 1;
     a[i] = XOR(a[i],getRandomVal(0));
     sending_args[1].sent_elements[sending_rounds][sb] = a[i];
     sb+=1;
@@ -102,8 +104,8 @@ int offset = {id > player_id ? 1 : 0};
 int player = id - offset;
 for(int i = 0; i < l; i++)
 {
-a[i] = receiving_args[player].received_elements[rounds-1][rb];
-rb+=1;
+a[i] = receiving_args[player].received_elements[rounds-1][share_buffer[player]];
+share_buffer[player] +=1;
 }
 }
 

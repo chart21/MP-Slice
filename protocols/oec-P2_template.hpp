@@ -37,9 +37,9 @@ DATATYPE Xor(DATATYPE a, DATATYPE b)
 void prepare_and(DATATYPE &a, DATATYPE &b)
 {
 DATATYPE ry = getRandomVal(0);
-DATATYPE o1 = receiving_args[0].received_elements[rounds-1][rb];
-DATATYPE o2 = receiving_args[0].received_elements[rounds-1][rb+1];
-rb+=2;
+DATATYPE o1 = receiving_args[0].received_elements[rounds-1][share_buffer[0]];
+DATATYPE o2 = receiving_args[0].received_elements[rounds-1][share_buffer[0]+1];
+share_buffer[0]+=2;
 a = XOR(ry, XOR(AND(a,o1),AND(a,o2)));
 sending_args[1].sent_elements[sending_rounds][sb] = a; 
 sb+=1;
@@ -88,6 +88,8 @@ if(id == 2)
 {
 for(int i = 0; i < l; i++)
 {
+    a[i] = player_input[share_buffer[2]];
+    share_buffer[2] += 1;
     a[i] = XOR(a[i],getRandomVal(0));
     sending_args[1].sent_elements[sending_rounds][sb] = a[i];
     sb+=1;
@@ -102,8 +104,8 @@ if(id == player_id)
 
 for(int i = 0; i < l; i++)
 {
-a[i] = receiving_args[id].received_elements[rounds-1][rb];
-rb+=1;
+a[i] = receiving_args[id].received_elements[rounds-1][share_buffer[id]];
+share_buffer[id] +=1;
 }
 
 
@@ -141,6 +143,8 @@ double time = std::chrono::duration_cast<std::chrono::microseconds>(
 printf("Time spent waiting for data chrono: %fs \n", time / 1000000);
 
 rb = 0;
+for(int t = 0; t < num_players-1; t++)
+    share_buffer[t] = 0;
 }
 
 void send_and_receive()

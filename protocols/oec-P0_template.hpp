@@ -23,7 +23,7 @@ XOR_Share public_val(DATATYPE a)
 
 DATATYPE Not(DATATYPE a)
 {
-   return Not(a);
+   return NOT(a);
 }
 
 // Receive sharing of ~XOR(a,b) locally
@@ -131,6 +131,8 @@ if(id == 0)
 {
     for(int i = 0; i < l; i++)
     {
+    a[i] = player_input[share_buffer[2]];
+    share_buffer[2] += 1;
     DATATYPE r = XOR(getRandomVal(2),a[i]);
     sending_args[0].sent_elements[sending_rounds][sb] = r;
     sending_args[1].sent_elements[sending_rounds][sb] = r;
