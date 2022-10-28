@@ -16,6 +16,13 @@
 #include "protocols/replicated_template.hpp"
 #include "protocols/replicated_init_template.hpp"
 
+#include "protocols/oec-P0_init_template.hpp"
+#include "protocols/oec-P1_init_template.hpp"
+#include "protocols/oec-P2_init_template.hpp"
+#include "protocols/oec-P0_template.hpp"
+#include "protocols/oec-P1_template.hpp"
+#include "protocols/oec-P2_template.hpp"
+
 #include "utils/randomizer.h"
 #include "utils/timing.hpp"
 #include "networking/client.c"
@@ -258,6 +265,28 @@ else if(argv[2] == std::string("rep"))
     searchComm__<Replicated_init,Share>(init_protocol,garbage);
     init_protocol.finalize(ips);
 }
+else if(argv[2] == std::string("oec"))
+{
+    if(player_id == 0)
+    {
+    OEC0_init init_protocol = OEC0_init();
+    searchComm__<OEC0_init,XOR_Share>(init_protocol,garbage);
+    init_protocol.finalize(ips);
+
+    }
+    else if(player_id == 1){
+    OEC1_init init_protocol = OEC1_init();
+    searchComm__<OEC1_init,XOR_Share>(init_protocol,garbage);
+    init_protocol.finalize(ips);
+    
+    }
+    else if(player_id == 2){
+        OEC2_init init_protocol = OEC2_init();
+    searchComm__<OEC2_init,XOR_Share>(init_protocol,garbage);
+    init_protocol.finalize(ips);
+
+    }
+}
 clock_t time_init_finished = clock ();
 /* printf("creating receiving servers\n"); */
 printf("Time measured to initialize program: %fs \n", double((time_init_finished - time_init_start)) / CLOCKS_PER_SEC);
@@ -324,6 +353,23 @@ else if(argv[2] == std::string("rep"))
 {
     Replicated protocol = Replicated();
     searchComm__<Replicated,Share>(protocol,*found);
+}
+else if(argv[2] == std::string("oec"))
+{
+    if(player_id == 0)
+    {
+    OEC0 protocol = OEC0();
+    searchComm__<OEC0,XOR_Share>(protocol,*found);
+    }
+    else if(player_id == 1){
+    OEC1 protocol = OEC1();
+    searchComm__<OEC1,XOR_Share>(protocol,*found);
+    
+    }
+    else if(player_id == 2){
+    OEC2 protocol = OEC2();
+    searchComm__<OEC2,XOR_Share>(protocol,*found);
+    }
 }
 double time = std::chrono::duration_cast<std::chrono::microseconds>(
                      std::chrono::high_resolution_clock::now() - c1)
