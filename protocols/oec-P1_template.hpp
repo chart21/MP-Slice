@@ -100,13 +100,27 @@ void complete_receive_from(DATATYPE a[], int id, int l)
 {
 if(id == player_id)
     return;
-int offset = {id > player_id ? 1 : 0};
-int player = id - offset;
+else if(id == 0)
+{
+    for(int i = 0; i < l; i++)
+        a[i] = SET_ALL_ZERO();
+}
+else if(id == 2)
+{
 for(int i = 0; i < l; i++)
 {
-a[i] = receiving_args[player].received_elements[rounds-1][share_buffer[player]];
-share_buffer[player] +=1;
+a[i] = receiving_args[1].received_elements[rounds-1][share_buffer[1]];
+share_buffer[1] +=1;
 }
+}
+
+/* int offset = {id > player_id ? 1 : 0}; */
+/* int player = id - offset; */
+/* for(int i = 0; i < l; i++) */
+/* { */
+/* a[i] = receiving_args[player].received_elements[rounds-1][share_buffer[player]]; */
+/* share_buffer[player] +=1; */
+/* } */
 }
 
 void send()

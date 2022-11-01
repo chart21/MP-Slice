@@ -87,15 +87,17 @@ XOR_Share* alloc_Share(int l)
 
 void prepare_receive_from(DATATYPE a[], int id, int l)
 {
-if(id == 0)
-{
-    for(int i = 0; i < l; i++)
-    {
-        sending_args[0].elements_to_send[sending_args[0].send_rounds] += 1;
-        sending_args[1].elements_to_send[sending_args[1].send_rounds] += 1;
-    }
+return;
+/* old: */
+/* if(id == 0) */
+/* { */
+/*     for(int i = 0; i < l; i++) */
+/*     { */
+/*         sending_args[0].elements_to_send[sending_args[0].send_rounds] += 1; */
+/*         sending_args[1].elements_to_send[sending_args[1].send_rounds] += 1; */
+/*     } */
 
-}
+/* } */
 }
 
 

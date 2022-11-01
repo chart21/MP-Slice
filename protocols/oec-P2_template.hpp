@@ -101,14 +101,24 @@ void complete_receive_from(DATATYPE a[], int id, int l)
 {
 if(id == player_id)
     return;
-
+else if(id == 0)
+{
+    for(int i = 0; i < l; i++)
+        a[i] = SET_ALL_ZERO();
+}
+else if(id == 1)
+{
 for(int i = 0; i < l; i++)
 {
-a[i] = receiving_args[id].received_elements[rounds-1][share_buffer[id]];
-share_buffer[id] +=1;
+a[i] = receiving_args[1].received_elements[rounds-1][share_buffer[1]];
+share_buffer[1] +=1;
 }
-
-
+}
+/* for(int i = 0; i < l; i++) */
+/* { */
+/* a[i] = receiving_args[id].received_elements[rounds-1][share_buffer[id]]; */
+/* share_buffer[id] +=1; */
+/* } */
 }
 
 

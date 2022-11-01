@@ -99,10 +99,15 @@ if(id == 2)
 
 void complete_receive_from(DATATYPE a[], int id, int l)
 {
-if(id == player_id)
-    return;
+if(id == 1)
+{
 for(int i = 0; i < l; i++)
-    receiving_args[id].elements_to_rec[receiving_args[id].rec_rounds -1] += 1;
+    receiving_args[1].elements_to_rec[receiving_args[1].rec_rounds -1] += 1;
+}
+/* if(id == player_id) */
+/*     return; */
+/* for(int i = 0; i < l; i++) */
+/*     receiving_args[id].elements_to_rec[receiving_args[id].rec_rounds -1] += 1; */
 }
 
 

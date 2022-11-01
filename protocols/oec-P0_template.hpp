@@ -125,12 +125,15 @@ XOR_Share* alloc_Share(int l)
 }
 
 
-void prepare_receive_from(DATATYPE a[], int id, int l)
+
+void prepare_receive_from_old(DATATYPE a[], int id, int l)
 {
+
 if(id == 0)
 {
     for(int i = 0; i < l; i++)
     {
+    //special sharing technique, P0 keeps it inputs, the other parties hold share=0
     a[i] = player_input[share_buffer[2]];
     share_buffer[2] += 1;
     /* sending_args[0].sent_elements[sending_rounds][sb] = 0; */
@@ -142,6 +145,29 @@ if(id == 0)
     sending_args[1].sent_elements[sending_rounds][sb] = a[i];
     sb += 1;
     a[i] = r;
+    }
+
+}
+}
+
+void prepare_receive_from(DATATYPE a[], int id, int l)
+{
+if(id == 0)
+{
+    for(int i = 0; i < l; i++)
+    {
+    //special sharing technique, P0 keeps it inputs, the other parties hold share=0
+    a[i] = player_input[share_buffer[2]];
+    share_buffer[2] += 1;
+    /* sending_args[0].sent_elements[sending_rounds][sb] = 0; */
+    /* sending_args[1].sent_elements[sending_rounds][sb] = 0; */
+    /* sb += 1; */
+    /* DATATYPE r = getRandomVal(2); //should be an SRNG shared by P0,P1,P2 to save communication */
+    /* a[i] = XOR(r,a[i]); */
+    /* sending_args[0].sent_elements[sending_rounds][sb] = SET_ALL_ZERO(); */
+    /* sending_args[1].sent_elements[sending_rounds][sb] = SET_ALL_ZERO(); */
+    /* sb += 1; */
+    /* a[i] = r; */
     }
 
 }

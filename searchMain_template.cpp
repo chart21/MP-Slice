@@ -199,6 +199,7 @@ srng = NEW(DATATYPE[num_players][BITLENGTH]);
 init_srng(pprev, modulo((player_id - 1),  num_players) + 5000);
 init_srng(pnext,player_id + 5000);
 init_srng(num_players-1, player_id+6000); // used for sharing inputs
+/* init_srng(num_players, num_players+6000); */ 
 
 if(player_id == 0)
 {

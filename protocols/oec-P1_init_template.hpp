@@ -98,12 +98,18 @@ if(id == 1)
 
 void complete_receive_from(DATATYPE a[], int id, int l)
 {
-if(id == player_id)
-    return;
-int offset = {id > player_id ? 1 : 0};
-int player = id - offset;
+if(id == 2)
+{
 for(int i = 0; i < l; i++)
-    receiving_args[player].elements_to_rec[receiving_args[player].rec_rounds -1] += 1;
+    receiving_args[1].elements_to_rec[receiving_args[1].rec_rounds -1] += 1;
+}
+
+    /* if(id == player_id) */
+/*     return; */
+/* int offset = {id > player_id ? 1 : 0}; */
+/* int player = id - offset; */
+/* for(int i = 0; i < l; i++) */
+/*     receiving_args[player].elements_to_rec[receiving_args[player].rec_rounds -1] += 1; */
 }
 
 
