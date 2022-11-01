@@ -18,6 +18,7 @@ OEC0() {}
 
 XOR_Share public_val(DATATYPE a)
 {
+    a = SET_ALL_ZERO();
     return a;
 }
 
