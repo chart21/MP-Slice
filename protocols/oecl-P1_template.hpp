@@ -19,12 +19,12 @@ OECL1() {}
 
 OECL_Share public_val(DATATYPE a)
 {
-    OECL_Share s = OECL_Share(a,SET_ALL_ZERO());
-    return s;
+    return OECL_Share(a,SET_ALL_ZERO());
 }
 
 OECL_Share Not(OECL_Share a)
 {
+    a.p1 = NOT(a.p1);
    return a;
 }
 
@@ -40,10 +40,10 @@ OECL_Share Xor(OECL_Share a, OECL_Share b)
 void prepare_and(OECL_Share &a, OECL_Share &b)
 {
 /* DATATYPE rx = getRandomVal(0); */
-a.p2 = getRandomVal(0);
-a.p1 = XOR(a.p2, XOR ( b.p2  , XOR(AND(a.p1,a.p2), AND(b.p1,b.p2))));
-sending_args[1].sent_elements[sending_rounds][sb] = a.p1;
-sb+=1;
+a.p1 = XOR(getRandomVal(0), XOR(AND(a.p1,b.p2), AND(b.p1,a.p2))); //remove P1_mask, then (a+ra)rl + (b+rb)rr 
+a.p2 = getRandomVal(0); //generate P1_2 mask
+sending_args[1].sent_elements[sending_rounds][send_count[1]] = XOR(a.p1,a.p2); //apply P1_2 mask
+send_count[1]+=1;
 
 }
 
@@ -51,13 +51,12 @@ sb+=1;
 OECL_Share complete_and(OECL_Share a, OECL_Share b)
 {
 // a.p2 already set in last round
-a.p1 = XOR(a.p1, receiving_args[1].received_elements[rounds-1][rb]);
-rb+=1;
-
+a.p1 = XOR(a.p1, receiving_args[1].received_elements[rounds-1][share_buffer[1]]);
+share_buffer[1]+=1;
 return a; 
 }
 
-void prepare_reveal_to_all(DATATYPE a)
+void prepare_reveal_to_all(OECL_Share a)
 {
 return;
 }    
@@ -68,8 +67,9 @@ DATATYPE complete_Reveal(OECL_Share a)
 {
 /* for(int t = 0; t < num_players-1; t++) */ 
 /*     receiving_args[t].elements_to_rec[rounds-1]+=1; */
-a.p1 = XOR(a.p1,receiving_args[0].received_elements[rounds-1][rb]); 
-rb+=1;
+
+a.p1 = XOR(a.p1,receiving_args[0].received_elements[rounds-1][share_buffer[0]]); 
+share_buffer[0]+=1;
 return a.p1;
 }
 
@@ -86,31 +86,34 @@ OECL_Share* alloc_Share(int l)
 
 void prepare_receive_from(OECL_Share a[], int id, int l)
 {
-if(id == 1)
+if(id == 0)
+{
+    for(int i = 0; i < l; i++)
+    {
+        a[i].p2 = getRandomVal(0);
+    }
+}
+else if(id == 1)
 {
 for(int i = 0; i < l; i++)
 {
     a[i].p1 = player_input[share_buffer[2]];
     share_buffer[2] += 1;
-    /* a[i].p1 = XOR(a[i].p1,getRandomVal(0)); */
-    /* sending_args[1].sent_elements[sending_rounds][sb] = a[i].p1; */
-    /* sb+=1; */
-    a[i].p2 = SET_ALL_ZERO();
+    a[i].p2 = getRandomVal(0);
+    sending_args[1].sent_elements[sending_rounds][send_count[1]] = XOR(a[i].p1,a[i].p2);
+    send_count[1]+=1;
 }
 }
 }
 
 void complete_receive_from(OECL_Share a[], int id, int l)
 {
-if(id == player_id)
-    return;
-else if(id == 0)
+if(id == 0)
 {
     for(int i = 0; i < l; i++)
     {
         a[i].p1 = receiving_args[0].received_elements[rounds-1][share_buffer[0]];
         share_buffer[0] +=1;
-        a[i].p2 = getRandomVal(0);
     }
 }
 else if(id == 2)
@@ -133,9 +136,11 @@ a[i].p2 = SET_ALL_ZERO();
 /* } */
 }
 
+
 void send()
 {
-sb = 0;      
+send_count[0]=0;
+send_count[1]=0;
     for(int t = 0; t < num_players-1; t++)
         sending_args[t].sent_elements[sending_rounds + 1] = NEW(DATATYPE[sending_args[t].elements_to_send[sending_rounds + 1]]); // Allocate memory for all sending buffers for next round
     pthread_mutex_lock(&mtx_send_next); 
@@ -163,7 +168,8 @@ double time = std::chrono::duration_cast<std::chrono::microseconds>(
       pthread_mutex_unlock(&mtx_receive_next);
 printf("Time spent waiting for data chrono: %fs \n", time / 1000000);
 
-rb = 0;
+share_buffer[0] = 0;
+share_buffer[1] = 0;
 }
 
 void send_and_receive()

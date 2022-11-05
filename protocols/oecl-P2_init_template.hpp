@@ -107,7 +107,7 @@ for(int i = 0; i < l; i++)
 else if(id == 0)
 {
 for(int i = 0; i < l; i++)
-    receiving_args[0].elements_to_rec[receiving_args[1].rec_rounds -1] += 1;
+    receiving_args[0].elements_to_rec[receiving_args[0].rec_rounds -1] += 1;
 } 
 /* if(id == player_id) */
 /*     return; */

@@ -114,9 +114,16 @@ for (int i = 0; i < n; i++) {
   }
  
   found = SET_ALL_ZERO(); 
-  S sfound = P.public_val(found);
+  /* S sfound = P.public_val(found); */
 
-  for (int i = 0; i < n; i++) {
+  /* for (int i = 0; i < n; i++) { */
+  /*   sfound = P.Xor(dataset[i][0],sfound); */ 
+
+  /* } */
+  
+  S sfound = dataset[0][0];
+
+  for (int i = 1; i < n; i++) {
     sfound = P.Xor(dataset[i][0],sfound); 
 
   }

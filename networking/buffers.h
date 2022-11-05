@@ -6,6 +6,7 @@ receiver_args receiving_args[num_players];
 int rounds;
 int rb;
 int sb;
+int send_count[num_players] = {0};
 int share_buffer[num_players] = {0};
 int reveal_buffer[num_players] = {0};
 int total_comm;

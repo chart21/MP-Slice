@@ -19,14 +19,11 @@ OECL0() {}
 
 OECL_Share public_val(DATATYPE a)
 {
-    OECL_Share s(SET_ALL_ZERO(),SET_ALL_ZERO());
-    return s;
+    return OECL_Share(SET_ALL_ZERO(),SET_ALL_ZERO());
 }
 
 OECL_Share Not(OECL_Share a)
 {
-    a.p1 = NOT(a.p1);
-    a.p2 = NOT(a.p2);
    return a;
 }
 
@@ -48,13 +45,17 @@ void prepare_and(OECL_Share &a, OECL_Share &b)
 
 /* DATATYPE rx = getRandomVal(0); */
 /* DATATYPE ry = getRandomVal(1); */
-DATATYPE maskP1 = XOR(a.p1,b.p1);
-DATATYPE maskP2 = XOR(a.p2,b.p2);
-DATATYPE maskP1_2 = getRandomVal(0);
+/* DATATYPE maskP1 = XOR(a.p1,b.p1); */
+/* DATATYPE maskP2 = XOR(a.p2,b.p2); */
 
-sending_args[1].sent_elements[sending_rounds][sb] = XOR( XOR(XOR(maskP1, maskP2), maskP1_2) ,  XOR( XOR( AND(a.p1,a.p2) , AND(b.p1,b.p2) ) ,  AND(b.p1,b.p2) ) ); 
+DATATYPE maskP1 = getRandomVal(0);
+DATATYPE maskP1_2 = getRandomVal(0);
+DATATYPE maskP2 = getRandomVal(1);
+
+sending_args[1].sent_elements[sending_rounds][send_count[1]] = XOR(maskP1,  XOR( XOR( AND(a.p1,b.p2) , AND(a.p2,b.p1) ) ,  AND(a.p2,b.p2) ) ); 
+// maskP1 + ra rl + rr rb + rr rl
 /* sending_args[1].sent_elements[sending_rounds][sb] = XOR( XOR(rx, ry),  XOR( XOR( AND(a.p1,a.p2) , AND(b.p1,b.p2) ) ,  AND(b.p1,b.p2) ) ); */ 
-sb+=1;
+send_count[1] += 1;
 a.p1 = maskP2;
 a.p2 = maskP1_2;
 }
@@ -66,9 +67,10 @@ return a;
 
 void prepare_reveal_to_all(OECL_Share a)
 {
-    sending_args[0].sent_elements[sending_rounds][sb] = a.p1;
-    sending_args[1].sent_elements[sending_rounds][sb] = a.p2;
-    sb += 1;
+    sending_args[0].sent_elements[sending_rounds][send_count[0]] = a.p1;
+    sending_args[1].sent_elements[sending_rounds][send_count[1]] = a.p2;
+    send_count[0] += 1;
+    send_count[1] += 1;
 }    
 
 
@@ -77,14 +79,15 @@ DATATYPE complete_Reveal(OECL_Share a)
 {
 /* for(int t = 0; t < num_players-1; t++) */ 
 /*     receiving_args[t].elements_to_rec[rounds-1]+=1; */
-DATATYPE result = XOR(a.p2,receiving_args[1].received_elements[rounds-1][rb]); 
-rb+=1;
+DATATYPE result = XOR(a.p2,receiving_args[1].received_elements[rounds-1][share_buffer[1]]); 
+share_buffer[1]+=1;
 return result;
 }
 
 void send()
 {
-sb = 0;      
+send_count[0] = 0;
+send_count[1] = 0;
     for(int t = 0; t < num_players-1; t++)
         sending_args[t].sent_elements[sending_rounds + 1] = NEW(DATATYPE[sending_args[t].elements_to_send[sending_rounds + 1]]); // Allocate memory for all sending buffers for next round
     pthread_mutex_lock(&mtx_send_next); 
@@ -95,6 +98,8 @@ sb = 0;
 }
 
 void receive(){
+share_buffer[0] = 0;
+share_buffer[1] = 0;
         rounds+=1;  
         // receive_data
       //wait until all sockets have finished received their last data
@@ -112,7 +117,6 @@ double time = std::chrono::duration_cast<std::chrono::microseconds>(
       pthread_mutex_unlock(&mtx_receive_next);
 printf("Time spent waiting for data chrono: %fs \n", time / 1000000);
 
-rb = 0;
 }
 
 void communicate()
@@ -136,9 +140,10 @@ if(id == 0)
     {
     a[i].p1 = getRandomVal(1);
     a[i].p2 = getRandomVal(0);
-    sending_args[0].sent_elements[sending_rounds][sb] = XOR(a[i].p1,player_input[share_buffer[2]]);
-    sending_args[1].sent_elements[sending_rounds][sb] = XOR(a[i].p2,player_input[share_buffer[2]]);
-    sb += 1;
+    sending_args[0].sent_elements[sending_rounds][send_count[0]] = XOR(a[i].p1,player_input[share_buffer[2]]);
+    sending_args[1].sent_elements[sending_rounds][send_count[1]] = XOR(a[i].p2,player_input[share_buffer[2]]);
+    send_count[0]+=1;
+    send_count[1]+=1;
     share_buffer[2] += 1;
     /* DATATYPE r = getRandomVal(2); //should be an SRNG shared by P0,P1,P2 to save communication */
     /* a[i] = XOR(r,a[i]); */
@@ -158,7 +163,7 @@ for(int i = 0; i < l; i++)
 
 
 }
-else // id ==2
+else if(id == 2)// id ==2
 {
     for(int i = 0; i < l; i++)
     {
@@ -169,7 +174,7 @@ else // id ==2
 }
 }
 
-void complete_receive_from(DATATYPE a[], int id, int l)
+void complete_receive_from(OECL_Share a[], int id, int l)
 {
     return;
 }
@@ -217,7 +222,5 @@ for(int t=0;t<(num_players-1);t++) {
 }
 rounds = 0;
 sending_rounds = 0;
-rb = 0;
-sb = 0;
 }
 };
