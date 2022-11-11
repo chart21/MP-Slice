@@ -14,6 +14,9 @@ class OECL2_init
 {
 public:
 OECL2_init() {}
+bool optimized_sharing;
+public:
+OECL2_init(bool optimized_sharing) {this->optimized_sharing = optimized_sharing;}
 void send_and_receive()
 {
 for (int t = 0; t < 2; t++)

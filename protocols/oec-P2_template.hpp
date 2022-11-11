@@ -13,8 +13,10 @@
 #include "sharemind_base.hpp"
 class OEC2
 {
+bool optimized_sharing;
 public:
-OEC2() {}
+OEC2(bool optimized_sharing) {this->optimized_sharing = optimized_sharing;}
+
 XOR_Share public_val(DATATYPE a)
 {
     return a;
@@ -103,8 +105,19 @@ if(id == player_id)
     return;
 else if(id == 0)
 {
-    for(int i = 0; i < l; i++)
-        a[i] = SET_ALL_ZERO();
+    if(optimized_sharing == true)
+    {
+        for(int i = 0; i < l; i++)
+            a[i] = SET_ALL_ZERO();
+    }
+    else
+    {
+        for(int i = 0; i < l; i++)
+        {
+            a[i] = receiving_args[0].received_elements[rounds-1][share_buffer[0]];
+            share_buffer[0] +=1;
+        }
+    }
 }
 else if(id == 1)
 {

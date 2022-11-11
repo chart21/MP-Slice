@@ -13,8 +13,9 @@
 #include "sharemind_base.hpp"
 class OEC0
 {
+bool optimized_sharing;
 public:
-OEC0() {}
+OEC0(bool optimized_sharing) {this->optimized_sharing = optimized_sharing;}
 
 XOR_Share public_val(DATATYPE a)
 {
@@ -126,7 +127,7 @@ XOR_Share* alloc_Share(int l)
 
 
 
-void prepare_receive_from_old(DATATYPE a[], int id, int l)
+void share_unoptimized(DATATYPE a[], int id, int l)
 {
 
 if(id == 0)
@@ -154,6 +155,12 @@ void prepare_receive_from(DATATYPE a[], int id, int l)
 {
 if(id == 0)
 {
+    if(optimized_sharing == false)
+    {
+        share_unoptimized(a, id, l);
+    }
+    else
+    {
     for(int i = 0; i < l; i++)
     {
     //special sharing technique, P0 keeps it inputs, the other parties hold share=0
@@ -169,7 +176,9 @@ if(id == 0)
     /* sb += 1; */
     /* a[i] = r; */
     }
+    
 
+}
 }
 else{
 for(int i = 0; i < l; i++)

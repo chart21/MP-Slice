@@ -14,8 +14,9 @@
 #include "oecl_base.hpp"
 class OECL1
 {
+bool optimized_sharing;
 public:
-OECL1() {}
+OECL1(bool optimized_sharing) {this->optimized_sharing = optimized_sharing;}
 
 OECL_Share public_val(DATATYPE a)
 {
@@ -110,11 +111,21 @@ void complete_receive_from(OECL_Share a[], int id, int l)
 {
 if(id == 0)
 {
+if(optimized_sharing == true)
+{
+    for(int i = 0; i < l; i++)
+    {
+        a[i].p1 = SET_ALL_ZERO(); 
+    }
+}
+else{
     for(int i = 0; i < l; i++)
     {
         a[i].p1 = receiving_args[0].received_elements[rounds-1][share_buffer[0]];
         share_buffer[0] +=1;
     }
+    
+}
 }
 else if(id == 2)
 {

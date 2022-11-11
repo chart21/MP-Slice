@@ -13,7 +13,9 @@
 class OEC2_init
 {
 public:
-OEC2_init() {}
+bool optimized_sharing;
+public:
+OEC2_init(bool optimized_sharing) {this->optimized_sharing = optimized_sharing;}
 void send_and_receive()
 {
 for (int t = 0; t < 2; t++)
@@ -103,6 +105,11 @@ if(id == 1)
 {
 for(int i = 0; i < l; i++)
     receiving_args[1].elements_to_rec[receiving_args[1].rec_rounds -1] += 1;
+}
+else if(id==0 && optimized_sharing == false)
+{
+for(int i = 0; i < l; i++)
+    receiving_args[0].elements_to_rec[receiving_args[0].rec_rounds -1] += 1;
 }
 /* if(id == player_id) */
 /*     return; */

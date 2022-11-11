@@ -225,11 +225,15 @@ char* ips[num_players-1];
 //char* hostnames[num_players-1];
 for(int i=0; i < num_players -1; i++)
 {
-    if(i < (argc - 2))
-        ips[i] = argv[i+3];
+    if(i < (argc - 3))
+        ips[i] = argv[i+4];
     else
         ips[i] = (char*) "127.0.0.1";
 }
+bool optimized_sharing = false;
+if(argv[3] == std::string("opt_share"))
+    optimized_sharing = true;
+
 pthread_mutex_init(&mtx_connection_established, NULL);
 pthread_mutex_init(&mtx_start_communicating, NULL);
 pthread_cond_init(&cond_successful_connection, NULL);
@@ -257,13 +261,7 @@ DATATYPE garbage = SET_ALL_ZERO();
 clock_t time_init_start = clock ();
 if(argv[2] == std::string("sharemind"))
 {
-    Sharemind_init s_init = Sharemind_init(false);
-    searchComm__<Sharemind_init,XOR_Share>(s_init,garbage);
-    s_init.finalize(ips);
-}
-else if(argv[2] == std::string("shareminds"))
-{
-    Sharemind_init s_init = Sharemind_init(true);
+    Sharemind_init s_init = Sharemind_init(optimized_sharing);
     searchComm__<Sharemind_init,XOR_Share>(s_init,garbage);
     s_init.finalize(ips);
 }
@@ -277,19 +275,19 @@ else if(argv[2] == std::string("oec"))
 {
     if(player_id == 0)
     {
-    OEC0_init init_protocol = OEC0_init();
+    OEC0_init init_protocol = OEC0_init(optimized_sharing);
     searchComm__<OEC0_init,XOR_Share>(init_protocol,garbage);
     init_protocol.finalize(ips);
 
     }
     else if(player_id == 1){
-    OEC1_init init_protocol = OEC1_init();
+    OEC1_init init_protocol = OEC1_init(optimized_sharing);
     searchComm__<OEC1_init,XOR_Share>(init_protocol,garbage);
     init_protocol.finalize(ips);
     
     }
     else if(player_id == 2){
-        OEC2_init init_protocol = OEC2_init();
+        OEC2_init init_protocol = OEC2_init(optimized_sharing);
     searchComm__<OEC2_init,XOR_Share>(init_protocol,garbage);
     init_protocol.finalize(ips);
 
@@ -299,19 +297,19 @@ else if(argv[2] == std::string("oecl"))
 {
     if(player_id == 0)
     {
-    OECL0_init init_protocol = OECL0_init();
+    OECL0_init init_protocol = OECL0_init(optimized_sharing);
     searchComm__<OECL0_init,XOR_Share>(init_protocol,garbage);
     init_protocol.finalize(ips);
 
     }
     else if(player_id == 1){
-    OECL1_init init_protocol = OECL1_init();
+    OECL1_init init_protocol = OECL1_init(optimized_sharing);
     searchComm__<OECL1_init,XOR_Share>(init_protocol,garbage);
     init_protocol.finalize(ips);
     
     }
     else if(player_id == 2){
-        OECL2_init init_protocol = OECL2_init();
+        OECL2_init init_protocol = OECL2_init(optimized_sharing);
     searchComm__<OECL2_init,XOR_Share>(init_protocol,garbage);
     init_protocol.finalize(ips);
 
@@ -371,12 +369,7 @@ std::chrono::high_resolution_clock::time_point c1 =
         std::chrono::high_resolution_clock::now();
 if(argv[2] == std::string("sharemind"))
 {
-    Sharemind protocol = Sharemind(false);
-    searchComm__<Sharemind,XOR_Share>(protocol,*found);
-}
-else if(argv[2] == std::string("shareminds"))
-{
-    Sharemind protocol = Sharemind(true);
+    Sharemind protocol = Sharemind(optimized_sharing);
     searchComm__<Sharemind,XOR_Share>(protocol,*found);
 }
 else if(argv[2] == std::string("rep"))
@@ -388,16 +381,16 @@ else if(argv[2] == std::string("oec"))
 {
     if(player_id == 0)
     {
-    OEC0 protocol = OEC0();
+    OEC0 protocol = OEC0(optimized_sharing);
     searchComm__<OEC0,XOR_Share>(protocol,*found);
     }
     else if(player_id == 1){
-    OEC1 protocol = OEC1();
+    OEC1 protocol = OEC1(optimized_sharing);
     searchComm__<OEC1,XOR_Share>(protocol,*found);
     
     }
     else if(player_id == 2){
-    OEC2 protocol = OEC2();
+    OEC2 protocol = OEC2(optimized_sharing);
     searchComm__<OEC2,XOR_Share>(protocol,*found);
     }
 }
@@ -405,17 +398,17 @@ else if(argv[2] == std::string("oecl"))
 {
     if(player_id == 0)
     {
-    OECL0 protocol = OECL0();
+    OECL0 protocol = OECL0(optimized_sharing);
     searchComm__<OECL0,OECL_Share>(protocol,*found);
     }
     else if(player_id == 1){
-    OECL1 protocol = OECL1();
+    OECL1 protocol = OECL1(optimized_sharing);
     searchComm__<OECL1,OECL_Share>(protocol,*found);
     
     }
     else if(player_id == 2){
-    OECL2 protocol = OECL2();
-    searchComm__<OECL2,OECL_Share>(protocol,*found);
+    OECL2 protocol = OECL2(optimized_sharing);
+    searchComm__<OECL2,XOR_Share>(protocol,*found);
     }
 }
 double time = std::chrono::duration_cast<std::chrono::microseconds>(

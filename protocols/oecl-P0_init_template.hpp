@@ -12,8 +12,9 @@
 #include "sharemind_base.hpp"
 class OECL0_init
 {
+bool optimized_sharing;
 public:
-OECL0_init() {}
+OECL0_init(bool optimized_sharing) {this->optimized_sharing = optimized_sharing;}
 void send_and_receive()
 {
 for (int t = 0; t < 2; t++)
@@ -89,8 +90,18 @@ void prepare_receive_from(DATATYPE a[], int id, int l)
 {
 /* return; */
 /* old: */
+
 if(id == 0)
 {
+if(optimized_sharing == true)
+{
+    for(int i = 0; i < l; i++)
+    {
+        sending_args[1].elements_to_send[sending_args[1].send_rounds] += 1;
+    }
+
+}
+else{
     for(int i = 0; i < l; i++)
     {
         sending_args[0].elements_to_send[sending_args[0].send_rounds] += 1;
@@ -98,8 +109,9 @@ if(id == 0)
     }
 
 }
-}
 
+}
+}
 
 void complete_receive_from(DATATYPE a[], int id, int l)
 {

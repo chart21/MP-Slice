@@ -16,6 +16,9 @@ class OECL0
 {
 public:
 OECL0() {}
+bool optimized_sharing;
+public:
+OECL0(bool optimized_sharing) {this->optimized_sharing = optimized_sharing;}
 
 OECL_Share public_val(DATATYPE a)
 {
@@ -136,6 +139,25 @@ void prepare_receive_from(OECL_Share a[], int id, int l)
 {
 if(id == 0)
 {
+    if(optimized_sharing == true)
+    {
+    for(int i = 0; i < l; i++)
+    {
+    a[i].p1 = player_input[share_buffer[2]];
+    a[i].p2 = getRandomVal(0);
+    sending_args[1].sent_elements[sending_rounds][send_count[1]] = XOR(a[i].p2,player_input[share_buffer[2]]);
+    send_count[0]+=1;
+    send_count[1]+=1;
+    share_buffer[2] += 1;
+    /* DATATYPE r = getRandomVal(2); //should be an SRNG shared by P0,P1,P2 to save communication */
+    /* a[i] = XOR(r,a[i]); */
+    /* sending_args[0].sent_elements[sending_rounds][sb] = SET_ALL_ZERO(); */
+    /* sending_args[1].sent_elements[sending_rounds][sb] = SET_ALL_ZERO(); */
+    /* sb += 1; */
+    /* a[i] = r; */
+    }
+
+    }
     for(int i = 0; i < l; i++)
     {
     a[i].p1 = getRandomVal(1);

@@ -12,8 +12,9 @@
 #include "sharemind_base.hpp"
 class OECL1_init
 {
+bool optimized_sharing;
 public:
-OECL1_init() {}
+OECL1_init(bool optimized_sharing) {this->optimized_sharing = optimized_sharing;}
 void send_and_receive()
 {
 for (int t = 0; t < 2; t++)

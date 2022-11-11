@@ -10,69 +10,70 @@
 // XOR_Share of each player is ~a
 #include "../utils/printing.hpp"
 #include "../utils/randomizer.h"
-//#include "sharemind_base.hpp"
+#include "sharemind_base.hpp"
 //
-#include "oecl_base.hpp"
+//#include "oecl_base.hpp"
 
 class OECL2
 {
+bool optimized_sharing;
 public:
-OECL2() {}
+OECL2(bool optimized_sharing) {this->optimized_sharing = optimized_sharing;}
 
-OECL_Share public_val(DATATYPE a)
+XOR_Share public_val(DATATYPE a)
 {
-    return OECL_Share(SET_ALL_ZERO(),a);
+    return a;
 }
 
-OECL_Share Not(OECL_Share a)
+XOR_Share Not(XOR_Share a)
 {
-    a.p2 = NOT(a.p2);
+    a = NOT(a);
    return a;
 }
 
 // Receive sharing of ~XOR(a,b) locally
-OECL_Share Xor(OECL_Share a, OECL_Share b)
+XOR_Share Xor(XOR_Share a, XOR_Share b)
 {
-   return OECL_Share(XOR(a.p1,b.p1),XOR(a.p2,b.p2));
+   return XOR(a,b);
 }
 
 
 
 //prepare AND -> send real value a&b to other P
-void prepare_and(OECL_Share &a, OECL_Share &b)
+void prepare_and(XOR_Share &a, XOR_Share &b)
 {
 
-a.p1 = getRandomVal(0); // P2 mask for P1
-a.p2 = XOR(receiving_args[0].received_elements[rounds-1][share_buffer[0]], AND(a.p2,b.p2)); // P0_message + (a+rr) (b+rl)
-sending_args[1].sent_elements[sending_rounds][send_count[1]] = XOR(a.p1,a.p2); // + P2 mask
+XOR_Share ap1 = getRandomVal(0); // P2 mask for P1
+a = XOR(receiving_args[0].received_elements[rounds-1][share_buffer[0]], AND(a,b)); // P0_message + (a+rr) (b+rl)
+sending_args[1].sent_elements[sending_rounds][send_count[1]] = XOR(ap1,a); // + P2 mask
 share_buffer[0]+=1;
 send_count[1]+=1;
 }
 
 // NAND both real Values to receive sharing of ~ (a&b) 
-OECL_Share complete_and(OECL_Share a, OECL_Share b)
+XOR_Share complete_and(XOR_Share a, XOR_Share b)
 {
-a.p2 = XOR(a.p2, receiving_args[1].received_elements[rounds-1][share_buffer[1]]);
+a = XOR(a, receiving_args[1].received_elements[rounds-1][share_buffer[1]]);
 share_buffer[1]+=1;
 
 return a; 
 }
 
-void prepare_reveal_to_all(OECL_Share a)
+void prepare_reveal_to_all(XOR_Share a)
 {
-sending_args[0].sent_elements[sending_rounds][send_count[0]] = a.p2;
+sending_args[0].sent_elements[sending_rounds][send_count[0]] = a;
 send_count[0] += 1;
 }    
 
 
 
-DATATYPE complete_Reveal(OECL_Share a)
+DATATYPE complete_Reveal(XOR_Share a)
 {
 /* for(int t = 0; t < num_players-1; t++) */ 
 /*     receiving_args[t].elements_to_rec[rounds-1]+=1; */
-a.p2 = XOR(a.p2,receiving_args[0].received_elements[rounds-1][share_buffer[0]]); 
+a = XOR(a,receiving_args[0].received_elements[rounds-1][share_buffer[0]]); 
 share_buffer[0]+=1;
-return a.p2;
+return a;
 }
 
 void communicate()
@@ -80,41 +81,34 @@ void communicate()
     send_and_receive();
 }
 
-OECL_Share* alloc_Share(int l)
+XOR_Share* alloc_Share(int l)
 {
-    return new OECL_Share[l];
+    return new XOR_Share[l];
 }
 
 
-void prepare_receive_from(OECL_Share a[], int id, int l)
+void prepare_receive_from(XOR_Share a[], int id, int l)
 {
-if(id == 0)
-{
-    for(int i = 0; i < l; i++)
-    {
-        a[i].p1 = getRandomVal(0);
-    }
-}
-else if(id == 2)
+if(id == 2)
 {
 for(int i = 0; i < l; i++)
 {
-    a[i].p2 = player_input[share_buffer[2]];
-    a[i].p1 = getRandomVal(0);
+    a[i] = player_input[share_buffer[2]];
+    /* a[i].p1 = getRandomVal(0); *1/ */
     share_buffer[2] += 1;
-    sending_args[1].sent_elements[sending_rounds][send_count[1]] = XOR(a[i].p1,a[i].p2);
+    sending_args[1].sent_elements[sending_rounds][send_count[1]] = XOR(getRandomVal(0),a[i]);
     send_count[1]+=1;
 }
 }
 }
 
-void complete_receive_from(OECL_Share a[], int id, int l)
+void complete_receive_from(XOR_Share a[], int id, int l)
 {
 if(id == 0)
 {
     for(int i = 0; i < l; i++)
     {
-        a[i].p2 = receiving_args[0].received_elements[rounds-1][share_buffer[0]];
+        a[i] = receiving_args[0].received_elements[rounds-1][share_buffer[0]];
         share_buffer[0] +=1;
     }
 }
@@ -122,8 +116,8 @@ else if(id == 1)
 {
 for(int i = 0; i < l; i++)
 {
-a[i].p1 = SET_ALL_ZERO();
-a[i].p2 = receiving_args[1].received_elements[rounds-1][share_buffer[1]];
+/* a[i].p1 = SET_ALL_ZERO(); */
+a[i] = receiving_args[1].received_elements[rounds-1][share_buffer[1]];
 share_buffer[1] +=1;
 /* a[i].p1 = SET_ALL_ZERO(); */
 }
