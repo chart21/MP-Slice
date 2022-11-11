@@ -27,8 +27,7 @@ XOR_Share public_val(DATATYPE a)
 
 XOR_Share Not(XOR_Share a)
 {
-    a = NOT(a);
-   return a;
+    return Not(a);
 }
 
 // Receive sharing of ~XOR(a,b) locally

@@ -14,8 +14,6 @@
 #include "oecl_base.hpp"
 class OECL0
 {
-public:
-OECL0() {}
 bool optimized_sharing;
 public:
 OECL0(bool optimized_sharing) {this->optimized_sharing = optimized_sharing;}
@@ -146,7 +144,6 @@ if(id == 0)
     a[i].p1 = player_input[share_buffer[2]];
     a[i].p2 = getRandomVal(0);
     sending_args[1].sent_elements[sending_rounds][send_count[1]] = XOR(a[i].p2,player_input[share_buffer[2]]);
-    send_count[0]+=1;
     send_count[1]+=1;
     share_buffer[2] += 1;
     /* DATATYPE r = getRandomVal(2); //should be an SRNG shared by P0,P1,P2 to save communication */
@@ -158,6 +155,8 @@ if(id == 0)
     }
 
     }
+    else
+    {
     for(int i = 0; i < l; i++)
     {
     a[i].p1 = getRandomVal(1);
@@ -175,6 +174,7 @@ if(id == 0)
     /* a[i] = r; */
     }
 
+    }
 }
 else if(id == 1){
 for(int i = 0; i < l; i++)
