@@ -30,6 +30,11 @@
 #include "protocols/oecl-P1_template.hpp"
 #include "protocols/oecl-P2_template.hpp"
 
+#include "protocols/astra-P0_template.hpp"
+#include "protocols/astra-P1_template.hpp"
+#include "protocols/astra-P2_template.hpp"
+
+
 #include "utils/randomizer.h"
 #include "utils/timing.hpp"
 #include "networking/client.c"
@@ -315,6 +320,28 @@ else if(argv[2] == std::string("oecl"))
 
     }
 }
+else if(argv[2] == std::string("astra"))
+{
+    if(player_id == 0)
+    {
+    OECL0_init init_protocol = OECL0_init(optimized_sharing);
+    searchComm__<OECL0_init,XOR_Share>(init_protocol,garbage);
+    init_protocol.finalize(ips);
+
+    }
+    else if(player_id == 1){
+    OECL1_init init_protocol = OECL1_init(optimized_sharing);
+    searchComm__<OECL1_init,XOR_Share>(init_protocol,garbage);
+    init_protocol.finalize(ips);
+    
+    }
+    else if(player_id == 2){
+        OECL2_init init_protocol = OECL2_init(optimized_sharing);
+    searchComm__<OECL2_init,XOR_Share>(init_protocol,garbage);
+    init_protocol.finalize(ips);
+
+    }
+}
 clock_t time_init_finished = clock ();
 /* printf("creating receiving servers\n"); */
 printf("Time measured to initialize program: %fs \n", double((time_init_finished - time_init_start)) / CLOCKS_PER_SEC);
@@ -409,6 +436,23 @@ else if(argv[2] == std::string("oecl"))
     else if(player_id == 2){
     OECL2 protocol = OECL2(optimized_sharing);
     searchComm__<OECL2,XOR_Share>(protocol,*found);
+    }
+}
+else if(argv[2] == std::string("astra"))
+{
+    if(player_id == 0)
+    {
+    ASTRA0 protocol = ASTRA0(optimized_sharing);
+    searchComm__<ASTRA0,Coordinator_Share>(protocol,*found);
+    }
+    else if(player_id == 1){
+    ASTRA1 protocol = ASTRA1(optimized_sharing);
+    searchComm__<ASTRA1,Evaluator_Share>(protocol,*found);
+    
+    }
+    else if(player_id == 2){
+    ASTRA2 protocol = ASTRA2(optimized_sharing);
+    searchComm__<ASTRA2,Evaluator_Share>(protocol,*found);
     }
 }
 double time = std::chrono::duration_cast<std::chrono::microseconds>(
