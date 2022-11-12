@@ -27,7 +27,7 @@ XOR_Share public_val(DATATYPE a)
 
 XOR_Share Not(XOR_Share a)
 {
-    return Not(a);
+    return NOT(a);
 }
 
 // Receive sharing of ~XOR(a,b) locally
@@ -38,7 +38,6 @@ XOR_Share Xor(XOR_Share a, XOR_Share b)
 
 
 
-//prepare AND -> send real value a&b to other P
 void prepare_and(XOR_Share &a, XOR_Share &b)
 {
 
@@ -49,7 +48,6 @@ share_buffer[0]+=1;
 send_count[1]+=1;
 }
 
-// NAND both real Values to receive sharing of ~ (a&b) 
 XOR_Share complete_and(XOR_Share a, XOR_Share b)
 {
 a = XOR(a, receiving_args[1].received_elements[rounds-1][share_buffer[1]]);

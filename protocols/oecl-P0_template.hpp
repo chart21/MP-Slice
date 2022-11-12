@@ -159,7 +159,7 @@ if(id == 0)
     {
     for(int i = 0; i < l; i++)
     {
-    a[i].p1 = getRandomVal(1);
+    a[i].p1 = getRandomVal(2); // P2 does not need to the share -> thus not srng but 2 
     a[i].p2 = getRandomVal(0);
     sending_args[0].sent_elements[sending_rounds][send_count[0]] = XOR(a[i].p1,player_input[share_buffer[2]]);
     sending_args[1].sent_elements[sending_rounds][send_count[1]] = XOR(a[i].p2,player_input[share_buffer[2]]);
