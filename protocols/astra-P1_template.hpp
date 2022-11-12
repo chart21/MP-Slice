@@ -41,11 +41,11 @@ Evaluator_Share Xor(Evaluator_Share a, Evaluator_Share b)
 void prepare_and(Evaluator_Share &a, Evaluator_Share &b)
 {
 DATATYPE yz1 = getRandomVal(0); //yz1
-DATATYPE yxy1 = getRandomVal(0); //yz1
+DATATYPE yxy1 = getRandomVal(0); 
 a.mv = XOR( XOR(  XOR( AND(a.mv,b.lv), AND(b.mv, a.lv) ), yz1 ), yxy1); 
-sending_args[1].sent_elements[sending_rounds][send_count[1]] = a.mv; //apply P1_2 mask
+sending_args[1].sent_elements[sending_rounds][send_count[1]] = a.mv; 
 send_count[1]+=1;
-
+a.lv = yz1;
 }
 
 // NAND both real Values to receive sharing of ~ (a&b) 

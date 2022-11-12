@@ -44,9 +44,9 @@ DATATYPE yz2 = getRandomVal(0); //yz1
 DATATYPE yxy2 = receiving_args[0].received_elements[rounds-1][share_buffer[0]];
 share_buffer[0] +=1;
 a.mv = XOR( AND(a.mv,b.mv), XOR( XOR(  XOR( AND(a.mv,b.lv), AND(b.mv, a.lv) ), yz2 ), yxy2)); 
-sending_args[1].sent_elements[sending_rounds][send_count[1]] = a.mv; //apply P1_2 mask
+sending_args[1].sent_elements[sending_rounds][send_count[1]] = a.mv; 
 send_count[1]+=1;
-
+a.lv = yz2;
 }
 
 // NAND both real Values to receive sharing of ~ (a&b) 
@@ -60,7 +60,8 @@ return a;
 
 void prepare_reveal_to_all(Evaluator_Share a)
 {
-return;
+sending_args[0].sent_elements[sending_rounds][send_count[0]] = a.mv; 
+send_count[0]+=1;
 }    
 
 
@@ -135,7 +136,7 @@ else{
     
 }
 }
-else if(id == 2)
+else if(id == 1)
 {
 for(int i = 0; i < l; i++)
 {

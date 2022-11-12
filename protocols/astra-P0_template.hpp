@@ -47,8 +47,8 @@ void prepare_and(Coordinator_Share &a, Coordinator_Share &b)
 /* DATATYPE maskP1 = XOR(a.p1,b.p1); */
 /* DATATYPE maskP2 = XOR(a.p2,b.p2); */
 
-a = XOR(getRandomVal(0),getRandomVal(1)); //yz
 DATATYPE yxy = AND(a,b);
+a = XOR(getRandomVal(0),getRandomVal(1)); //yz
 DATATYPE yxy2 = XOR(getRandomVal(0),yxy);
 
 sending_args[1].sent_elements[sending_rounds][send_count[1]] = yxy2; 
@@ -181,7 +181,7 @@ else if(id == 2)// id ==2
 {
     for(int i = 0; i < l; i++)
     {
-    a[i] = getRandomVal(0);
+        a[i] = getRandomVal(1);
     }
 
 }
