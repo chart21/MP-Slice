@@ -12,7 +12,6 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include "../Datastructures/bit_array.hpp"
 #ifndef BOOL
 #define BOOL
 #endif
@@ -38,11 +37,6 @@
 #ifndef DATATYPE
 #define DATATYPE bool 
 #endif
-
-#ifndef DATATYPE_REF
-#define DATATYPE_REF boost::dynamic_bitset<unsigned char>::reference
-#endif
-
 #define SET_ALL_ONE()  true
 #define SET_ALL_ZERO() false
 
@@ -51,7 +45,6 @@
 
 #define ALLOC(size) malloc(size * sizeof(bool))
 #define NEW(var) new var;
-
 
 void orthogonalize(uint64_t* num, bool* out) {
   for (int i = 0; i < BITSIZE; i++)

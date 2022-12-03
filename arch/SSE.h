@@ -10,7 +10,6 @@
 #include <stdlib.h>
 #include <x86intrin.h>
 #include <stdint.h>
-
 #ifndef SSE
 #define SSE
 #endif

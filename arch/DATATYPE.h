@@ -5,8 +5,8 @@
 #ifndef ORTHO
 #define ORTHO
 #endif
-#include "STD.h"
-#define n 1 << 12
+#include "BOOL.h"
+#define n int(1 << 12)
 #define BITLENGTH 64
 #define US
 #define base_port 6000

@@ -58,7 +58,7 @@ return a;
 }
 
 
-void share(DATATYPE a[], int length)
+void share(Bit_Array a, int length)
 {
 if(input_srngs == true)
 {
@@ -92,7 +92,7 @@ void reshare(DATATYPE a, DATATYPE u[])
  
 }
 //prepare AND -> send real value a&b to other P
-void prepare_and(DATATYPE &a, DATATYPE &b)
+void prepare_and(DATATYPE a, DATATYPE b)
 {
 sending_args[pnext].elements_to_send[sending_args[pnext].send_rounds] += 1;
 sending_args[pprev].elements_to_send[sending_args[pprev].send_rounds] += 1;
@@ -154,10 +154,10 @@ XOR_Share* alloc_Share(int l)
     return new DATATYPE[l];
 }
 
-void receive_from_SRNG(XOR_Share a[], int id, int l)
+void receive_from_SRNG(Bit_Array a, int id, int l)
 {
 }
-void receive_from_comm(DATATYPE a[], int id, int l)
+void receive_from_comm(Bit_Array a, int id, int l)
 {
 if(id == player_id)
 {
@@ -173,7 +173,7 @@ receiving_args[player].elements_to_rec[receiving_args[player].rec_rounds -1] += 
 }
 
 
-void receive_from(DATATYPE a[], int id, int l)
+void receive_from(Bit_Array a, int id, int l)
 {
 if(input_srngs == true)
 {
@@ -185,7 +185,7 @@ receive_from_comm(a, id, l);
 }
 }
 
-void complete_receive_from_comm(DATATYPE a[], int id, int l)
+void complete_receive_from_comm(Bit_Array a, int id, int l)
 {
 if(id == player_id)
     return;
@@ -199,7 +199,7 @@ for (int i = 0; i < l; i++) {
 }
 
 
-void prepare_receive_from_comm(DATATYPE a[], int id, int l)
+void prepare_receive_from_comm(Bit_Array a, int id, int l)
 {
 if(id == player_id)
 {
@@ -214,7 +214,7 @@ return;
     }
 }
 
-void prepare_receive_from(DATATYPE a[], int id, int l)
+void prepare_receive_from(Bit_Array a, int id, int l)
 {
 if(input_srngs == true)
 {
@@ -227,7 +227,7 @@ prepare_receive_from_comm(a, id, l);
 }
 
 
-void complete_receive_from(DATATYPE a[], int id, int l)
+void complete_receive_from(Bit_Array a, int id, int l)
 {
 if(input_srngs == true)
 {
@@ -248,7 +248,7 @@ for(int t=0;t<(num_players-1);t++) {
     if(t >= player_id)
         offset = 1; // player should not receive from itself
     receiving_args[t].player_count = num_players;
-    receiving_args[t].received_elements = new DATATYPE*[receiving_args[t].rec_rounds]; //every thread gets its own pointer array for receiving elements
+    receiving_args[t].received_elements = new Bit_Array*[receiving_args[t].rec_rounds]; //every thread gets its own pointer array for receiving elements
     
     /* receiving_args[t].elements_to_rec = new int[total_comm]; */
     /* for (int i = 1 - use_srng_for_inputs; i < total_comm -1; i++) { */
@@ -270,14 +270,14 @@ for(int t=0;t<(num_players-1);t++) {
     int offset = 0;
     if(t >= player_id)
         offset = 1; // player should not send to itself
-    sending_args[t].sent_elements = new DATATYPE*[sending_args[t].send_rounds];
     /* sending_args[t].elements_to_send[0] = 0; //input sharing with SRNGs */ 
+    sending_args[t].sent_elements = new Bit_Array*[sending_args[t].send_rounds];
     sending_args[t].player_id = player_id;
     sending_args[t].player_count = num_players;
     sending_args[t].connected_to = t+offset;
     sending_args[t].port = (int) base_port + (t+offset) * (num_players -1) + player_id - 1 + offset; //e.g. P0 sends on base port + num_players  for P1, P2 on base port + num_players for P0 (6001,6000)
     /* std::cout << "In main: creating thread " << t << "\n"; */
-    sending_args[t].sent_elements[0] = NEW(DATATYPE[sending_args[t].elements_to_send[0]]); // Allocate memory for first round
+    sending_args[t].sent_elements[0] = new Bit_Array(sending_args[t].elements_to_send[0]); // Allocate memory for first round
        
 }
 rounds = 0;

@@ -39,10 +39,12 @@ void *get_in_addr(struct sockaddr *sa)
 }
 
 typedef struct receiver_arguments {
-  int player_count;
+    int player_count;
   int player_id;
   int connected_to;
-  DATATYPE **received_elements;
+
+  Bit_Array** received_elements;
+  /* std::vector<Bit_Array> received_elements; */
   int inputs_size;
   char *ip;
   int port;
@@ -55,8 +57,9 @@ typedef struct receiver_arguments {
 } receiver_args;
 
 typedef struct sender_arguments {
-  DATATYPE **sent_elements;
-  int inputs_size;
+    /* std::vector<Bit_Array> sent_elements; */
+  Bit_Array** sent_elements;
+    int inputs_size;
   int port;
   int player_id;
   int player_count;

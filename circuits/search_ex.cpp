@@ -12,13 +12,13 @@
 /* /1* including the architecture specific .h *1/ */
 #include "../arch/DATATYPE.h"
 /* #include "../protocols/Protocol.hpp" */
-/* #include "../protocols/sharemind_template.hpp" */
-/* #include "../protocols/sharemind_init_template.hpp" */
+#include "../protocols/sharemind_template.hpp"
+#include "../protocols/sharemind_init_template.hpp"
 /* #include "../protocols/dummy_Protocol.hpp" */
 /* #include "../protocols/dummy_Protocol.hpp" */
 /* #include "../protocols/sharemind.hpp" */
-#include "../protocols/replicated_template.hpp"
-#include "../protocols/replicated_init_template.hpp"
+/* #include "../protocols/replicated_template.hpp" */
+/* #include "../protocols/replicated_init_template.hpp" */
 /* auxiliary functions */
 /* main function */
 
@@ -45,8 +45,11 @@ void searchComm__ (Pr P,/*outputs*/ DATATYPE &found)
 {
 
 // allocate memory for shares
-S (*dataset)[BITLENGTH] = (S ((*)[BITLENGTH])) P.alloc_Share(((int) n)*BITLENGTH);
-S* element = P.alloc_Share(BITLENGTH);
+/* S (*dataset)[BITLENGTH] = (S ((*)[BITLENGTH])) P.alloc_Share(((int) n)*BITLENGTH); */
+/* S* element = P.alloc_Share(BITLENGTH); */
+
+auto dataset = Bit_Array(n*BITLENGTH); 
+auto element = Bit_Array(BITLENGTH); 
 
 
 /* if(player_id == 0) */
@@ -68,8 +71,10 @@ S* element = P.alloc_Share(BITLENGTH);
 /* /1* P_share(element,BITLENGTH); *1/ */
 /* } */
 
-P.prepare_receive_from((S*) dataset,0,(n)*BITLENGTH);
+P.prepare_receive_from(dataset,0,n*BITLENGTH);
 P.prepare_receive_from(element,1,BITLENGTH);
+/* P.prepare_receive_from((S*) dataset,0,(n)*BITLENGTH); */
+/* P.prepare_receive_from(element,1,BITLENGTH); */
 
 
 P.communicate();
@@ -77,7 +82,7 @@ P.communicate();
 // change to receive from
 
 
-P.complete_receive_from((S*) dataset,0,(n)*BITLENGTH);
+P.complete_receive_from(dataset,0,n*BITLENGTH);
 P.complete_receive_from(element,1,BITLENGTH);
 /* P.receive_from_SRNG((Share*) dataset,0,BITLENGTH*n); */
 /* P.receive_from_SRNG(element,1,BITLENGTH); */
@@ -85,7 +90,7 @@ P.complete_receive_from(element,1,BITLENGTH);
 
 for (int i = 0; i < n; i++) {
     for (int j = 0; j < BITLENGTH; j++) {
-      dataset[i][j] = P.Not(P.Xor(dataset[i][j], element[j]));
+      dataset[i+(n*j)] = P.Not(P.Xor(dataset[i+(n*j)], element[j]));
     }
   }
   
@@ -94,7 +99,7 @@ for (int i = 0; i < n; i++) {
     for (int i = 0; i < k; i++) {
         int j = i * 2;
       for (int s = 0; s < n; s++) {
-          P.prepare_and(dataset[s][j],dataset[s][j +1]);
+          P.prepare_and(dataset[s + (s*j)],dataset[s + 1 + s*j]);
       }
     }
 
@@ -103,7 +108,7 @@ for (int i = 0; i < n; i++) {
     for (int i = 0; i < k; i++) {
         int j = i * 2;
       for (int s = 0; s < n; s++) {
-            dataset[s][i] = P.complete_and(dataset[s][j], dataset[s][j+1]);
+          dataset[s + (s*j)] = P.complete_and(dataset[s + (s*j)],dataset[s + 1 + s*j]);
       }
       
 
@@ -113,17 +118,17 @@ for (int i = 0; i < n; i++) {
   }
  
   found = SET_ALL_ZERO(); 
-  /* S sfound = P.public_val(found); */
+      /* S sfound = P.public_val(found); */
 
   /* for (int i = 0; i < n; i++) { */
   /*   sfound = P.Xor(dataset[i][0],sfound); */ 
 
   /* } */
   
-  S sfound = dataset[0][0];
+  S sfound = dataset[0];
 
   for (int i = 1; i < n; i++) {
-    sfound = P.Xor(dataset[i][0],sfound); 
+    sfound = P.Xor(dataset[i*BITLENGTH],sfound); 
 
   }
 
