@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include "../Datastructures/bit_array.hpp"
+#include "../Datastructures/bit_array_vec.hpp"
 #ifndef BOOL
 #define BOOL
 #endif
@@ -40,7 +40,8 @@
 #endif
 
 #ifndef DATATYPE_REF
-#define DATATYPE_REF boost::dynamic_bitset<unsigned char>::reference
+#define DATATYPE_REF std::vector<bool>::reference
+/* #define DATATYPE_REF boost::dynamic_bitset<unsigned char>::reference */
 #endif
 
 #define SET_ALL_ONE()  true
