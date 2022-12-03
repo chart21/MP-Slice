@@ -119,13 +119,13 @@ if(((receiver_args*) threadParameters)->elements_to_rec[rounds] > 0) //should da
             }
 #endif
 #ifdef BOOL
-    int elements_to_rec =  ((receiver_args*) threadParameters)->elements_to_rec[rounds] / 8 + 1;
+    int elements_to_rec =  (((receiver_args*) threadParameters)->elements_to_rec[rounds] + 7) / 8;
     char* rec_buffer = new char[elements_to_rec];
             if ((recv(sockfd, rec_buffer , elements_to_rec, MSG_WAITALL)) == -1) {
                 perror("recv");
                 exit(1);
             }
-((receiver_args*) threadParameters)->received_elements[rounds] = new Bit_Array(rec_buffer,elements_to_rec);
+((receiver_args*) threadParameters)->received_elements[rounds] = new Bit_Array(rec_buffer,rec_buffer+elements_to_rec,((receiver_args*) threadParameters)->elements_to_rec[rounds]);
 delete[] rec_buffer;
 #endif
 printf("received %i bytes from player %i in round %i out of %i \n", elements_to_rec, ((receiver_args*) threadParameters)->connected_to, rounds + 1, ((receiver_args*) threadParameters)->rec_rounds);

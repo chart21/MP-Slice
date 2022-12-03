@@ -14,9 +14,9 @@ Bit_Array(size_t l)
 {
     a = alloc_C(l);
 }
-Bit_Array(char* c, size_t l)
+Bit_Array(char* begin, char* end, size_t l)
 {
-    a = alloc_C(c,l);
+    a = alloc_C(begin,end,l);
 }
 
 
@@ -44,10 +44,10 @@ Container alloc_C(size_t l)
     return boost::dynamic_bitset<uint8_t>(l); 
 }
 
-Container alloc_C(char* arr, size_t l)
+Container alloc_C(char* begin, char* end, size_t l)
 {
     auto a = boost::dynamic_bitset<uint8_t>(l);  
-    boost::from_block_range(arr, arr+l, a);
+    boost::from_block_range(begin, end , a);
     return a;
 }
 

@@ -194,15 +194,14 @@ void *sender(void* threadParameters)
 #endif
 #ifdef BOOL
             int elements_to_send =  (((sender_args*) threadParameters)->elements_to_send[rounds] + 7)/8;
-            elements_to_send = elements_to_send;
             char* send_buf = new char[elements_to_send];
-((receiver_args*) threadParameters)->received_elements[rounds]->pack(send_buf);
+((sender_args*) threadParameters)->sent_elements[rounds]->pack(send_buf);
 
                 if (sendall(new_fd, send_buf, &elements_to_send) == -1) {
                 perror("sendall");
                 printf("We only sent %d bytes because of the error!\n", ((sender_args*) threadParameters)->inputs_size);
             }
-                delete[] send_buf;
+                /* delete[] send_buf; */
                 //delete Arr
 #endif
             printf("sent %i bytes to player %i in round %i out of %i \n", elements_to_send, ((sender_args*) threadParameters)->connected_to, rounds + 1, ((sender_args*) threadParameters)->send_rounds);
