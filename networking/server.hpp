@@ -1,4 +1,3 @@
-#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -12,12 +11,16 @@
 #include <sys/wait.h>
 #include <signal.h>
 #include "sockethelper.h"
-
+#include "packer.hpp"
 //#define PORT "6000"  // the port users will be connecting to
 
 #define BACKLOG 1	 // how many pending connections queue will hold
-
+#ifndef BOOL_COMPRESS
 int sendall(int s, DATATYPE *buf, int *len)
+#endif
+#ifdef BOOL_COMPRESS
+int sendall(int s, char *buf, int *len)
+#endif
 {
     int total = 0;        // how many bytes we've sent
     int bytesleft = *len * sizeof(DATATYPE); // how many we have left to send
@@ -178,7 +181,7 @@ void *sender(void* threadParameters)
             /* printf("sending round %i out of %i \n", rounds, ((sender_args*) threadParameters)->send_rounds); */
             if(((sender_args*) threadParameters)->elements_to_send[rounds] > 0)
             {
-
+#ifndef BOOL_COMPRESS
             int elements_to_send =  ((sender_args*) threadParameters)->elements_to_send[rounds];
             elements_to_send = elements_to_send * sizeof(DATATYPE);
 
@@ -186,6 +189,20 @@ void *sender(void* threadParameters)
                 perror("sendall");
                 printf("We only sent %d bytes because of the error!\n", ((sender_args*) threadParameters)->inputs_size);
             }
+                //delete Arr
+#endif
+#ifdef BOOL_COMPRESS
+            int elements_to_send =  (((sender_args*) threadParameters)->elements_to_send[rounds] + 7)/8;
+            char* send_buf = new char[elements_to_send];
+pack(((sender_args*) threadParameters)->sent_elements[rounds],send_buf,((sender_args*) threadParameters)->elements_to_send[rounds]);
+
+                if (sendall(new_fd, send_buf, &elements_to_send) == -1) {
+                perror("sendall");
+                printf("We only sent %d bytes because of the error!\n", ((sender_args*) threadParameters)->inputs_size);
+            }
+                /* delete[] send_buf; */
+                //delete Arr
+#endif
             printf("sent %i bytes to player %i in round %i out of %i \n", elements_to_send, ((sender_args*) threadParameters)->connected_to, rounds + 1, ((sender_args*) threadParameters)->send_rounds);
             }
                 //Delete sent data

@@ -14,6 +14,7 @@
 #include "sockethelper.h"
 
 #include "../arch/DATATYPE.h"
+#include "packer.hpp"
 #define MAXDATASIZE 100 // max number of bytes we can get at once -> currently not used 
 
  
@@ -109,13 +110,25 @@ void *receiver(void* threadParameters)
         
 if(((receiver_args*) threadParameters)->elements_to_rec[rounds] > 0) //should data be received in this round?
 {
+#ifndef BOOL
     int elements_to_rec =  ((receiver_args*) threadParameters)->elements_to_rec[rounds];
     elements_to_rec = elements_to_rec * sizeof(DATATYPE);
 
             if ((recv(sockfd, ((char*) ((receiver_args*) threadParameters)->received_elements[rounds]), elements_to_rec, MSG_WAITALL)) == -1) {
                 perror("recv");
                 exit(1);
-            } 
+            }
+#endif
+#ifdef BOOL
+    int elements_to_rec =  (((receiver_args*) threadParameters)->elements_to_rec[rounds] + 7) / 8;
+    char* rec_buffer = new char[elements_to_rec];
+            if ((recv(sockfd, rec_buffer , elements_to_rec, MSG_WAITALL)) == -1) {
+                perror("recv");
+                exit(1);
+            }
+unpack(rec_buffer,((receiver_args*) threadParameters)->received_elements[rounds],((receiver_args*) threadParameters)->elements_to_rec[rounds]);
+delete[] rec_buffer;
+#endif
 printf("received %i bytes from player %i in round %i out of %i \n", elements_to_rec, ((receiver_args*) threadParameters)->connected_to, rounds + 1, ((receiver_args*) threadParameters)->rec_rounds);
 }
 //If all sockets received, signal main_thread

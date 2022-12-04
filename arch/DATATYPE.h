@@ -1,11 +1,14 @@
 #pragma once
+#ifndef BOOL_COMPRESS
+#define BOOL_COMPRESS
+#endif
 #ifndef RUNTIME
 #define RUNTIME
 #endif
 #ifndef ORTHO
 #define ORTHO
 #endif
-#include "STD.h"
+#include "BOOL.h"
 #define n 1 << 12
 #define BITLENGTH 64
 #define US

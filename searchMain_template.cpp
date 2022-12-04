@@ -37,8 +37,8 @@
 
 #include "utils/randomizer.h"
 #include "utils/timing.hpp"
-#include "networking/client.c"
-#include "networking/server.c"
+#include "networking/client.hpp"
+#include "networking/server.hpp"
 #include "networking/sockethelper.h"
 #include "networking/buffers.h"
 #include "utils/printing.hpp"
