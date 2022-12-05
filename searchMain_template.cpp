@@ -11,29 +11,8 @@
 #include "circuits/searchBitSlice.c"
 #include "circuits/searchBitSliceWithComm_template.cpp"
 #include "circuits/xorshift.h"
-#include "protocols/sharemind_init_template.hpp"
-#include "protocols/sharemind_template.hpp"
-#include "protocols/replicated_template.hpp"
-#include "protocols/replicated_init_template.hpp"
 
-#include "protocols/oec-P0_init_template.hpp"
-#include "protocols/oec-P1_init_template.hpp"
-#include "protocols/oec-P2_init_template.hpp"
-#include "protocols/oec-P0_template.hpp"
-#include "protocols/oec-P1_template.hpp"
-#include "protocols/oec-P2_template.hpp"
-
-#include "protocols/oecl-P0_init_template.hpp"
-#include "protocols/oecl-P1_init_template.hpp"
-#include "protocols/oecl-P2_init_template.hpp"
-#include "protocols/oecl-P0_template.hpp"
-#include "protocols/oecl-P1_template.hpp"
-#include "protocols/oecl-P2_template.hpp"
-
-#include "protocols/astra-P0_template.hpp"
-#include "protocols/astra-P1_template.hpp"
-#include "protocols/astra-P2_template.hpp"
-
+#include "protocols/Protocols.h"
 
 #include "utils/randomizer.h"
 #include "utils/timing.hpp"
@@ -194,6 +173,7 @@ funcTime("generating random inputs",randomizeInputs,dataset,elements);
 //modify certain data to test functionality
 //
 insertManually(dataset, elements, origData, origElements, 1,7 , 200, 200);
+
 
 
 

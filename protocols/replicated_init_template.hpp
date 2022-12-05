@@ -7,7 +7,9 @@
 #include "replicated_base.hpp"
 
 class Replicated_init{
-public:
+bool input_srngs;
+    public:
+Replicated_init(bool use_srngs) {input_srngs = use_srngs;}
 Share share_SRNG(DATATYPE a)
 {
 

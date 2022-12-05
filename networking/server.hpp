@@ -187,7 +187,7 @@ void *sender(void* threadParameters)
 
                 if (sendall(new_fd, ((sender_args*) threadParameters)->sent_elements[rounds], &((sender_args*) threadParameters)->elements_to_send[rounds]) == -1) {
                 perror("sendall");
-                printf("We only sent %d bytes because of the error!\n", ((sender_args*) threadParameters)->inputs_size);
+                printf("Failed to send all bytes!\n"); 
             }
                 //delete Arr
 #endif
@@ -198,7 +198,7 @@ pack(((sender_args*) threadParameters)->sent_elements[rounds],send_buf,((sender_
 
                 if (sendall(new_fd, send_buf, &elements_to_send) == -1) {
                 perror("sendall");
-                printf("We only sent %d bytes because of the error!\n", ((sender_args*) threadParameters)->inputs_size);
+                printf("Failed to send all bytes!\n"); 
             }
                 /* delete[] send_buf; */
                 //delete Arr

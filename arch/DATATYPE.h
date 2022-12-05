@@ -1,17 +1,35 @@
 #pragma once
-#ifndef BOOL_COMPRESS
-#define BOOL_COMPRESS
-#endif
+#include "../config.h"
 #ifndef RUNTIME
 #define RUNTIME
 #endif
 #ifndef ORTHO
 #define ORTHO
 #endif
-#include "BOOL.h"
-#define n 1 << 12
-#define BITLENGTH 64
 #define US
-#define base_port 6000
-#define num_inputs 4
-#define num_players 3
+
+
+#if (COMPRESS == true && TYPE == bool)
+    #define BOOL_COMPRESS
+#endif
+
+#if DATTYPE == bool 
+    #include "BOOL.h"
+#elif DATTYPE == char 
+    #include "CHAR.h"
+#elif DATTYPE == std 
+    #include "STD.h"
+#elif DATTYPE == sse 
+    #include "SSE.h"
+#elif DATTYPE == avx 
+    #include "avx.h"
+#elif DATTYPE == avx2 
+    #include "avx512.h"
+#endif
+
+
+
+
+
+
+

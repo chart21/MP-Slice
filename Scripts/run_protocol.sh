@@ -20,4 +20,4 @@ do
    esac
 done
 
-./searchMaint.o 0 "$protocol" "$optshare" & ./searchMaint.o 1 "$protocol" "$opt_share" & ./searchMaint.o 2 "$protocol" "$opt_share"
+./searchMaint.o 0 "$protocol" "$optshare" & ./searchMaint.o 1 "$protocol" "$optshare" & ./searchMaint.o 2 "$protocol" "$optshare"

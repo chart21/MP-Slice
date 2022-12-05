@@ -8,7 +8,9 @@
 
 
 class Replicated{
-public:
+bool input_srngs;
+    public:
+Replicated(bool use_srngs) {input_srngs = use_srngs;}
 Share share_SRNG(DATATYPE a)
 {
 Share s[3];
