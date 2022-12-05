@@ -105,4 +105,13 @@
             #include "oecl-P2_template.hpp"
         #endif
     #endif
+    #if PROTOCOL == ttp 
+        #define PROTOCOL_LIVE TTP
+        #define PROTOCOL_INIT TTP_init
+        #if INIT == true 
+            #include "ttp_init_template.hpp"
+        #endif
+        #if LIVE == true
+            #include "ttp.hpp"
+   #endif
 #endif
