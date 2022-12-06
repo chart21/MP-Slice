@@ -148,7 +148,7 @@ void search_main(int argc, char *argv[])
 {
 //init_comm();
 
-
+std::cout << PROTOCOL << "\n";
 
 uint64_t (*origData)[BITS_PER_REG] = NEW(uint64_t[n][BITS_PER_REG]);
 uint64_t *origElements = NEW(uint64_t[BITS_PER_REG]);
@@ -224,8 +224,8 @@ for(int i=0; i < num_players -1; i++)
         ips[i] = (char*) "127.0.0.1";
 }
 
-#if OPT_SHARE == false
-bool optimized_sharing = false;
+#if OPT_SHARE == 1
+bool optimized_sharing = true;
 #else
 bool optimized_sharing = false;
 #endif
@@ -257,8 +257,8 @@ for(int t=0;t<(num_players-1);t++) {
 /* Sharemind_init init_protocol = Sharemind_init(); */
 clock_t time_init_start = clock ();
 
-#if INIT == true && NO_INIT == false
-    auto p_init = PROTOCOL_INIT(OPT_SHARE);
+#if INIT == 1 && NO_INIT == 0
+    auto p_init = PROTOCOL_INIT(optimized_sharing);
     DATATYPE garbage = SET_ALL_ZERO();
     searchComm__<PROTOCOL_INIT,INIT_SHARE>(p_init,garbage);
     p_init.finalize(ips);
@@ -352,7 +352,7 @@ clock_t time_init_finished = clock ();
 /* printf("creating receiving servers\n"); */
 printf("Time measured to initialize program: %fs \n", double((time_init_finished - time_init_start)) / CLOCKS_PER_SEC);
 
-#if LIVE == true
+#if LIVE == 1
     for(int t=0;t<(num_players-1);t++) {
         ret = pthread_create(&receiving_threads[t], NULL, receiver, &receiving_args[t]);
         if (ret){
@@ -462,7 +462,7 @@ printf("Time measured to initialize program: %fs \n", double((time_init_finished
     /*     searchComm__<ASTRA2,Evaluator_Share>(protocol,*found); */
     /*     } */
     /* } */
-    auto p_live = PROTOCOL_LIVE(OPT_SHARE);
+    auto p_live = PROTOCOL_LIVE(optimized_sharing);
     searchComm__<PROTOCOL_LIVE,SHARE>(p_live,*found);
     p_init.finalize(ips);
     

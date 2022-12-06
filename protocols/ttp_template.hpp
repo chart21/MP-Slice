@@ -12,6 +12,7 @@
 #include "../utils/randomizer.h"
 #include "sharemind_base.hpp"
 //#define XOR_Share DATATYPE
+#define SHARE DATATYPE
 
 class TTP
 {

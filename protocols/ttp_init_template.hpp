@@ -10,6 +10,7 @@
 #include "../utils/printing.hpp"
 #include "../utils/randomizer.h"
 #include "sharemind_base.hpp"
+#define INIT_SHARE DATATYPE
 class TTP_init
 {
 bool input_srngs;
@@ -70,10 +71,6 @@ DATATYPE Xor(DATATYPE a, DATATYPE b)
 
 
 
-void reshare(DATATYPE a, DATATYPE u[])
-{
- 
-}
 //prepare AND -> send real value a&b to other P
 void prepare_and(DATATYPE &a, DATATYPE &b)
 {
@@ -104,10 +101,12 @@ void prepare_reveal_to_all(DATATYPE a)
 
 DATATYPE complete_Reveal(DATATYPE a)
 {
-    for(int t = 0; t < num_players-1; t++) 
+    if(player_id != 2)
     {
-        if(player_id != 2)
-            receiving_args[1].elements_to_rec[receiving_args[1].rec_rounds -1]+=1;
+        for(int t = 0; t < num_players-1; t++) 
+        {
+                receiving_args[1].elements_to_rec[receiving_args[1].rec_rounds -1]+=1;
+        }
     }
 return a;
 }
@@ -128,12 +127,13 @@ if(id == player_id)
 {
     return;
 }
-if(id == 2)
-    for (int i = 0; i < l; i++) {
-    receiving_args[id].elements_to_rec[receiving_args[id].rec_rounds -1] += 1;
+if(player_id == 2)
+{
+        for (int i = 0; i < l; i++) {
+        receiving_args[id].elements_to_rec[receiving_args[id].rec_rounds -1] += 1;
+        }
     }
 }
-
 
 void receive_from(DATATYPE a[], int id, int l)
 {
@@ -150,7 +150,7 @@ void prepare_receive_from_comm(DATATYPE a[], int id, int l)
 {
 if(id == player_id && player_id != 2)
 {
-    sending_args[1].elements_to_send[sending_args[pprev].send_rounds] += 1;
+    sending_args[1].elements_to_send[sending_args[1].send_rounds] += 1;
 }
 }
 

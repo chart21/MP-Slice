@@ -10,7 +10,8 @@
 /*     DATATYPE s; */
 /* }; */
 #define Share DATATYPE
-
+#define SHARE DATATYPE
+#define INIT_SHARE DATATYPE
 
 Share P_share_SRNG(DATATYPE a)
 {

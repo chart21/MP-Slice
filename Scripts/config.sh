@@ -46,9 +46,9 @@ if [ ! -z "$NUM_INPUTS" ]
 then
     sed -i -e "s/\(define n \).*/\1$NUM_INPUTS/" config.h
 fi
-if [ ! -z "$DATATYPE" ]
+if [ ! -z "$DATTYPE" ]
 then
-    sed -i -e "s/\(DATTYPE \).*/\1$DATATYPE/" config.h
+    sed -i -e "s/\(DATTYPE \).*/\1$DATTYPE/" config.h
 fi
 if [ ! -z "$FUNCTION" ]
 then

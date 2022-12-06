@@ -9,20 +9,21 @@
 #define US
 
 
-#if (COMPRESS == true && TYPE == bool)
+#if (COMPRESS == 1 && DATTYPE == 1)
     #define BOOL_COMPRESS
 #endif
 
-#if DATTYPE == bool 
+#if DATTYPE == 1 
     #include "BOOL.h"
-#elif DATTYPE == char 
+#elif DATTYPE == 8 
     #include "CHAR.h"
-#elif DATTYPE == std 
+#elif DATTYPE == 64 
     #include "STD.h"
-#elif DATTYPE == sse 
+#elif DATTYPE == 128 
     #include "SSE.h"
-#elif DATTYPE == avx 
+#elif DATTYPE == 256 
     #include "avx.h"
-#elif DATTYPE == avx2 
+#elif DATTYPE == 512 
     #include "avx512.h"
 #endif
+

@@ -17,11 +17,12 @@
 /* #include "../protocols/dummy_Protocol.hpp" */
 /* #include "../protocols/dummy_Protocol.hpp" */
 /* #include "../protocols/sharemind.hpp" */
-#include "../protocols/replicated_template.hpp"
-#include "../protocols/replicated_init_template.hpp"
+/* #include "../protocols/replicated_template.hpp" */
+/* #include "../protocols/replicated_init_template.hpp" */
 /* auxiliary functions */
 /* main function */
 
+#include "../protocols/Protocols.h"
 
 /* void receive_from_SRNG(DATATYPE a[], int id, int l) */
 /* { */

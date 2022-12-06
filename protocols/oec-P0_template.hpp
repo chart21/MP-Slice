@@ -11,6 +11,7 @@
 #include "../utils/printing.hpp"
 #include "../utils/randomizer.h"
 #include "sharemind_base.hpp"
+#define SHARE DATATYPE
 class OEC0
 {
 bool optimized_sharing;

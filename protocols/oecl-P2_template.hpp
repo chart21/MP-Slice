@@ -13,7 +13,7 @@
 #include "sharemind_base.hpp"
 //
 //#include "oecl_base.hpp"
-
+#define SHARE DATATYPE
 class OECL2
 {
 bool optimized_sharing;
