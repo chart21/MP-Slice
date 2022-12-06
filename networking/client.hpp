@@ -121,7 +121,7 @@ if(((receiver_args*) threadParameters)->elements_to_rec[rounds] > 0) //should da
 #endif
 #ifdef BOOL_COMPRESS
     int elements_to_rec =  (((receiver_args*) threadParameters)->elements_to_rec[rounds] + 7) / 8;
-    char* rec_buffer = new char[elements_to_rec];
+    uint8_t* rec_buffer = new (std::align_val_t(sizeof(uint64_t))) uint8_t[elements_to_rec];
             if ((recv(sockfd, rec_buffer , elements_to_rec, MSG_WAITALL)) == -1) {
                 perror("recv");
                 exit(1);

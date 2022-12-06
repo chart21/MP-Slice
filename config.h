@@ -1,5 +1,5 @@
 #pragma once
-#define PROTOCOL 6
+#define PROTOCOL 4
 #define FUNCTION searchComm__
 
 #define DATTYPE 1
@@ -7,7 +7,7 @@
 #define OPT_SHARE 1
 
 #define NO_INI 0
-#define INIT 0
+#define INIT 1
 #define LIVE 1
 #define PRE 0
 #define PARTY 2

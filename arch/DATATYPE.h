@@ -9,8 +9,13 @@
 #define US
 
 
-#if (COMPRESS == 1 && DATTYPE == 1)
-    #define BOOL_COMPRESS
+#if DATTYPE == 1
+    #if COMPRESS == 1
+        #define BOOL_COMPRESS
+        #define NEW(var) new (std::align_val_t(sizeof(uint64_t))) var; //align variables for packing/unpacking
+    #else
+        #define NEW(var) new var;
+    #endif
 #endif
 
 #if DATTYPE == 1 

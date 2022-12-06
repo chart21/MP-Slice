@@ -19,7 +19,7 @@
 int sendall(int s, DATATYPE *buf, int *len)
 #endif
 #ifdef BOOL_COMPRESS
-int sendall(int s, char *buf, int *len)
+int sendall(int s, uint8_t *buf, int *len)
 #endif
 {
     int total = 0;        // how many bytes we've sent
@@ -193,7 +193,7 @@ void *sender(void* threadParameters)
 #endif
 #ifdef BOOL_COMPRESS
             int elements_to_send =  (((sender_args*) threadParameters)->elements_to_send[rounds] + 7)/8;
-            char* send_buf = new char[elements_to_send];
+            uint8_t* send_buf = new (std::align_val_t(sizeof(uint64_t))) uint8_t[elements_to_send];
 pack(((sender_args*) threadParameters)->sent_elements[rounds],send_buf,((sender_args*) threadParameters)->elements_to_send[rounds]);
 
                 if (sendall(new_fd, send_buf, &elements_to_send) == -1) {
