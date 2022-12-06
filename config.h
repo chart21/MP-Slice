@@ -1,19 +1,19 @@
 #pragma once
-#define PROTOCOL 4
+#define PROTOCOL 6
 #define FUNCTION searchComm__
 
 #define DATTYPE 1
-#define COMPRESS 1
+#define COMPRESS 0
 #define OPT_SHARE 1
 
-#define NO_INIT 0
-#define INIT 1
+#define NO_INI 0
+#define INIT 0
 #define LIVE 1
 #define PRE 0
 #define PARTY 2
 
 #define INPUT 'r'
-#define n 1 << 12
+#define NUM_INPUTS 1 << 12
 #define BITLENGTH 64
 #define num_players 3
 

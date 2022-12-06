@@ -120,15 +120,15 @@ static uint64_t mask_r[6] = {
 
 void real_ortho(uint64_t data[]) {
   for (int i = 0; i < 6; i ++) {
-    int n = (1UL << i);
-    for (int j = 0; j < 64; j += (2 * n))
-      for (int k = 0; k < n; k ++) {
+    int nu = (1UL << i);
+    for (int j = 0; j < 64; j += (2 * nu))
+      for (int k = 0; k < nu; k ++) {
         uint64_t u = data[j + k] & mask_l[i];
         uint64_t v = data[j + k] & mask_r[i];
-        uint64_t x = data[j + n + k] & mask_l[i];
-        uint64_t y = data[j + n + k] & mask_r[i];
-        data[j + k] = u | (x >> n);
-        data[j + n + k] = (v << n) | y;
+        uint64_t x = data[j + nu + k] & mask_l[i];
+        uint64_t y = data[j + nu + k] & mask_r[i];
+        data[j + k] = u | (x >> nu);
+        data[j + nu + k] = (v << nu) | y;
       }
   }
 }

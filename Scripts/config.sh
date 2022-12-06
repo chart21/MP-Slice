@@ -5,7 +5,7 @@ helpFunction()
    exit 1 # Exit script after printing help
 }
 
-while getopts "b:a:d:c:f:n:s:i:l:p:o:u:" opt
+while getopts "b:a:d:c:f:n:s:i:l:p:o:u:g:x:" opt
 do
    case "$opt" in
       b ) BASE_PORT="$OPTARG" ;;
@@ -20,11 +20,24 @@ do
       p ) PARTY="$OPTARG" ;;
       o ) OPT_SHARE="$OPTARG" ;;
       u ) NUM_PLAYERS="$OPTARG" ;;
-
+      g ) GNU_OPTIONS="$OPTARG" ;;
+      x ) COMPILER="$OPTARG" ;;
       ? ) helpFunction ;; # Print helpFunction in case parameter is non-existent
    esac
 done
 
+comp="g++"
+if [ ! -z "$COMPILER" ]
+then
+comp="$COMPILER"
+fi
+
+flags="-msse4.1 -Ofast -std=c++2a"
+
+if [ ! -z "$GNU_OPTIONS" ]
+then
+flags="$GNU_OPTIONS"
+fi
 # Print helpFunction in case parameters are empty
 # if [ -z "$parameterA" ] || [ -z "$parameterB" ] || [ -z "$parameterC" ]
 # then
@@ -44,7 +57,7 @@ then
 fi
 if [ ! -z "$NUM_INPUTS" ]
 then
-    sed -i -e "s/\(define n \).*/\1$NUM_INPUTS/" config.h
+    sed -i -e "s/\(NUM_INPUTS \).*/\1$NUM_INPUTS/" config.h
 fi
 if [ ! -z "$DATTYPE" ]
 then
@@ -91,14 +104,18 @@ do
         then        
             sed -i -e "s/\(PARTY \).*/\1"$i"/" config.h
         fi
-        if [ "$LIVE" = "false" ] && [ "$INIT" = "true" ]; 
+        if [ "$LIVE" = "0" ] && [ "$INIT" = "1" ]; 
         then
-            g++ -std=c++2a tmain.cpp -o ./search-P"$i"-INIT.o -msse4.1 -Ofast
+            sed -i -e "s/\(LIVE \).*/\10/" config.h
+            sed -i -e "s/\(INIT \).*/\11/" config.h
+            echo "Compiling INIT executable for P-$i ..."
+            "$comp" tmain.cpp -o ./search-P"$i"-INIT.o $flags
             ./search-P"$i"-INIT.o
-            sed -i -e "s/\(LIVE \).*/\1true/" config.h
-            sed -i -e "s/\(INIT \).*/\1FALSE/" config.h
+            sed -i -e "s/\(LIVE \).*/\11/" config.h
+            sed -i -e "s/\(INIT \).*/\10/" config.h
         fi
-            g++ -std=c++2a tmain.cpp -o ./search-P"$i".o -msse4.1 -Ofast
+            echo "Compiling executable for P-$i ..."
+            "$comp" tmain.cpp -o ./search-P"$i".o $flags
     fi
 done
-
+echo "Finished compiling"

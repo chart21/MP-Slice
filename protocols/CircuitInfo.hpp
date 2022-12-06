@@ -18,10 +18,10 @@ ETS
 for(int t=0;t<(num_players-1);t++) {
     receiving_args[t].rec_rounds = rec_rounds[t];
     sending_args[t].send_rounds = send_rounds[t];
-    for(int i=0;i<rec_rounds[t];t++) {
+    for(int i=0;i<rec_rounds[t];i++) {
         receiving_args[t].elements_to_rec[i] = elements_to_rec[t][i]; 
     }
-    for(int i=0;i<send_rounds[t];t++) {
+    for(int i=0;i<send_rounds[t];i++) {
         sending_args[t].elements_to_send[i] = elements_to_send[t][i]; 
     }
 }
@@ -61,11 +61,11 @@ void export_Details_to_file()
         for(int t=0;t<(num_players-1);t++) {
             line3+= "{";
             line4+= "{";
-            for(int i=0;i<receiving_args[0].rec_rounds;t++) {
+            for(int i=0;i<receiving_args[t].rec_rounds;i++) {
                 line3+= std::to_string(receiving_args[t].elements_to_rec[i]);
                 line3+= ",";
             }
-            for(int i=0;i<sending_args[0].send_rounds;t++) {
+            for(int i=0;i<sending_args[t].send_rounds;i++) {
                 line4+= std::to_string(sending_args[t].elements_to_send[i]);
                 line4+= ",";
             }
@@ -79,8 +79,12 @@ void export_Details_to_file()
   
     std::ofstream myfile;
   myfile.open ("protocols/CircuitDetails.h");
-  myfile << "Writing this to a file.\n";
+  myfile << line1 << "\n";
+  myfile << line2 << "\n";
+  myfile << line3 << "\n";
+  myfile << line4;
   myfile.close();
+  std::cout << "Exported Circuit Details" << "\n";
 }
 
 void finalize(char** ips)

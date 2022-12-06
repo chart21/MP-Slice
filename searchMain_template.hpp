@@ -9,7 +9,7 @@
 #include <new>
 #include <memory>
 #include "arch/DATATYPE.h"
-#include "circuits/searchBitSlice.c"
+/* #include "circuits/searchBitSlice.c" */
 #include "circuits/searchBitSliceWithComm_template.cpp"
 #include "circuits/xorshift.h"
 
@@ -64,7 +64,8 @@ std::cout << origData[c][b] << origElements[b] << std::endl;
 
 
 uint8_t* cfound = new uint8_t[BITS_PER_REG]{0};
-funcTime("Plain search", search_Compare, origData, origElements, cfound);
+/* funcTime("Plain search", search_Compare, origData, origElements, cfound); */
+search_Compare(origData, origElements, cfound);
 print_bool(cfound);
 
 
@@ -90,7 +91,8 @@ funcTime("single ortho", orthogonalize,iseed, seed);
 for (int i = 0; i < n; i++) {
      xor_shift__(seed, dataset[i]);
  }
- funcTime("xor_shift",xor_shift__,seed, elements);
+xor_shift__(seed, elements);
+ /* funcTime("xor_shift",xor_shift__,seed, elements); */
 }
 
 //init 1 srng per link
@@ -257,16 +259,17 @@ for(int t=0;t<(num_players-1);t++) {
 /* Sharemind_init init_protocol = Sharemind_init(); */
 clock_t time_init_start = clock ();
 
-#if INIT == 1 && NO_INIT == 0
+#if INIT == 1 && NO_INI == 0
+    std::cout << "Initialzing circuit ..." << "\n";
     auto p_init = PROTOCOL_INIT(optimized_sharing);
     DATATYPE garbage = SET_ALL_ZERO();
     searchComm__<PROTOCOL_INIT,INIT_SHARE>(p_init,garbage);
     p_init.finalize(ips);
-    #if LIVE == false
+    #if LIVE == 0
         export_Details_to_file();
     #endif
 #endif
-#if INIT == false && NO_INIT == false
+#if LIVE == 1 && INIT == 0 && NO_INI == 0
     init_from_file();
     finalize(ips);
 #endif
@@ -464,7 +467,6 @@ printf("Time measured to initialize program: %fs \n", double((time_init_finished
     /* } */
     auto p_live = PROTOCOL_LIVE(optimized_sharing);
     searchComm__<PROTOCOL_LIVE,SHARE>(p_live,*found);
-    p_init.finalize(ips);
     
 
     double time = std::chrono::duration_cast<std::chrono::microseconds>(

@@ -114,15 +114,15 @@ static uint64_t mask_r[6] = {
 
 void real_ortho(uint64_t data[]) {
   for (int i = 0; i < 6; i ++) {
-    int n = (1UL << i);
-    for (int j = 0; j < 64; j += (2 * n))
-      for (int k = 0; k < n; k ++) {
+    int nu = (1UL << i);
+    for (int j = 0; j < 64; j += (2 * nu))
+      for (int k = 0; k < nu; k ++) {
         uint64_t u = data[j + k] & mask_l[i];
         uint64_t v = data[j + k] & mask_r[i];
-        uint64_t x = data[j + n + k] & mask_l[i];
-        uint64_t y = data[j + n + k] & mask_r[i];
-        data[j + k] = u | (x >> n);
-        data[j + n + k] = (v << n) | y;
+        uint64_t x = data[j + nu + k] & mask_l[i];
+        uint64_t y = data[j + nu + k] & mask_r[i];
+        data[j + k] = u | (x >> nu);
+        data[j + nu + k] = (v << nu) | y;
       }
   }
 }
@@ -153,23 +153,23 @@ void real_ortho_256x256(__m256i data[]) {
   };
 
   for (int i = 0; i < 8; i ++) {
-    int n = (1UL << i);
-    for (int j = 0; j < 256; j += (2 * n))
-      for (int k = 0; k < n; k ++) {
+    int nu = (1UL << i);
+    for (int j = 0; j < 256; j += (2 * nu))
+      for (int k = 0; k < nu; k ++) {
         __m256i u = _mm256_and_si256(data[j + k], mask_l[i]);
         __m256i v = _mm256_and_si256(data[j + k], mask_r[i]);
-        __m256i x = _mm256_and_si256(data[j + n + k], mask_l[i]);
-        __m256i y = _mm256_and_si256(data[j + n + k], mask_r[i]);
+        __m256i x = _mm256_and_si256(data[j + nu + k], mask_l[i]);
+        __m256i y = _mm256_and_si256(data[j + nu + k], mask_r[i]);
         if (i <= 5) {
-          data[j + k] = _mm256_or_si256(u, _mm256_srli_epi64(x, n));
-          data[j + n + k] = _mm256_or_si256(_mm256_slli_epi64(v, n), y);
+          data[j + k] = _mm256_or_si256(u, _mm256_srli_epi64(x, nu));
+          data[j + nu + k] = _mm256_or_si256(_mm256_slli_epi64(v, nu), y);
         } else if (i == 6) {
           /* Note the "inversion" of srli and slli. */
           data[j + k] = _mm256_or_si256(u, _mm256_slli_si256(x, 8));
-          data[j + n + k] = _mm256_or_si256(_mm256_srli_si256(v, 8), y);
+          data[j + nu + k] = _mm256_or_si256(_mm256_srli_si256(v, 8), y);
         } else {
           data[j + k] = _mm256_or_si256(u, _mm256_permute2x128_si256( x , x , 1));
-          data[j + n + k] = _mm256_or_si256(_mm256_permute2x128_si256( v , v , 1), y);
+          data[j + nu + k] = _mm256_or_si256(_mm256_permute2x128_si256( v , v , 1), y);
         }
       }
   }

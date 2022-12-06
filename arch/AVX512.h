@@ -121,15 +121,15 @@ static uint64_t mask_r[6] = {
 
 void real_ortho(uint64_t data[]) {
   for (int i = 0; i < 6; i ++) {
-    int n = (1UL << i);
-    for (int j = 0; j < 64; j += (2 * n))
-      for (int k = 0; k < n; k ++) {
+    int nu = (1UL << i);
+    for (int j = 0; j < 64; j += (2 * nu))
+      for (int k = 0; k < nu; k ++) {
         uint64_t u = data[j + k] & mask_l[i];
         uint64_t v = data[j + k] & mask_r[i];
-        uint64_t x = data[j + n + k] & mask_l[i];
-        uint64_t y = data[j + n + k] & mask_r[i];
-        data[j + k] = u | (x >> n);
-        data[j + n + k] = (v << n) | y;
+        uint64_t x = data[j + nu + k] & mask_l[i];
+        uint64_t y = data[j + nu + k] & mask_r[i];
+        data[j + k] = u | (x >> nu);
+        data[j + nu + k] = (v << nu) | y;
       }
   }
 }
@@ -162,29 +162,29 @@ void real_ortho_512x512(__m512i data[]) {
   };
 
   for (int i = 0; i < 9; i ++) {
-    int n = (1UL << i);
-    for (int j = 0; j < 512; j += (2 * n))
-      for (int k = 0; k < n; k ++) {
+    int nu = (1UL << i);
+    for (int j = 0; j < 512; j += (2 * nu))
+      for (int k = 0; k < nu; k ++) {
         __m512i u = _mm512_and_si512(data[j + k], mask_l[i]);
         __m512i v = _mm512_and_si512(data[j + k], mask_r[i]);
-        __m512i x = _mm512_and_si512(data[j + n + k], mask_l[i]);
-        __m512i y = _mm512_and_si512(data[j + n + k], mask_r[i]);
+        __m512i x = _mm512_and_si512(data[j + nu + k], mask_l[i]);
+        __m512i y = _mm512_and_si512(data[j + nu + k], mask_r[i]);
         if (i <= 5) {
-          data[j + k] = _mm512_or_si512(u, _mm512_srli_epi64(x, n));
-          data[j + n + k] = _mm512_or_si512(_mm512_slli_epi64(v, n), y);
+          data[j + k] = _mm512_or_si512(u, _mm512_srli_epi64(x, nu));
+          data[j + nu + k] = _mm512_or_si512(_mm512_slli_epi64(v, nu), y);
         } else if (i == 6) {
           /* Note the "inversion" of srli and slli. */
           data[j + k] = _mm512_or_si512(u, _mm512_bslli_epi128(x, 8));
-          data[j + n + k] = _mm512_or_si512(_mm512_bsrli_epi128(v, 8), y);
+          data[j + nu + k] = _mm512_or_si512(_mm512_bsrli_epi128(v, 8), y);
         } else if (i == 7) {
           /* might be 0b01001110 instead */
           data[j + k] = _mm512_or_si512(u, _mm512_permutex_epi64(x,0b10110001));
-          data[j + n + k] = _mm512_or_si512(_mm512_permutex_epi64(v,0b10110001), y);
+          data[j + nu + k] = _mm512_or_si512(_mm512_permutex_epi64(v,0b10110001), y);
         } else {
           /* might be 0,1,2,3,4,5,6,7 */
           __m512i ctrl = _mm512_set_epi64(4,5,6,7,0,1,2,3);
           data[j + k] = _mm512_or_si512(u, _mm512_permutexvar_epi64(ctrl,x));
-          data[j + n + k] = _mm512_or_si512(_mm512_permutexvar_epi64(ctrl,v), y);
+          data[j + nu + k] = _mm512_or_si512(_mm512_permutexvar_epi64(ctrl,v), y);
         }
       }
   }
