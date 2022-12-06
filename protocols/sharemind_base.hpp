@@ -1,1 +1,2 @@
+#define INIT_SHARE DATATYPE
 #define XOR_Share DATATYPE

@@ -1,3 +1,4 @@
+#pragma once
 #include <cstddef>
 #include <cstdint>
 #include <ctime>
@@ -12,6 +13,7 @@
 #include "circuits/searchBitSliceWithComm_template.cpp"
 #include "circuits/xorshift.h"
 
+#include "config.h"
 #include "protocols/Protocols.h"
 
 #include "utils/randomizer.h"
@@ -142,7 +144,7 @@ for (int k = BITLENGTH >> 1; k > 0; k = k >> 1)
 
 }
 
-int main(int argc, char *argv[])
+void search_main(int argc, char *argv[])
 {
 //init_comm();
 
@@ -178,12 +180,12 @@ insertManually(dataset, elements, origData, origElements, 1,7 , 200, 200);
 
 
 int argv_offset = 0;
-#if PARTY == all
-argv_offset+=1;
-player_id = atoi(argv[1]);
-#else
+/* #if PARTY == all */
+/* argv_offset+=1; */
+/* player_id = atoi(argv[1]); */
+/* #else */
 player_id = PARTY;
-#endif
+/* #endif */
 
 pnext = (player_id == 1);
 pprev = (player_id != 1);
@@ -216,8 +218,8 @@ char* ips[num_players-1];
 //char* hostnames[num_players-1];
 for(int i=0; i < num_players -1; i++)
 {
-    if(i < (argc - 3))
-        ips[i] = argv[i+4];
+    if(i < argc - argv_offset)
+        ips[i] = argv[i+1+ argv_offset];
     else
         ips[i] = (char*) "127.0.0.1";
 }
@@ -258,7 +260,7 @@ clock_t time_init_start = clock ();
 #if INIT == true && NO_INIT == false
     auto p_init = PROTOCOL_INIT(OPT_SHARE);
     DATATYPE garbage = SET_ALL_ZERO();
-    searchComm__<PROTOCOL_INIT,Share>(p_init,garbage);
+    searchComm__<PROTOCOL_INIT,INIT_SHARE>(p_init,garbage);
     p_init.finalize(ips);
     #if LIVE == false
         export_Details_to_file();
@@ -461,7 +463,7 @@ printf("Time measured to initialize program: %fs \n", double((time_init_finished
     /*     } */
     /* } */
     auto p_live = PROTOCOL_LIVE(OPT_SHARE);
-    searchComm__<PROTOCOL_LIVE,Share>(p_live,*found);
+    searchComm__<PROTOCOL_LIVE,SHARE>(p_live,*found);
     p_init.finalize(ips);
     
 

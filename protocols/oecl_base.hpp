@@ -1,5 +1,6 @@
 #pragma once
 #include "../arch/DATATYPE.h"
+#define SHARE OECL_Share
 struct OECL_Share{
     DATATYPE p1;
     DATATYPE p2;

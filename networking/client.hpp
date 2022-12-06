@@ -110,7 +110,7 @@ void *receiver(void* threadParameters)
         
 if(((receiver_args*) threadParameters)->elements_to_rec[rounds] > 0) //should data be received in this round?
 {
-#ifndef BOOL
+#ifndef BOOL_COMPRESS
     int elements_to_rec =  ((receiver_args*) threadParameters)->elements_to_rec[rounds];
     elements_to_rec = elements_to_rec * sizeof(DATATYPE);
 
@@ -119,7 +119,7 @@ if(((receiver_args*) threadParameters)->elements_to_rec[rounds] > 0) //should da
                 exit(1);
             }
 #endif
-#ifdef BOOL
+#ifdef BOOL_COMPRESS
     int elements_to_rec =  (((receiver_args*) threadParameters)->elements_to_rec[rounds] + 7) / 8;
     char* rec_buffer = new char[elements_to_rec];
             if ((recv(sockfd, rec_buffer , elements_to_rec, MSG_WAITALL)) == -1) {

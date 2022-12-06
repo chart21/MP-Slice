@@ -1,6 +1,11 @@
  
 #pragma once
 #include "../arch/DATATYPE.h"
+#if PARTY == 0
+    #define SHARE DATATYPE
+#else
+    #define SHARE Evaluator_Share
+#endif
 #define Coordinator_Share DATATYPE
 struct Evaluator_Share{
     DATATYPE mv;

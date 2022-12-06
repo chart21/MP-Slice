@@ -4,31 +4,31 @@
 #include "../networking/buffers.h"
 #include "../utils/printing.hpp"
 #include "../utils/randomizer.h"
-#include "replicated_base.hpp"
+#include "sharemind_base.hpp"
 
 class Replicated_init{
 bool input_srngs;
     public:
 Replicated_init(bool use_srngs) {input_srngs = use_srngs;}
-Share share_SRNG(DATATYPE a)
+XOR_Share share_SRNG(DATATYPE a)
 {
 
 sending_args[pprev].elements_to_send[sending_args[pprev].send_rounds] +=1;
 sending_args[pnext].elements_to_send[sending_args[pnext].send_rounds] +=1;
-Share dummy;
+XOR_Share dummy;
 return dummy;
 }
 
-Share receive_share_SRNG(int player)
+XOR_Share receive_share_SRNG(int player)
 {
 receiving_args[player].elements_to_rec[receiving_args[player].rec_rounds - 1] +=1;
-Share s;
+XOR_Share s;
 return s;
 }
 
 
 
-void share(Share a[], int length)
+void share(XOR_Share a[], int length)
 {
 
     for(int l = 0; l < length; l++)
@@ -38,13 +38,13 @@ void share(Share a[], int length)
 }
 
 
-void prepare_receive_from(Share a[], int id, int l)
+void prepare_receive_from(XOR_Share a[], int id, int l)
 {
     if(id == player_id)
         share(a,l);
 }
 
-void complete_receive_from(Share a[], int id, int l)
+void complete_receive_from(XOR_Share a[], int id, int l)
 {
 if(id == player_id)
     return;
@@ -57,42 +57,42 @@ for (int i = 0; i < l; i++) {
 
 
 // Receive sharing of ~XOR(a,b) locally
-Share Xor(Share a, Share b)
+XOR_Share Xor(XOR_Share a, XOR_Share b)
 {
     return a; 
 }
 
-Share Xor_pub(Share a, DATATYPE b)
+XOR_Share Xor_pub(XOR_Share a, DATATYPE b)
 {
     return a; 
 }
 
-Share public_val(DATATYPE a)
+XOR_Share public_val(DATATYPE a)
 {
-    Share dummy;
+    XOR_Share dummy;
     return dummy; 
 }
 
-Share Not(Share a)
+XOR_Share Not(XOR_Share a)
 {
     return a; 
 }
 
 
 //prepare AND -> send real value a&b to other P
-void prepare_and(Share &a, Share &b)
+void prepare_and(XOR_Share &a, XOR_Share &b)
 {
 sending_args[pnext].elements_to_send[sending_args[pnext].send_rounds] +=1;
 }
 
 // NAND both real Values to receive sharing of ~ (a&b) 
-Share complete_and(Share a, Share b)
+XOR_Share complete_and(XOR_Share a, XOR_Share b)
 {
 receiving_args[pprev].elements_to_rec[receiving_args[pprev].rec_rounds - 1] +=1;
 return a;
 }
 
-void prepare_reveal_to_all(Share a)
+void prepare_reveal_to_all(XOR_Share a)
 {
     sending_args[pnext].elements_to_send[sending_args[pnext].send_rounds] +=1;
     //add to send buffer
@@ -100,7 +100,7 @@ void prepare_reveal_to_all(Share a)
 
 
 
-DATATYPE complete_Reveal(Share a)
+DATATYPE complete_Reveal(XOR_Share a)
 {
 DATATYPE result;
 receiving_args[pprev].elements_to_rec[receiving_args[pprev].rec_rounds - 1] +=1;
@@ -137,12 +137,12 @@ void communicate()
     send_and_receive();
 }
 
-Share* alloc_Share(int l)
+XOR_Share* alloc_Share(int l)
 {
-    return new Share[l];
+    return new XOR_Share[l];
 }
 
-void receive_from_SRNG(Share a[], int id, int l)
+void receive_from_SRNG(XOR_Share a[], int id, int l)
 {
 if(id == player_id)
 {
@@ -157,7 +157,7 @@ for (int i = 0; i < l; i++) {
 }
 }
 }
-void receive_from(Share a[], int id, int l)
+void receive_from(XOR_Share a[], int id, int l)
 {
 if(id == player_id)
 {

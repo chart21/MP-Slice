@@ -26,10 +26,3 @@
 #elif DATTYPE == avx2 
     #include "avx512.h"
 #endif
-
-
-
-
-
-
-
