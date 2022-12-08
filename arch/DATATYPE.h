@@ -27,8 +27,8 @@
 #elif DATTYPE == 128 
     #include "SSE.h"
 #elif DATTYPE == 256 
-    #include "avx.h"
+    #include "AVX.h"
 #elif DATTYPE == 512 
-    #include "avx512.h"
+    #include "AVX512.h"
 #endif
 

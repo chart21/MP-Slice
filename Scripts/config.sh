@@ -32,7 +32,7 @@ then
 comp="$COMPILER"
 fi
 
-flags="-msse4.1 -Ofast -std=c++2a"
+flags="-march=native -Ofast -std=c++2a -pthread"
 
 if [ ! -z "$GNU_OPTIONS" ]
 then

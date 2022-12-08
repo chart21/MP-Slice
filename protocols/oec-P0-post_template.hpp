@@ -12,11 +12,11 @@
 #include "../utils/randomizer.h"
 #include "sharemind_base.hpp"
 #define SHARE DATATYPE
-class OEC2
+class OEC0_POST
 {
 bool optimized_sharing;
 public:
-OEC2(bool optimized_sharing) {this->optimized_sharing = optimized_sharing;}
+OEC0_POST(bool optimized_sharing) {this->optimized_sharing = optimized_sharing;}
 
 XOR_Share public_val(DATATYPE a)
 {
@@ -31,7 +31,7 @@ DATATYPE Not(DATATYPE a)
 // Receive sharing of ~XOR(a,b) locally
 DATATYPE Xor(DATATYPE a, DATATYPE b)
 {
-   return XOR(a,b);
+   return a;
 }
 
 
@@ -39,120 +39,30 @@ DATATYPE Xor(DATATYPE a, DATATYPE b)
 //prepare AND -> send real value a&b to other P
 void prepare_and(DATATYPE &a, DATATYPE &b)
 {
-DATATYPE ry = getRandomVal(0);
-
-#if PRE == 1
-DATATYPE o1 = receiving_args_pre[0].received_elements[0][share_buffer[0]]; //TODO different share_buffer for pres
-DATATYPE o2 = receiving_args_pre[0].received_elements[0][share_buffer[0]+1];
-share_buffer[0]+=2;
-#else
-DATATYPE o1 = receiving_args[0].received_elements[rounds-1][share_buffer[0]];
-DATATYPE o2 = receiving_args[0].received_elements[rounds-1][share_buffer[0]+1];
-share_buffer[0]+=2;
-#endif
-a = XOR(ry, AND(XOR(a,o1),XOR(b,o2)));
-sending_args[1].sent_elements[sending_rounds][sb] = a; 
-sb+=1;
-
 }
 
-// NAND both real Values to receive sharing of ~ (a&b) 
 DATATYPE complete_and(DATATYPE a, DATATYPE b)
 {
-b = receiving_args[1].received_elements[rounds-1][rb];
-rb+=1;
-return XOR(a, b); 
+return a;
 }
 
 void prepare_reveal_to_all(DATATYPE a)
 {
-sending_args[0].sent_elements[sending_rounds][sb] = a;
-sb+=1;
 }    
 
 
 
 DATATYPE complete_Reveal(DATATYPE a)
 {
-/* for(int t = 0; t < num_players-1; t++) */ 
-/*     receiving_args[t].elements_to_rec[rounds-1]+=1; */
-#if PRE == 1 && (OPT_SHARE == 0 || SHARE_PREP == 1) 
-    a = XOR(a,receiving_args_pre[0].received_elements[0][rb]);
-    rb += 1;
-#else 
-    a = XOR(a,receiving_args[0].received_elements[rounds-1][rb]); 
-    rb+=1;
-#endif
+a = XOR(a,receiving_args[1].received_elements[rounds-1][rb]); 
+rb+=1;
 return a;
 }
-
-void communicate()
-{
-    send_and_receive();
-}
-
-XOR_Share* alloc_Share(int l)
-{
-    return new DATATYPE[l];
-}
-
-
-void prepare_receive_from(DATATYPE a[], int id, int l)
-{
-if(id == 2)
-{
-for(int i = 0; i < l; i++)
-{
-    a[i] = player_input[share_buffer[2]];
-    share_buffer[2] += 1;
-    a[i] = XOR(a[i],getRandomVal(0));
-    sending_args[1].sent_elements[sending_rounds][sb] = a[i];
-    sb+=1;
-}
-}
-}
-
-void complete_receive_from(DATATYPE a[], int id, int l)
-{
-if(id == player_id)
-    return;
-else if(id == 0)
-{
-    #if OPT_SHARE == 1
-        for(int i = 0; i < l; i++)
-            a[i] = SET_ALL_ZERO();
-    #else
-        for(int i = 0; i < l; i++)
-        {
-            #if PRE == 1 && SHARE_PREP == 1
-            a[i] = receiving_args_pre[0].received_elements[0][share_buffer[0]];
-            share_buffer[0] +=1;
-            #else
-            a[i] = receiving_args[0].received_elements[0][share_buffer[0]];
-            share_buffer[0] +=1;
-            #endif
-        }
-    #endif
-}
-else if(id == 1)
-{
-for(int i = 0; i < l; i++)
-{
-a[i] = receiving_args[1].received_elements[rounds-1][share_buffer[1]];
-share_buffer[1] +=1;
-}
-}
-/* for(int i = 0; i < l; i++) */
-/* { */
-/* a[i] = receiving_args[id].received_elements[rounds-1][share_buffer[id]]; */
-/* share_buffer[id] +=1; */
-/* } */
-}
-
 
 void send()
 {
 sb = 0;      
+    // different in PRE
     for(int t = 0; t < num_players-1; t++)
         sending_args[t].sent_elements[sending_rounds + 1] = NEW(DATATYPE[sending_args[t].elements_to_send[sending_rounds + 1]]); // Allocate memory for all sending buffers for next round
     pthread_mutex_lock(&mtx_send_next); 
@@ -181,15 +91,86 @@ double time = std::chrono::duration_cast<std::chrono::microseconds>(
 printf("Time spent waiting for data chrono: %fs \n", time / 1000000);
 
 rb = 0;
-for(int t = 0; t < num_players-1; t++)
-    share_buffer[t] = 0;
 }
 
-void send_and_receive()
+void communicate()
 {
+#if PRE == 0
     send();
     receive();
+#endif
 }
+
+XOR_Share* alloc_Share(int l)
+{
+    return new DATATYPE[l];
+}
+
+
+#if OPT_SHARE == 0 && PREP_SHARE == 0
+void share_unoptimized(DATATYPE a[], int id, int l)
+{
+
+if(id == 0)
+{
+    for(int i = 0; i < l; i++)
+    {
+    //special sharing technique, P0 keeps it inputs, the other parties hold share=0
+    a[i] = player_input[share_buffer[2]];
+    share_buffer[2] += 1;
+    /* sending_args[0].sent_elements[sending_rounds][sb] = 0; */
+    /* sending_args[1].sent_elements[sending_rounds][sb] = 0; */
+    /* sb += 1; */
+    DATATYPE r = getRandomVal(2); //should be an SRNG shared by P0,P1,P2 to save communication
+    a[i] = XOR(r,a[i]);
+    sending_args[0].sent_elements[sending_rounds][sb] = a[i];
+    sending_args[1].sent_elements[sending_rounds][sb] = a[i];
+    sb += 1;
+    a[i] = r;
+    }
+
+}
+}
+#endif
+
+void prepare_receive_from(DATATYPE a[], int id, int l)
+{
+if(id == 0)
+{
+    #if OPT_SHARE == 0 && PREP_SHARE == 0
+    share_unoptimized(a, id, l);
+    #else
+    for(int i = 0; i < l; i++)
+    {
+    //special sharing technique, P0 keeps it inputs, the other parties hold share=0
+    a[i] = player_input[share_buffer[2]];
+    share_buffer[2] += 1;
+    /* sending_args[0].sent_elements[sending_rounds][sb] = 0; */
+    /* sending_args[1].sent_elements[sending_rounds][sb] = 0; */
+    /* sb += 1; */
+    /* DATATYPE r = getRandomVal(2); //should be an SRNG shared by P0,P1,P2 to save communication */
+    /* a[i] = XOR(r,a[i]); */
+    /* sending_args[0].sent_elements[sending_rounds][sb] = SET_ALL_ZERO(); */
+    /* sending_args[1].sent_elements[sending_rounds][sb] = SET_ALL_ZERO(); */
+    /* sb += 1; */
+    /* a[i] = r; */
+    }
+#endif 
+}
+else{
+for(int i = 0; i < l; i++)
+    {
+    a[i] = getRandomVal(id - 1);
+    }
+}
+}
+
+void complete_receive_from(DATATYPE a[], int id, int l)
+{
+    return;
+}
+
+
 
 void finalize(char** ips)
 {

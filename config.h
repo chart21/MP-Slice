@@ -9,8 +9,9 @@
 #define NO_INI 0
 #define INIT 1
 #define LIVE 1
-#define PRE 0
-#define PARTY 2
+#define PRE 1
+#define SHARE_PREP 1
+#define PARTY 0
 
 #define INPUT 'r'
 #define NUM_INPUTS 1 << 12

@@ -54,6 +54,18 @@
         #endif
     #endif
 #elif PROTOCOL == odup
+    #if PRE == 1
+        #if PARTY == 0
+            #define PROTOCOL_PRE OEC0
+            #include "oec-P0_template.hpp"
+        #endif
+        #if PARTY == 1
+            #define PROTOCOL_PRE -1
+        #endif
+        #if PARTY == 2
+            #define PROTOCOL_PRE -1
+        #endif
+    #endif
     #if INIT == 1
         #if PARTY == 0
             #define PROTOCOL_INIT OEC0_init
@@ -70,8 +82,12 @@
     #endif
     #if LIVE == 1 
         #if PARTY == 0
-            #define PROTOCOL_LIVE OEC0
-            #include "oec-P0_template.hpp"
+            #if PRE == 1
+                #define PROTOCOL_LIVE OEC0_POST
+                #include "oec-P0-post_template.hpp"
+            #else
+                #define PROTOCOL_LIVE OEC0
+                #include "oec-P0_template.hpp"
         #endif
         #if PARTY == 1
             #define PROTOCOL_LIVE OEC1

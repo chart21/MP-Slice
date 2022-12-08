@@ -26,7 +26,7 @@
 
 #include "protocols/CircuitInfo.hpp"
 
-struct timespec t1, t2;
+struct timespec t1, t2, p1, p2;
 int modulo(int x,int N){
     return (x % N + N) %N;
 }
@@ -246,25 +246,20 @@ pthread_cond_init(&cond_start_signal, NULL);
 
 
 /* std::vector<DATATYPE> inputs[num_players]; */    
-pthread_t sending_Threads[num_players-1];
-pthread_t receiving_threads[num_players-1];
-int ret;
-
-sockets_received = new int[10]{0};
-//replace with vector soon
-for(int t=0;t<(num_players-1);t++) {
-    receiving_args[t].elements_to_rec = new int[10]{0};
-    sending_args[t].elements_to_send = new int[10]{0};
-}
 /* Sharemind_init init_protocol = Sharemind_init(); */
+//TODO replace with chrono
 clock_t time_init_start = clock ();
+std::cout << "Initialzing circuit ..." << "\n";
 
 #if INIT == 1 && NO_INI == 0
-    std::cout << "Initialzing circuit ..." << "\n";
     auto p_init = PROTOCOL_INIT(optimized_sharing);
     DATATYPE garbage = SET_ALL_ZERO();
     searchComm__<PROTOCOL_INIT,INIT_SHARE>(p_init,garbage);
-    p_init.finalize(ips);
+    
+    #if PRE == 1
+    p_init.finalize(ips,receiving_args_pre,sending_args_pre);
+    #else
+    p_init.finalize(ips); //TODO change to new version
     #if LIVE == 0
         export_Details_to_file();
     #endif
@@ -273,7 +268,91 @@ clock_t time_init_start = clock ();
     init_from_file();
     finalize(ips);
 #endif
-    /* if(argv[2] == std::string("sharemind")) */
+
+clock_t time_init_finished = clock ();
+/* printf("creating receiving servers\n"); */
+printf("Time measured to initialize program: %fs \n", double((time_init_finished - time_init_start)) / CLOCKS_PER_SEC);
+
+
+#if PRE == 1
+std::cout << "Preprocessing phase ..." << "\n";
+clock_t time_function_start = clock ();
+clock_gettime(CLOCK_REALTIME, &p1);
+std::chrono::high_resolution_clock::time_point p =
+            std::chrono::high_resolution_clock::now();
+    #if PROTOCOL_PRE == -1
+            // receive only
+    #else
+        auto p_pre = PROTOCOL_PRE(optimized_sharing);
+        DATATYPE garbage_PRE = SET_ALL_ZERO();
+        searchComm__<PROTOCOL_PRE,INIT_SHARE>(p_pre,garbage_PRE);
+    #endif
+p_init.finalize(ips,receiving_args,sending_args);
+
+
+
+pthread_t sending_Threads_pre[num_players-1];
+pthread_t receiving_threads_pre[num_players-1];
+int ret_pre;
+
+    for(int t=0;t<(num_players-1);t++) {
+        ret_pre = pthread_create(&receiving_threads_pre[t], NULL, receiver, &receiving_args_pre[t]);
+        if (ret_pre){
+            printf("ERROR; return code from pthread_create() is %d\n", ret_pre);
+            exit(-1);
+            }
+    }
+
+    /// Creating sending threads
+    for(int t=0;t<(num_players-1);t++) {
+        ret_pre = pthread_create(&sending_Threads_pre[t], NULL, sender, &sending_args_pre[t]);
+        if (ret_pre){
+            printf("ERROR; return code from pthread_create() is %d\n", ret_pre);
+            exit(-1);
+            }
+    }
+
+
+
+    // waiting until all threads connected
+
+    pthread_mutex_lock(&mtx_connection_established);
+    while (num_successful_connections < 2 * (num_players -1)) {
+    pthread_cond_wait(&cond_successful_connection, &mtx_connection_established);
+    }
+    num_successful_connections = -1; 
+    pthread_cond_broadcast(&cond_start_signal); //signal all threads to start receiving
+    printf("All parties connected sucessfully, starting protocol and timer! \n");
+    pthread_mutex_unlock(&mtx_connection_established);
+
+
+
+
+
+    sb = 0;      
+    for(int t = 0; t < num_players-1; t++)
+    pthread_mutex_lock(&mtx_send_next); 
+     sending_rounds +=1;
+      pthread_cond_broadcast(&cond_send_next); //signal all threads that sending buffer contains next data
+      pthread_mutex_unlock(&mtx_send_next); 
+
+    rounds+=1;  
+        // receive_data
+      //wait until all sockets have finished received their last data
+    pthread_mutex_lock(&mtx_receive_next);
+      
+    while(rounds > receiving_rounds) //wait until all threads received their data
+          pthread_cond_wait(&cond_receive_next, &mtx_receive_next);
+      
+    rounds = 0; //reset
+    receiving_rounds = 0; //reset
+    pthread_mutex_unlock(&mtx_receive_next);
+
+    rb = 0;
+#endif
+
+
+/* if(argv[2] == std::string("sharemind")) */
 /* { */
 /*     Sharemind_init s_init = Sharemind_init(optimized_sharing); */
 /*     searchComm__<Sharemind_init,XOR_Share>(s_init,garbage); */
@@ -351,11 +430,41 @@ clock_t time_init_start = clock ();
 
 /*     } */
 /* } */
-clock_t time_init_finished = clock ();
-/* printf("creating receiving servers\n"); */
-printf("Time measured to initialize program: %fs \n", double((time_init_finished - time_init_start)) / CLOCKS_PER_SEC);
 
 #if LIVE == 1
+
+
+#if PRE == 1
+//Reset preprocessing phase alterations
+
+    pthread_mutex_lock(&mtx_connection_established);
+    num_successful_connections = 0; 
+    pthread_mutex_unlock(&mtx_connection_established);
+
+    //In very unlucky case sending thread from above still has not woken up and blocks everything
+    pthread_mutex_lock(&mtx_send_next); 
+     sending_rounds = 0;
+      pthread_cond_broadcast(&cond_send_next); //signal all threads that sending buffer contains next data
+      pthread_mutex_unlock(&mtx_send_next); 
+
+#endif
+
+
+
+
+
+
+pthread_t sending_Threads[num_players-1];
+pthread_t receiving_threads[num_players-1];
+int ret;
+
+//TODO check, recently commented
+/* sockets_received = new int[10]{0}; // ??? */
+/* //replace with vector soon */
+/* for(int t=0;t<(num_players-1);t++) { // ??? */
+/*     receiving_args[t].elements_to_rec = new int[10]{0}; */
+/*     sending_args[t].elements_to_send = new int[10]{0}; */
+/* } */
     for(int t=0;t<(num_players-1);t++) {
         ret = pthread_create(&receiving_threads[t], NULL, receiver, &receiving_args[t]);
         if (ret){

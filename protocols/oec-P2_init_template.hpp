@@ -48,7 +48,11 @@ DATATYPE Xor(DATATYPE a, DATATYPE b)
 //prepare AND -> send real value a&b to other P
 void prepare_and(DATATYPE &a, DATATYPE &b)
 {
+#if PRE == 1
+receiving_args_pre[0].elements_to_rec[0] += 2;
+#else
 receiving_args[0].elements_to_rec[receiving_args[0].rec_rounds -1] += 2;
+#endif
 sending_args[1].elements_to_send[sending_args[1].send_rounds] += 1;
 //return u[player_id] * v[player_id];
 }
@@ -71,7 +75,11 @@ DATATYPE complete_Reveal(DATATYPE a)
 {
 /* for(int t = 0; t < num_players-1; t++) */ 
 /*     receiving_args[t].elements_to_rec[rounds-1]+=1; */
-receiving_args[0].elements_to_rec[receiving_args[0].rec_rounds -1]+=1;
+#if PRE == 1 && (OPT_SHARE == 0 || SHARE_PREP == 1) // OPT_SHARE is input dependent, can only be sent in prepocessing phase if allowed
+    receiving_args_pre[0].elements_to_rec[0]+=1;
+#else
+    receiving_args[0].elements_to_rec[receiving_args[0].rec_rounds -1]+=1;
+#endif
 return a;
 }
 
@@ -109,7 +117,11 @@ for(int i = 0; i < l; i++)
 else if(id==0 && optimized_sharing == false)
 {
 for(int i = 0; i < l; i++)
+#if SHARE_PREP == 1
+    receiving_args_pre[0].elements_to_rec[0] += 1;
+#else
     receiving_args[0].elements_to_rec[receiving_args[0].rec_rounds -1] += 1;
+#endif
 }
 /* if(id == player_id) */
 /*     return; */
@@ -156,6 +168,55 @@ for(int t=0;t<(num_players-1);t++) {
     sending_args[t].port = (int) base_port + (t+offset) * (num_players -1) + player_id - 1 + offset; //e.g. P0 sends on base port + num_players  for P1, P2 on base port + num_players for P0 (6001,6000)
     /* std::cout << "In main: creating thread " << t << "\n"; */
     sending_args[t].sent_elements[0] = NEW(DATATYPE[sending_args[t].elements_to_send[0]]); // Allocate memory for first round
+       
+}
+rounds = 0;
+sending_rounds = 0;
+rb = 0;
+sb = 0;
+}
+
+void finalize(char** ips, receiver_args* ra, sender_args* sa)
+{
+for(int t=0;t<(num_players-1);t++) {
+    int offset = 0;
+    if(t >= player_id)
+        offset = 1; // player should not receive from itself
+    ra[t].player_count = num_players;
+    ra[t].received_elements = new DATATYPE*[ra[t].rec_rounds]; //every thread gets its own pointer array for receiving elements
+    
+    /* receiving_args[t].elements_to_rec = new int[total_comm]; */
+    /* for (int i = 1 - use_srng_for_inputs; i < total_comm -1; i++) { */
+    /* receiving_args[t].elements_to_rec[i] = elements_per_round[i]; */
+    /* } */
+    /* receiving_args[t].elements_to_rec[0] = 0; // input sharing with SRNG */ 
+    /* if(use_srng_for_inputs == 0) */
+    /*     receiving_args[t].elements_to_rec[0] = input_length[t+offset]; //input shares to receive from that player */
+    /* receiving_args[t].elements_to_rec[total_comm-1] = reveal_length[player_id]; //number of revealed values to receive from other players */
+    ra[t].player_id = player_id;
+    ra[t].connected_to = t+offset;
+    ra[t].ip = ips[t];
+    ra[t].hostname = (char*)"hostname";
+    ra[t].port = (int) base_port + player_id * (num_players-1) + t; //e.g. P0 receives on base port from P1, P2 on base port + num_players from P0 6000,6002
+    /* std::cout << "In main: creating thread " << t << "\n"; */
+    //init_srng(t, (t+offset) + player_id); 
+}
+for(int t=0;t<(num_players-1);t++) {
+    int offset = 0;
+    if(t >= player_id)
+        offset = 1; // player should not send to itself
+#if PRE == 1
+    sa[t].send_rounds = 1;
+#endif
+
+    sa[t].sent_elements = new DATATYPE*[sa[t].send_rounds];
+    /* sending_args[t].elements_to_send[0] = 0; //input sharing with SRNGs */ 
+    sa[t].player_id = player_id;
+    sa[t].player_count = num_players;
+    sa[t].connected_to = t+offset;
+    sa[t].port = (int) base_port + (t+offset) * (num_players -1) + player_id - 1 + offset; //e.g. P0 sends on base port + num_players  for P1, P2 on base port + num_players for P0 (6001,6000)
+    /* std::cout << "In main: creating thread " << t << "\n"; */
+    sa[t].sent_elements[0] = NEW(DATATYPE[sa[t].elements_to_send[0]]); // Allocate memory for first round
        
 }
 rounds = 0;

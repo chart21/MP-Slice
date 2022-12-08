@@ -31,7 +31,7 @@ DATATYPE Not(DATATYPE a)
 // Receive sharing of ~XOR(a,b) locally
 DATATYPE Xor(DATATYPE a, DATATYPE b)
 {
-   return XOR(a,b);
+   return a;
 }
 
 
@@ -67,13 +67,8 @@ DATATYPE complete_Reveal(DATATYPE a)
 {
 /* for(int t = 0; t < num_players-1; t++) */ 
 /*     receiving_args[t].elements_to_rec[rounds-1]+=1; */
-#if PRE == 1 && (OPT_SHARE == 0 || SHARE_PREP == 1) 
-    a = XOR(a,receiving_args_pre[0].received_elements[0][rb]);
-    rb += 1;
-#else 
-    a = XOR(a,receiving_args[0].received_elements[rounds-1][rb]); 
-    rb+=1;
-#endif
+a = XOR(a,receiving_args[0].received_elements[rounds-1][rb]); 
+rb+=1;
 return a;
 }
 
@@ -97,8 +92,7 @@ for(int i = 0; i < l; i++)
     a[i] = player_input[share_buffer[2]];
     share_buffer[2] += 1;
     a[i] = XOR(a[i],getRandomVal(0));
-    sending_args[1].sent_elements[sending_rounds][sb] = a[i];             //TODO change everything to share buffers
-
+    sending_args[1].sent_elements[sending_rounds][sb] = a[i];
     sb+=1;
 }
 }
@@ -110,21 +104,18 @@ if(id == player_id)
     return;
 else if(id == 0)
 {
-    #if OPT_SHARE == 1
+    if(optimized_sharing == true)
+    {
         for(int i = 0; i < l; i++)
             a[i] = SET_ALL_ZERO();
-    #else
+    }
+    else{
         for(int i = 0; i < l; i++)
         {
-        #if PRE == 1 && SHARE_PREP == 1
-           a[i] = receiving_args_pre[0].received_elements[0][share_buffer[0]]; 
-           share_buffer[0] +=1; // use different share buffer
-        #else
-           a[i] = receiving_args[0].received_elements[rounds-1][share_buffer[0]]; 
-           share_buffer[0] +=1;
-        #endif
+            a[i] = receiving_args[0].received_elements[rounds-1][share_buffer[0]];
+            share_buffer[0] +=1;
         }
-    #endif
+    }
 }
 
 else if(id == 2)

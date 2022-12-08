@@ -48,9 +48,15 @@ DATATYPE ry = getRandomVal(1);
 
 DATATYPE o1 = XOR(a,rr);
 DATATYPE o2 = XOR(b,rl);
-sending_args[1].sent_elements[sending_rounds][sb] = o1; //P0 should only have a link to P2
-sending_args[1].sent_elements[sending_rounds][sb+1] = o2; //P0 should only have a link to P2
-sb+=2;
+#if PRE == 1
+    sending_args_pre[1].sent_elements[0][sb] = o1; //P0 should only have a link to P2
+    sending_args_pre[1].sent_elements[0][sb+1] = o2; //P0 should only have a link to P2
+    sb+=2;
+#else
+    sending_args[1].sent_elements[sending_rounds][sb] = o1; //P0 should only have a link to P2
+    sending_args[1].sent_elements[sending_rounds][sb+1] = o2; //P0 should only have a link to P2
+    sb+=2;
+#endif
 a = AND(a,rl);
 b = XOR(AND(b,rr),AND(rl,rr));
 a = XOR(a,b);
@@ -66,9 +72,15 @@ return XOR(a,b);
 
 void prepare_reveal_to_all(DATATYPE a)
 {
+#if PRE == 1 && (OPT_SHARE == 0 || SHARE_PREP == 1)
+    sending_args_pre[0].sent_elements[0][sb] = a;
+    sending_args_pre[1].sent_elements[0][sb] = a;
+    sb += 1;
+#else
     sending_args[0].sent_elements[sending_rounds][sb] = a;
     sending_args[1].sent_elements[sending_rounds][sb] = a;
     sb += 1;
+#endif
 }    
 
 
@@ -77,14 +89,18 @@ DATATYPE complete_Reveal(DATATYPE a)
 {
 /* for(int t = 0; t < num_players-1; t++) */ 
 /*     receiving_args[t].elements_to_rec[rounds-1]+=1; */
+// only if in live phase
+#if PRE == 0
 a = XOR(a,receiving_args[1].received_elements[rounds-1][rb]); 
 rb+=1;
+#endif
 return a;
 }
 
 void send()
 {
 sb = 0;      
+    // different in PRE
     for(int t = 0; t < num_players-1; t++)
         sending_args[t].sent_elements[sending_rounds + 1] = NEW(DATATYPE[sending_args[t].elements_to_send[sending_rounds + 1]]); // Allocate memory for all sending buffers for next round
     pthread_mutex_lock(&mtx_send_next); 
@@ -117,8 +133,10 @@ rb = 0;
 
 void communicate()
 {
+#if PRE == 0
     send();
     receive();
+#endif
 }
 
 XOR_Share* alloc_Share(int l)
@@ -127,7 +145,7 @@ XOR_Share* alloc_Share(int l)
 }
 
 
-
+#if OPT_SHARE == 0
 void share_unoptimized(DATATYPE a[], int id, int l)
 {
 
@@ -151,17 +169,15 @@ if(id == 0)
 
 }
 }
+#endif
 
 void prepare_receive_from(DATATYPE a[], int id, int l)
 {
 if(id == 0)
 {
-    if(optimized_sharing == false)
-    {
-        share_unoptimized(a, id, l);
-    }
-    else
-    {
+    #if OPT_SHARE == 0
+    share_unoptimized(a, id, l);
+    #else
     for(int i = 0; i < l; i++)
     {
     //special sharing technique, P0 keeps it inputs, the other parties hold share=0
@@ -177,9 +193,7 @@ if(id == 0)
     /* sb += 1; */
     /* a[i] = r; */
     }
-    
-
-}
+#endif 
 }
 else{
 for(int i = 0; i < l; i++)

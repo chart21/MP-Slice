@@ -223,7 +223,7 @@ void orthogonalize(uint64_t* data, __m256i* out) {
   orthogonalize_256x64(data,out);
 }
 void unorthogonalize(__m256i *in, uint64_t* data) {
-  unorthogonalize_256x64(in,data);
+  unorthogonalize_64x256(in,data);
 }
 
 #else

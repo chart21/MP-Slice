@@ -3,11 +3,17 @@
 int player_id;
 sender_args sending_args[num_players];
 receiver_args receiving_args[num_players];
+
+#if PRE == 1
+sender_args sending_args_pre[num_players];
+receiver_args receiving_args_pre[num_players];
+#endif
+
 int rounds;
 int rb;
 int sb;
 int send_count[num_players] = {0};
-int share_buffer[num_players] = {0};
+int share_buffer[num_players] = {0}; //TODO: move to protocol layer
 int reveal_buffer[num_players] = {0};
 int total_comm;
 int* elements_per_round;
