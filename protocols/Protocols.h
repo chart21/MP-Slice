@@ -88,6 +88,7 @@
             #else
                 #define PROTOCOL_LIVE OEC0
                 #include "oec-P0_template.hpp"
+            #endif
         #endif
         #if PARTY == 1
             #define PROTOCOL_LIVE OEC1

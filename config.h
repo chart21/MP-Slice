@@ -2,7 +2,7 @@
 #define PROTOCOL 4
 #define FUNCTION searchComm__
 
-#define DATTYPE 1
+#define DATTYPE 64
 #define COMPRESS 0
 #define OPT_SHARE 1
 
@@ -11,7 +11,7 @@
 #define LIVE 1
 #define PRE 1
 #define SHARE_PREP 1
-#define PARTY 0
+#define PARTY 2
 
 #define INPUT 'r'
 #define NUM_INPUTS 1 << 12

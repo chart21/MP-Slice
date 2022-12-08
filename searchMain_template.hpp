@@ -260,6 +260,7 @@ std::cout << "Initialzing circuit ..." << "\n";
     p_init.finalize(ips,receiving_args_pre,sending_args_pre);
     #else
     p_init.finalize(ips); //TODO change to new version
+    #endif
     #if LIVE == 0
         export_Details_to_file();
     #endif
@@ -276,7 +277,7 @@ printf("Time measured to initialize program: %fs \n", double((time_init_finished
 
 #if PRE == 1
 std::cout << "Preprocessing phase ..." << "\n";
-clock_t time_function_start = clock ();
+clock_t time_pre_function_start = clock ();
 clock_gettime(CLOCK_REALTIME, &p1);
 std::chrono::high_resolution_clock::time_point p =
             std::chrono::high_resolution_clock::now();
@@ -349,6 +350,20 @@ int ret_pre;
     pthread_mutex_unlock(&mtx_receive_next);
 
     rb = 0;
+    
+
+    double time_pre = std::chrono::duration_cast<std::chrono::microseconds>(
+                         std::chrono::high_resolution_clock::now() - p)
+                         .count();
+    /* searchComm__<Sharemind,DATATYPE>(protocol,*found); */
+    clock_gettime(CLOCK_REALTIME, &p2);
+    double accum_pre = ( p2.tv_sec - p1.tv_sec )
+    + (double)( p2.tv_nsec - p1.tv_nsec ) / (double) 1000000000L;
+    clock_t time_pre_function_finished = clock ();
+    /* printf("Time measured to read and receive inputs: %fs \n", double((time_data_received - time_application_start)) / CLOCKS_PER_SEC); */
+    printf("Time measured to perform computation clock: %fs \n", double((time_pre_function_finished - time_pre_function_start)) / CLOCKS_PER_SEC);
+    printf("Time measured to perform computation getTime: %fs \n", accum_pre);
+    printf("Time measured to perform computation chrono: %fs \n", time_pre / 1000000);
 #endif
 
 
@@ -592,7 +607,7 @@ int ret;
     printf("Time measured to perform computation getTime: %fs \n", accum);
     printf("Time measured to perform computation chrono: %fs \n", time / 1000000);
     /* printf("Time measured in total: %fs \n", double((time_computation_finished - time_application_start)) / CLOCKS_PER_SEC); */
-    clock_gettime(CLOCK_REALTIME, &t1);
+    /* clock_gettime(CLOCK_REALTIME, &t1); */
     /* DATATYPE dummy[64]; */
     /* for (uint64_t i = 0; i < 1000000000*64UL; i++) { */
     /* next(); */
