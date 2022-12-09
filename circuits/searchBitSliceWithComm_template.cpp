@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "../networking/sockethelper.h"
 #include "../networking/buffers.h"
+#include <chrono>
 /* Do NOT change the order of those define/include */
 
 /* #ifndef BITS_PER_REG */
@@ -91,8 +92,10 @@ for (int i = 0; i < n; i++) {
     }
   }
   
-
+int c = 1;
   for (int k = BITLENGTH >> 1; k > 0; k = k >> 1) {
+std::chrono::high_resolution_clock::time_point p =
+            std::chrono::high_resolution_clock::now();
     for (int i = 0; i < k; i++) {
         int j = i * 2;
       for (int s = 0; s < n; s++) {
@@ -111,6 +114,11 @@ for (int i = 0; i < n; i++) {
 
 
     }
+
+    double time_and = std::chrono::duration_cast<std::chrono::microseconds>(
+                         std::chrono::high_resolution_clock::now() - p).count();
+    printf("Time measured to perform AND in batch %i: %fs \n", c, time_and / 1000000);
+      c++;
 
   }
  
