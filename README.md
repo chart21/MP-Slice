@@ -33,7 +33,7 @@ The following configuration uses the previous configuration but adds a preproces
 The following configuration uses the previous configuration but compiles an executable for all players. Useful when running the parties on the same host.
 > ./Scripts/config.sh -p all
 
-The following configuration compiles 6 executable for player 2 (all player combinations) and runs all executables in parallel.
+The following configuration compiles 6 executables for player 2 (all player combinations) and runs all executables in parallel.
 > ./split-roles.sh -p 2 -a IP_P0 -b IP_P1
 
 ### Execution
