@@ -11,12 +11,12 @@
 #define LIVE 1
 #define PRE 1
 #define SHARE_PREP 1
-#define PARTY 2
+#define PARTY 1
 
 #define INPUT 'r'
 #define NUM_INPUTS 1 << 12
 #define BITLENGTH 64
 #define num_players 3
 
-#define base_port 6000
+#define base_port 11000
 #define SSL 0

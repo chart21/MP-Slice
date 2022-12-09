@@ -15,8 +15,12 @@
 class OEC2
 {
 bool optimized_sharing;
+int prep_buffer;
 public:
-OEC2(bool optimized_sharing) {this->optimized_sharing = optimized_sharing;}
+OEC2(bool optimized_sharing) {
+this->optimized_sharing = optimized_sharing;
+prep_buffer = 0;
+}
 
 XOR_Share public_val(DATATYPE a)
 {
@@ -42,9 +46,9 @@ void prepare_and(DATATYPE &a, DATATYPE &b)
 DATATYPE ry = getRandomVal(0);
 
 #if PRE == 1
-DATATYPE o1 = receiving_args_pre[0].received_elements[0][share_buffer[0]]; //TODO different share_buffer for pres
-DATATYPE o2 = receiving_args_pre[0].received_elements[0][share_buffer[0]+1];
-share_buffer[0]+=2;
+DATATYPE o1 = receiving_args_pre[0].received_elements[0][prep_buffer]; //TODO different share_buffer for pres
+DATATYPE o2 = receiving_args_pre[0].received_elements[0][prep_buffer+1];
+prep_buffer+=2;
 #else
 DATATYPE o1 = receiving_args[0].received_elements[rounds-1][share_buffer[0]];
 DATATYPE o2 = receiving_args[0].received_elements[rounds-1][share_buffer[0]+1];
@@ -77,8 +81,8 @@ DATATYPE complete_Reveal(DATATYPE a)
 /* for(int t = 0; t < num_players-1; t++) */ 
 /*     receiving_args[t].elements_to_rec[rounds-1]+=1; */
 #if PRE == 1 && (OPT_SHARE == 0 || SHARE_PREP == 1) 
-    a = XOR(a,receiving_args_pre[0].received_elements[0][rb]);
-    rb += 1;
+    a = XOR(a,receiving_args_pre[0].received_elements[0][prep_buffer]);
+    prep_buffer += 1;
 #else 
     a = XOR(a,receiving_args[0].received_elements[rounds-1][rb]); 
     rb+=1;
@@ -125,8 +129,8 @@ else if(id == 0)
         for(int i = 0; i < l; i++)
         {
             #if PRE == 1 && SHARE_PREP == 1
-            a[i] = receiving_args_pre[0].received_elements[0][share_buffer[0]];
-            share_buffer[0] +=1;
+            a[i] = receiving_args_pre[0].received_elements[0][prep_buffer];
+            prep_buffer +=1;
             #else
             a[i] = receiving_args[0].received_elements[0][share_buffer[0]];
             share_buffer[0] +=1;

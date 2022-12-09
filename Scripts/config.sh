@@ -5,7 +5,7 @@ helpFunction()
    exit 1 # Exit script after printing help
 }
 
-while getopts "b:a:d:c:f:n:s:i:l:p:o:u:g:x:" opt
+while getopts "b:a:d:c:f:n:s:i:l:p:o:u:g:x:e:" opt
 do
    case "$opt" in
       b ) BASE_PORT="$OPTARG" ;;
@@ -22,6 +22,7 @@ do
       u ) NUM_PLAYERS="$OPTARG" ;;
       g ) GNU_OPTIONS="$OPTARG" ;;
       x ) COMPILER="$OPTARG" ;;
+      e ) PREPROCESSING="$OPTARG" ;;
       ? ) helpFunction ;; # Print helpFunction in case parameter is non-existent
    esac
 done
@@ -94,6 +95,10 @@ fi
 if [ ! -z "$NUM_PLAYERS" ]
 then
     sed -i -e "s/\(num_players \).*/\1$NUM_PLAYERS/" config.h
+fi
+if [ ! -z "$PREPROCESSING" ]
+then
+    sed -i -e "s/\(define PRE \).*/\1$PREPROCESSING/" config.h
 fi
 
 for i in {0..2}
