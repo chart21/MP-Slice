@@ -73,7 +73,7 @@ return XOR(a,b);
 void prepare_reveal_to_all(DATATYPE a)
 {
 #if PRE == 1 && (OPT_SHARE == 0 || SHARE_PREP == 1)
-    sending_args_pre[0].sent_elements[0][sb] = a;
+    sending_args_pre[0].sent_elements[0][0] = a; // hardcoded, needs to change!!
     sending_args_pre[1].sent_elements[0][sb] = a;
     sb += 1;
 #else
@@ -136,6 +136,8 @@ void communicate()
 #if PRE == 0
     send();
     receive();
+#else
+    // sb = 0; //TODO replace with individual index for each player soon
 #endif
 }
 

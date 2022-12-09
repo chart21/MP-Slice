@@ -4,6 +4,7 @@
 #include <ctime>
 #include <iostream>
 #include <cstring>
+#include <pthread.h>
 #include <random>
 #include <bitset>
 #include <new>
@@ -236,8 +237,10 @@ bool optimized_sharing = false;
 
 pthread_mutex_init(&mtx_connection_established, NULL);
 pthread_mutex_init(&mtx_start_communicating, NULL);
+pthread_mutex_init(&mtx_send_next, NULL);
 pthread_cond_init(&cond_successful_connection, NULL);
 pthread_cond_init(&cond_start_signal, NULL);
+pthread_cond_init(&cond_send_next, NULL);
 //DATATYPE** inputs = new DATATYPE*[num_players]; //create n pointers, each to hold a player's input
 //int inputLength[] = INPUTSLENGTH;
 /* for (int i = 0; i < num_players; i++) { */
@@ -250,6 +253,22 @@ pthread_cond_init(&cond_start_signal, NULL);
 //TODO replace with chrono
 clock_t time_init_start = clock ();
 std::cout << "Initialzing circuit ..." << "\n";
+
+/* //replace with vector soon !! */
+sockets_received = new int[10]{0}; 
+for(int t=0;t<(num_players-1);t++) { // ???
+    #if LIVE == 1 
+    receiving_args[t].elements_to_rec = new int[10]{0};
+    sending_args[t].elements_to_send = new int[10]{0};
+    #endif
+    #if PRE == 1
+    receiving_args_pre[t].elements_to_rec = new int[1]{0};
+    sending_args_pre[t].elements_to_send = new int[1]{0};
+    receiving_args_pre[t].rec_rounds = 1;
+    sending_args_pre[t].send_rounds = 1;
+    #endif
+}
+
 
 #if INIT == 1 && NO_INI == 0
     auto p_init = PROTOCOL_INIT(optimized_sharing);
@@ -276,19 +295,7 @@ printf("Time measured to initialize program: %fs \n", double((time_init_finished
 
 
 #if PRE == 1
-std::cout << "Preprocessing phase ..." << "\n";
-clock_t time_pre_function_start = clock ();
-clock_gettime(CLOCK_REALTIME, &p1);
-std::chrono::high_resolution_clock::time_point p =
-            std::chrono::high_resolution_clock::now();
-    #if PROTOCOL_PRE == -1
-            // receive only
-    #else
-        auto p_pre = PROTOCOL_PRE(optimized_sharing);
-        DATATYPE garbage_PRE = SET_ALL_ZERO();
-        searchComm__<PROTOCOL_PRE,INIT_SHARE>(p_pre,garbage_PRE);
-    #endif
-p_init.finalize(ips,receiving_args,sending_args);
+
 
 
 
@@ -328,14 +335,29 @@ int ret_pre;
 
 
 
+std::cout << "Preprocessing phase ..." << "\n";
+clock_t time_pre_function_start = clock ();
+clock_gettime(CLOCK_REALTIME, &p1);
+std::chrono::high_resolution_clock::time_point p =
+            std::chrono::high_resolution_clock::now();
 
+#if PROTOCOL_PRE == -1
+            // receive only
+    #else
+        auto p_pre = PROTOCOL_PRE(optimized_sharing);
+        DATATYPE garbage_PRE = SET_ALL_ZERO();
+        searchComm__<PROTOCOL_PRE,INIT_SHARE>(p_pre,garbage_PRE);
+    #endif
+    // manual send
 
     sb = 0;      
-    for(int t = 0; t < num_players-1; t++)
     pthread_mutex_lock(&mtx_send_next); 
      sending_rounds +=1;
       pthread_cond_broadcast(&cond_send_next); //signal all threads that sending buffer contains next data
       pthread_mutex_unlock(&mtx_send_next); 
+
+    
+    // manual receive
 
     rounds+=1;  
         // receive_data
@@ -345,8 +367,6 @@ int ret_pre;
     while(rounds > receiving_rounds) //wait until all threads received their data
           pthread_cond_wait(&cond_receive_next, &mtx_receive_next);
       
-    rounds = 0; //reset
-    receiving_rounds = 0; //reset
     pthread_mutex_unlock(&mtx_receive_next);
 
     rb = 0;
@@ -361,9 +381,16 @@ int ret_pre;
     + (double)( p2.tv_nsec - p1.tv_nsec ) / (double) 1000000000L;
     clock_t time_pre_function_finished = clock ();
     /* printf("Time measured to read and receive inputs: %fs \n", double((time_data_received - time_application_start)) / CLOCKS_PER_SEC); */
-    printf("Time measured to perform computation clock: %fs \n", double((time_pre_function_finished - time_pre_function_start)) / CLOCKS_PER_SEC);
-    printf("Time measured to perform computation getTime: %fs \n", accum_pre);
-    printf("Time measured to perform computation chrono: %fs \n", time_pre / 1000000);
+   
+
+    // Join threads to avoid address rebind
+    for(int t=0;t<(num_players-1);t++) {
+    pthread_join(receiving_threads_pre[t],NULL);
+    pthread_join(sending_Threads_pre[t],NULL);
+    }
+    printf("Time measured to perform preprocessing clock: %fs \n", double((time_pre_function_finished - time_pre_function_start)) / CLOCKS_PER_SEC);
+    printf("Time measured to perform preprocessing getTime: %fs \n", accum_pre);
+    printf("Time measured to perform preprocessing chrono: %fs \n", time_pre / 1000000);
 #endif
 
 
@@ -450,20 +477,34 @@ int ret_pre;
 
 
 #if PRE == 1
-//Reset preprocessing phase alterations
+//Reset preprocessing phase alterations -> no locking needed after join
 
-    pthread_mutex_lock(&mtx_connection_established);
-    num_successful_connections = 0; 
-    pthread_mutex_unlock(&mtx_connection_established);
+    /* pthread_mutex_lock(&mtx_connection_established); */
+    /* num_successful_connections = 0; */ 
+    /* pthread_mutex_unlock(&mtx_connection_established); */
 
-    //In very unlucky case sending thread from above still has not woken up and blocks everything
-    pthread_mutex_lock(&mtx_send_next); 
-     sending_rounds = 0;
-      pthread_cond_broadcast(&cond_send_next); //signal all threads that sending buffer contains next data
-      pthread_mutex_unlock(&mtx_send_next); 
-
+    /* //In very unlucky case sending thread from above still has not woken up and blocks everything -> not with join */
+    /* pthread_mutex_lock(&mtx_send_next); */ 
+    /*  sending_rounds = 0; */
+      
+    /*  pthread_cond_broadcast(&cond_send_next); //signal all threads that sending buffer contains next data */
+    /*  pthread_mutex_unlock(&mtx_send_next); */ 
+num_successful_connections = 0;
+delete[] sockets_received;
+sockets_received = new int[10]{0};
+rb = 0;
+sb = 0;
+rounds = 0;
+sending_rounds = 0;
+receiving_rounds = 0;
+    #if INIT == 0 && NO_INI == 0
+         init_from_file();
+        finalize(ips);
+    #else
+        p_init.finalize(ips);
+        /* p_init.finalize(ips,receiving_args,sending_args); */
+    #endif
 #endif
-
 
 
 
@@ -474,12 +515,6 @@ pthread_t receiving_threads[num_players-1];
 int ret;
 
 //TODO check, recently commented
-/* sockets_received = new int[10]{0}; // ??? */
-/* //replace with vector soon */
-/* for(int t=0;t<(num_players-1);t++) { // ??? */
-/*     receiving_args[t].elements_to_rec = new int[10]{0}; */
-/*     sending_args[t].elements_to_send = new int[10]{0}; */
-/* } */
     for(int t=0;t<(num_players-1);t++) {
         ret = pthread_create(&receiving_threads[t], NULL, receiver, &receiving_args[t]);
         if (ret){

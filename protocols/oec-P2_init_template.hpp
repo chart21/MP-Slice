@@ -117,7 +117,7 @@ for(int i = 0; i < l; i++)
 else if(id==0 && optimized_sharing == false)
 {
 for(int i = 0; i < l; i++)
-#if SHARE_PREP == 1
+#if SHARE_PREP == 1 && PRE == 1
     receiving_args_pre[0].elements_to_rec[0] += 1;
 #else
     receiving_args[0].elements_to_rec[receiving_args[0].rec_rounds -1] += 1;
@@ -183,6 +183,7 @@ for(int t=0;t<(num_players-1);t++) {
     if(t >= player_id)
         offset = 1; // player should not receive from itself
     ra[t].player_count = num_players;
+
     ra[t].received_elements = new DATATYPE*[ra[t].rec_rounds]; //every thread gets its own pointer array for receiving elements
     
     /* receiving_args[t].elements_to_rec = new int[total_comm]; */
@@ -205,7 +206,7 @@ for(int t=0;t<(num_players-1);t++) {
     int offset = 0;
     if(t >= player_id)
         offset = 1; // player should not send to itself
-#if PRE == 1
+#if PRE == 1 // only in actual preprocessing phase
     sa[t].send_rounds = 1;
 #endif
 

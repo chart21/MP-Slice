@@ -95,10 +95,10 @@ rb = 0;
 
 void communicate()
 {
-#if PRE == 0
+/* #if PRE == 0 */
     send();
     receive();
-#endif
+/* #endif */
 }
 
 XOR_Share* alloc_Share(int l)
