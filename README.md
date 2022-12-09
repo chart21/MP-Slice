@@ -17,7 +17,7 @@ Run ./Scripts/config.sh with your desired parameters.
   -s MPC Protocol (1(Sharemind),2(Replicated),3(Astra),4(OEC DUP),5(OEC REP),6(TTP))
   -i Initialize circuit seperatly (0) or at runtime (1)?
   -l Include the Online Phase in this executable  (0/1)?
-  -l Compile circuit with Preprocessing phase before online phase  (0/1)?
+  -e Compile circuit with Preprocessing phase before online phase (0/1) (only with -d 4 -i 1 -l 1)?
   -o Use additional assumptions to optimize the sharing phase? (0/1)
   -u Number of players in total
   -g Compile flags (other than standard)
