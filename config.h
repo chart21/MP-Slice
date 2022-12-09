@@ -9,7 +9,7 @@
 #define NO_INI 0
 #define INIT 1
 #define LIVE 1
-#define PRE 1
+#define PRE 0
 #define SHARE_PREP 1
 #define PARTY 1
 
