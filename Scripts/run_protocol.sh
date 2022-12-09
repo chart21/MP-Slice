@@ -1,6 +1,8 @@
 #!/bin/bash
 helpFunction()
 {
+   echo "Script to run 3 players locally after compiling."
+   echo -e "\t-f Function to run"
    exit 1 # Exit script after printing help
 }
 

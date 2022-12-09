@@ -2,6 +2,21 @@
 
 helpFunction()
 {
+   echo "Script to configure and compile executables for a run."
+   echo -e "Only arguments you want to change have to be set."
+   echo -e "\t-b base_port: Needs to be the same for all players for successful networking (e.g. 6000)"
+   echo -e "\t-d Datatype used for slicing: 1(bool),8(char),64(uint64),128(SSE),256(AVX),512(AVX512)"
+   echo -e "\t-p Player ID (0/1/2). Use all for compilling all platers"
+   echo -e "\t-f Name of the function to execute"
+   echo -e "\t-c Pack Bool in Char before sending? (0/1). Only used with -d 1"
+   echo -e "\t-s MPC Protocol (1(Sharemind),2(Replicated),3(Astra),4(OEC DUP),5(OEC REP),6(TTP))"
+   echo -e "\t-i Initialize circuit seperatly (0) or at runtime (1)?"
+   echo -e "\t-l Include the Online Phase in this executable  (0/1)?"
+   echo -e "\t-e Compile circuit with Preprocessing phase before online phase  (0/1)?"
+   echo -e "\t-o Use additional assumptions to optimize the sharing phase? (0/1)"
+   echo -e "\t-u Number of players in total"
+   echo -e "\t-g Compile flags (other than standard)"
+   echo -e "\t-x Compiler (g++/clang++/..)"
    exit 1 # Exit script after printing help
 }
 

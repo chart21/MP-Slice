@@ -1,3 +1,12 @@
+helpFunction()
+{
+   echo "Script to compile and run 6 mixed constellations of players in parallel"
+   echo -e "\t-p Party number or all for running locally"
+   echo -e "\t-p a IP address of lower index player "
+   echo -e "\t-p b IP address of higher index player "
+   exit 1 # Exit script after printing help
+}
+
 while getopts "p:a:b:" opt
 do
    case "$opt" in

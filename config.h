@@ -14,7 +14,7 @@
 #define PARTY 1
 
 #define INPUT 'r'
-#define NUM_INPUTS 1 << 12
+#define NUM_INPUTS 1 << 16
 #define BITLENGTH 64
 #define num_players 3
 
