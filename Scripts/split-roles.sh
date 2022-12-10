@@ -62,10 +62,10 @@ echo "Executing"
 ./search-P0-"$PARTY"-0.o "$IP1" "$IP2" & ./search-P0-"$PARTY"-1.o "$IP2" "$IP1" & ./search-P1-"$PARTY"-0.o "$IP2" "$IP1" &./search-P1-"$PARTY"-1.o"$IP1" "$IP2" &./search-P2-"$PARTY"-0.o "$IP1" "$IP2" &./search-P2-"$PARTY"-1.o "$IP2" "$IP1"
         elif [ "$PARTY" = "1" ];
         then
-            ./search-P0-"$PARTY"-0.o "$IP1" "$IP2" & ./search-P0-"$PARTY"-1.o "$IP2" "$IP1" & ./search-P1-"$PARTY"-0.o "$IP2" "$IP1" &./search-P1-"$PARTY"-1.o"$IP1" "$IP2" &./search-P2-"$PARTY"-0.o "$IP2" "$IP1" &./search-P2-"$PARTY"-1.o "$IP1" "$IP2"
+            ./search-P0-"$PARTY"-0.o "$IP2" "$IP1" & ./search-P0-"$PARTY"-1.o "$IP1" "$IP2" & ./search-P1-"$PARTY"-0.o "$IP1" "$IP2" &./search-P1-"$PARTY"-1.o"$IP2" "$IP1" &./search-P2-"$PARTY"-0.o "$IP2" "$IP1" &./search-P2-"$PARTY"-1.o "$IP1" "$IP2"
         elif [ "$PARTY" = "2" ];
         then
-            ./search-P0-"$PARTY"-0.o "$IP1" "$IP2" & ./search-P0-"$PARTY"-1.o "$IP2" "$IP1" & ./search-P1-"$PARTY"-0.o "$IP1" "$IP2" &./search-P1-"$PARTY"-1.o"$IP2" "$IP1" &./search-P2-"$PARTY"-0.o "$IP2" "$IP1" &./search-P2-"$PARTY"-1.o "$IP1" "$IP2"
+            ./search-P0-"$PARTY"-0.o "$IP1" "$IP2" & ./search-P0-"$PARTY"-1.o "$IP2" "$IP1" & ./search-P1-"$PARTY"-0.o "$IP2" "$IP1" &./search-P1-"$PARTY"-1.o"$IP1" "$IP2" &./search-P2-"$PARTY"-0.o "$IP1" "$IP2" &./search-P2-"$PARTY"-1.o "$IP2" "$IP1"
         fi
 
 
