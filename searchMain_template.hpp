@@ -650,5 +650,10 @@ int ret;
     /* clock_gettime(CLOCK_REALTIME, &t2); */
     /* accum = ( t2.tv_sec - t1.tv_sec ) */
     /* + (double)( t2.tv_nsec - t1.tv_nsec ) / (double) 1000000000L; */
+    // Join threads to ensure closing of sockets
+    for(int t=0;t<(num_players-1);t++) {
+        pthread_join(receiving_threads[t],NULL);
+        pthread_join(sending_Threads[t],NULL);
+    }
 #endif
     }
