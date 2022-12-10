@@ -28,8 +28,7 @@ for i in {0..2}
         do
             for z in {0..1}
                 do
-                    let "s = (1-z)*(j+i)%3+z*(2-i-j)%3"
-                    s=${s#-}
+                    let "s = (1-z)*(j+i)%3+z*(3+2-i-j)%3"
                     # s= $(((1-z)*(j+i)%3+z*(2-i-j)%3))
                     echo $s
             if [ "$i" = "$PARTY" ] || [ "$PARTY" = "all" ];
