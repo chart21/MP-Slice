@@ -11,7 +11,7 @@
 #define LIVE 1
 #define PRE 0
 #define SHARE_PREP 1
-#define PARTY 1
+#define PARTY 2
 
 #define INPUT 'r'
 #define NUM_INPUTS 1 << 16

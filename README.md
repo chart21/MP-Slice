@@ -9,6 +9,7 @@ Run ./Scripts/config.sh with your desired parameters.
 ```
   Script to configure and compile executables for a run.
   Only arguments you want to change have to be set.
+  -n Number of elements
   -b base_port: Needs to be the same for all players for successful networking (e.g. 6000)
   -d Datatype used for slicing: 1(bool),8(char),64(uint64),128(SSE),256(AVX),512(AVX512)
   -p Player ID (0/1/2). Use all for compilling all platers

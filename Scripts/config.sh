@@ -4,6 +4,7 @@ helpFunction()
 {
    echo "Script to configure and compile executables for a run."
    echo -e "Only arguments you want to change have to be set."
+   echo -e "\t-n Number of elements"
    echo -e "\t-b base_port: Needs to be the same for all players for successful networking (e.g. 6000)"
    echo -e "\t-d Datatype used for slicing: 1(bool),8(char),64(uint64),128(SSE),256(AVX),512(AVX512)"
    echo -e "\t-p Player ID (0/1/2). Use all for compilling all platers"
