@@ -29,5 +29,4 @@ int pprev;
 
 int use_srng_for_inputs = 1;
 
-#define n NUM_INPUTS
 //int seeds[] = {10000,20000,12000}; // seeds shared between 1-0,2-0,1-2

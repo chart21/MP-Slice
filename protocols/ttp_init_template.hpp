@@ -165,7 +165,7 @@ complete_receive_from_comm(a, id, l);
 
 
 
-void finalize(char** ips)
+void finalize(std::string* ips)
 {
 for(int t=0;t<(num_players-1);t++) {
     int offset = 0;

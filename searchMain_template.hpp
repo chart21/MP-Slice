@@ -19,8 +19,13 @@
 
 #include "utils/randomizer.h"
 #include "utils/timing.hpp"
-#include "networking/client.hpp"
-#include "networking/server.hpp"
+#include "networking/client_n.hpp"
+#include "networking/server_n.hpp"
+
+/* #include "networking/client_macro.hpp" */
+/* #include "networking/server_macro.hpp" */
+/* #include "networking/client.hpp" */
+/* #include "networking/server.hpp" */
 #include "networking/sockethelper.h"
 #include "networking/buffers.h"
 #include "utils/printing.hpp"
@@ -41,9 +46,9 @@ void print_bool(uint8_t* found)
 }
 
 
-void search_Compare(uint64_t origData[n][BITS_PER_REG], uint64_t origElements[], uint8_t* found)
+void search_Compare(uint64_t origData[NUM_INPUTS][BITS_PER_REG], uint64_t origElements[], uint8_t* found)
 {
- for (int i = 0; i < n; i++) {
+ for (int i = 0; i < NUM_INPUTS; i++) {
     for (int j = 0; j < BITS_PER_REG; j++) {
         if(origData[i][j] == origElements[j])
             found[j] = 1;
@@ -52,11 +57,11 @@ void search_Compare(uint64_t origData[n][BITS_PER_REG], uint64_t origElements[],
 }
 
 
-void insertManually(DATATYPE dataset[n][BITLENGTH], DATATYPE elements[n], uint64_t origData[n][BITS_PER_REG], uint64_t origElements[], int c, int b, uint64_t numElement, uint64_t numDataset ){
+void insertManually(DATATYPE dataset[NUM_INPUTS][BITLENGTH], DATATYPE elements[NUM_INPUTS], uint64_t origData[NUM_INPUTS][BITS_PER_REG], uint64_t origElements[], int c, int b, uint64_t numElement, uint64_t numDataset ){
 
 unorthogonalize(elements, origElements);
 
-for (int i = 0; i < n; i++) {
+for (int i = 0; i < NUM_INPUTS; i++) {
  unorthogonalize(dataset[i], origData[i]);   
 }
 origData[c][b] = numDataset;
@@ -74,11 +79,11 @@ print_bool(cfound);
 
 orthogonalize(origElements, elements);
 
-for (int i = 0; i < n; i++) {
+for (int i = 0; i < NUM_INPUTS; i++) {
  orthogonalize(origData[i], dataset[i]);   
 }
 }
-void randomizeInputs(DATATYPE dataset[n][BITLENGTH], DATATYPE elements[n])
+void randomizeInputs(DATATYPE dataset[NUM_INPUTS][BITLENGTH], DATATYPE elements[NUM_INPUTS])
 {
     // init randomization
 uint64_t* iseed = NEW(uint64_t[BITS_PER_REG]);
@@ -89,7 +94,7 @@ DATATYPE* seed = new DATATYPE[BITLENGTH];
 funcTime("single ortho", orthogonalize,iseed, seed);
 
 //generate random data
-for (int i = 0; i < n; i++) {
+for (int i = 0; i < NUM_INPUTS; i++) {
      xor_shift__(seed, dataset[i]);
  }
 xor_shift__(seed, elements);
@@ -113,7 +118,7 @@ void init_comm()
 
 
 // sharing
-input_length[0] = BITLENGTH * n;
+input_length[0] = BITLENGTH * NUM_INPUTS;
 input_length[1] = BITLENGTH;
 
 // revealing
@@ -138,7 +143,7 @@ elements_per_round = new int[total_comm];
 int i = 1 - use_srng_for_inputs;
 for (int k = BITLENGTH >> 1; k > 0; k = k >> 1)
 {
-    elements_per_round[i] = k*n;
+    elements_per_round[i] = k*NUM_INPUTS;
     i+=1;
 }
 
@@ -147,13 +152,13 @@ for (int k = BITLENGTH >> 1; k > 0; k = k >> 1)
 
 }
 
-void search_main(int argc, char *argv[])
+void search_main(int argc, char *argv[], int process_id, int process_num)
 {
 //init_comm();
 
 std::cout << PROTOCOL << "\n";
 
-uint64_t (*origData)[BITS_PER_REG] = NEW(uint64_t[n][BITS_PER_REG]);
+uint64_t (*origData)[BITS_PER_REG] = NEW(uint64_t[NUM_INPUTS][BITS_PER_REG]);
 uint64_t *origElements = NEW(uint64_t[BITS_PER_REG]);
 
 // read inputs ///
@@ -165,9 +170,9 @@ uint64_t *origElements = NEW(uint64_t[BITS_PER_REG]);
 
 //Slicing inputs
 //DATATYPE (*dataset)[BITLENGTH] = malloc(sizeof(DATATYPE[n][BITLENGTH]));
-DATATYPE (*dataset)[BITLENGTH] = NEW(DATATYPE[n][BITLENGTH]);
+DATATYPE (*dataset)[BITLENGTH] = NEW(DATATYPE[NUM_INPUTS][BITLENGTH]);
 DATATYPE* elements = NEW(DATATYPE[BITLENGTH]);
-for (int i = 0; i < n; i++) {
+for (int i = 0; i < NUM_INPUTS; i++) {
  orthogonalize(origData[i], dataset[i]);   
 }
 orthogonalize(origElements, elements);
@@ -182,7 +187,6 @@ funcTime("generating random inputs",randomizeInputs,dataset,elements);
 insertManually(dataset, elements, origData, origElements, 1,7 , 200, 200);
 
 
-int argv_offset = 0;
 /* #if PARTY == all */
 /* argv_offset+=1; */
 /* player_id = atoi(argv[1]); */
@@ -216,15 +220,19 @@ DATATYPE* found = NEW(DATATYPE);
 
 
 /// Connecting to other Players
-char* ips[num_players-1];
+std::string ips[num_players-1];
 
 //char* hostnames[num_players-1];
 for(int i=0; i < num_players -1; i++)
 {
-    if(i < argc - argv_offset)
-        ips[i] = argv[i+1+ argv_offset];
+    if(i < argc - 1 )
+        ips[i] = std::string(argv[i+1]);
     else
-        ips[i] = (char*) "127.0.0.1";
+    {
+        ips[i] = "127.0.0.1";
+        /* ips[i] = (char*) "127.0.0.1\0" ; */
+    }
+        //hostnames[i] = (char*) "localhost"
 }
 
 #if OPT_SHARE == 1

@@ -1,8 +1,8 @@
 #pragma once
-#include <netinet/in.h>
-#include <sys/socket.h>
 #include <pthread.h>
+#include <string>
 #include "../arch/DATATYPE.h"
+
 pthread_mutex_t mtx_connection_established;
 pthread_mutex_t mtx_start_communicating;
 pthread_cond_t cond_successful_connection;
@@ -28,15 +28,6 @@ int sockets_sent = 0;
 pthread_mutex_t mtx_data_sent;
 pthread_cond_t cond_data_sent;
 
-// get sockaddr, IPv4 or IPv6:
-void *get_in_addr(struct sockaddr *sa)
-{
-	if (sa->sa_family == AF_INET) {
-		return &(((struct sockaddr_in*)sa)->sin_addr);
-	}
-
-	return &(((struct sockaddr_in6*)sa)->sin6_addr);
-}
 
 typedef struct receiver_arguments {
   int player_count;
@@ -44,7 +35,7 @@ typedef struct receiver_arguments {
   int connected_to;
   DATATYPE **received_elements;
   int inputs_size; //depricated
-  char *ip;
+  std::string ip;
   int port;
   char *hostname;
   int rec_rounds;
@@ -66,3 +57,21 @@ typedef struct sender_arguments {
   int total_rounds; //depricated
   //char *data;
 } sender_args;
+
+void client_signal_main()
+{
+
+    pthread_mutex_lock(&mtx_connection_established);
+    num_successful_connections += 1; 
+    if(num_successful_connections == 2 * num_players -1) {
+        pthread_cond_signal(&cond_successful_connection); //signal main thread that all threads have connected
+        printf("client %i \n",num_successful_connections);
+    }
+    pthread_mutex_unlock(&mtx_connection_established);
+
+    pthread_mutex_lock(&mtx_start_communicating); 
+    while (num_successful_connections != -1) { // wait for start signal from main thread
+        pthread_cond_wait(&cond_start_signal, &mtx_start_communicating);
+    }
+        pthread_mutex_unlock(&mtx_start_communicating);
+}

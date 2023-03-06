@@ -172,7 +172,7 @@ receiving_args[player].elements_to_rec[receiving_args[player].rec_rounds -1] += 
 }
 }
 
-void finalize(char** ips)
+void finalize(std::string* ips)
 {
 for(int t=0;t<(num_players-1);t++) {
     int offset = 0;

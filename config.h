@@ -18,5 +18,8 @@
 #define BITLENGTH 64
 #define num_players 3
 
-#define base_port 11000
-#define SSL 0
+#define BASE_PORT 10000
+int base_port = BASE_PORT; // temporary solution
+#define USE_SSL 0
+
+#define PROCESS_NUM 1

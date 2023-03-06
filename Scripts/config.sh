@@ -18,10 +18,11 @@ helpFunction()
    echo -e "\t-u Number of players in total"
    echo -e "\t-g Compile flags (other than standard)"
    echo -e "\t-x Compiler (g++/clang++/..)"
+   echo -h "\t-x USE SSL? (0/1)"
    exit 1 # Exit script after printing help
 }
 
-while getopts "b:a:d:c:f:n:s:i:l:p:o:u:g:x:e:" opt
+while getopts "b:a:d:c:f:n:s:i:l:p:o:u:g:x:e:h:" opt
 do
    case "$opt" in
       b ) BASE_PORT="$OPTARG" ;;
@@ -39,6 +40,7 @@ do
       g ) GNU_OPTIONS="$OPTARG" ;;
       x ) COMPILER="$OPTARG" ;;
       e ) PREPROCESSING="$OPTARG" ;;
+      h ) USE_SSL="$OPTARG" ;;
       ? ) helpFunction ;; # Print helpFunction in case parameter is non-existent
    esac
 done
@@ -49,7 +51,20 @@ then
 comp="$COMPILER"
 fi
 
-flags="-march=native -Ofast -std=c++2a -pthread"
+ssl="1"
+if [ ! -z "$USE_SSL" ]
+then
+ssl="$USE_SSL"
+fi
+
+
+
+if [ "$ssl" = "1" ]
+then
+    flags="-march=native -g -std=c++2a -pthread -lssl -lcrypto"
+else
+    flags="-march=native -g -std=c++2a -pthread"
+fi
 
 if [ ! -z "$GNU_OPTIONS" ]
 then

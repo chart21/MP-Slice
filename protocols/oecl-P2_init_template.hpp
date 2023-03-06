@@ -119,7 +119,7 @@ for(int i = 0; i < l; i++)
 }
 
 
-void finalize(char** ips)
+void finalize(std::string* ips)
 {
 for(int t=0;t<(num_players-1);t++) {
     int offset = 0;

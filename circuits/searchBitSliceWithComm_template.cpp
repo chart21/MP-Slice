@@ -48,7 +48,7 @@ void searchComm__ (Pr P,/*outputs*/ DATATYPE &found)
 {
 
 // allocate memory for shares
-S (*dataset)[BITLENGTH] = (S ((*)[BITLENGTH])) P.alloc_Share(((int) n)*BITLENGTH);
+S (*dataset)[BITLENGTH] = (S ((*)[BITLENGTH])) P.alloc_Share(((int) NUM_INPUTS)*BITLENGTH);
 S* element = P.alloc_Share(BITLENGTH);
 
 
@@ -71,7 +71,7 @@ S* element = P.alloc_Share(BITLENGTH);
 /* /1* P_share(element,BITLENGTH); *1/ */
 /* } */
 
-P.prepare_receive_from((S*) dataset,0,(n)*BITLENGTH);
+P.prepare_receive_from((S*) dataset,0,(NUM_INPUTS)*BITLENGTH);
 P.prepare_receive_from(element,1,BITLENGTH);
 
 
@@ -80,13 +80,13 @@ P.communicate();
 // change to receive from
 
 
-P.complete_receive_from((S*) dataset,0,(n)*BITLENGTH);
+P.complete_receive_from((S*) dataset,0,(NUM_INPUTS)*BITLENGTH);
 P.complete_receive_from(element,1,BITLENGTH);
 /* P.receive_from_SRNG((Share*) dataset,0,BITLENGTH*n); */
 /* P.receive_from_SRNG(element,1,BITLENGTH); */
 
 
-for (int i = 0; i < n; i++) {
+for (int i = 0; i < NUM_INPUTS; i++) {
     for (int j = 0; j < BITLENGTH; j++) {
       dataset[i][j] = P.Not(P.Xor(dataset[i][j], element[j]));
     }
@@ -98,7 +98,7 @@ std::chrono::high_resolution_clock::time_point p =
             std::chrono::high_resolution_clock::now();
     for (int i = 0; i < k; i++) {
         int j = i * 2;
-      for (int s = 0; s < n; s++) {
+      for (int s = 0; s < NUM_INPUTS; s++) {
           P.prepare_and(dataset[s][j],dataset[s][j +1]);
       }
     }
@@ -107,7 +107,7 @@ std::chrono::high_resolution_clock::time_point p =
 
     for (int i = 0; i < k; i++) {
         int j = i * 2;
-      for (int s = 0; s < n; s++) {
+      for (int s = 0; s < NUM_INPUTS; s++) {
             dataset[s][i] = P.complete_and(dataset[s][j], dataset[s][j+1]);
       }
       
@@ -132,7 +132,7 @@ std::chrono::high_resolution_clock::time_point p =
   
   S sfound = dataset[0][0];
 
-  for (int i = 1; i < n; i++) {
+  for (int i = 1; i < NUM_INPUTS; i++) {
     sfound = P.Xor(dataset[i][0],sfound); 
 
   }
