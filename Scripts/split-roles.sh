@@ -19,7 +19,7 @@ done
 
 comp="g++"
 
-flags="-march=native -Ofast -std=c++2a -pthread"
+flags="-march=native -Ofast -std=c++2a -pthread -lssl -lcrypto"
 
 
 for i in {0..2}
@@ -34,7 +34,7 @@ for i in {0..2}
             if [ "$i" = "$PARTY" ] || [ "$PARTY" = "all" ];
             then
                 sed -i -e "s/\(PARTY \).*/\1"$s"/" config.h
-                sed -i -e "s/\(base_port \).*/\1"$((6000 + (j+z*3) * 1000))"/" config.h
+                sed -i -e "s/\(BASE_PORT \).*/\1"$((6000 + (j+z*3) * 1000))"/" config.h
                 if [ "$LIVE" = "0" ] && [ "$INIT" = "1" ]; 
                 then
                     sed -i -e "s/\(LIVE \).*/\10/" config.h

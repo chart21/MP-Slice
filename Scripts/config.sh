@@ -85,7 +85,7 @@ fi
 
 if [ ! -z "$BASE_PORT" ]
 then
-    sed -i -e "s/\(base_port \).*/\1$BASE_PORT/" config.h
+    sed -i -e "s/\(BASE_PORT \).*/\1$BASE_PORT/" config.h
 fi
 if [ ! -z "$BITLENGTH" ]
 then

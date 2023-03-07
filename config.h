@@ -11,15 +11,16 @@
 #define LIVE 1
 #define PRE 0
 #define SHARE_PREP 1
-#define PARTY 2
+#define PARTY 1
 
 #define INPUT 'r'
 #define NUM_INPUTS 1 << 16
 #define BITLENGTH 64
 #define num_players 3
 
-#define BASE_PORT 10000
+#define BASE_PORT 6000
 int base_port = BASE_PORT; // temporary solution
+
 #define USE_SSL 1
 
 #define PROCESS_NUM 3
