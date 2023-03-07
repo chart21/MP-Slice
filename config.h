@@ -23,7 +23,7 @@ int base_port = BASE_PORT; // temporary solution
 
 #define USE_SSL 1
 
-#define PROCESS_NUM 3
+#define PROCESS_NUM 1
 
 //TODO: Always use Xorshift for non-cryptographic randomness
 #define RANDOM_ALGORITHM 0 // 0 = xorshift, 1 = AES_BS, 2 = AES_NI
