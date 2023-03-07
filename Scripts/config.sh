@@ -18,7 +18,9 @@ helpFunction()
    echo -e "\t-u Number of players in total"
    echo -e "\t-g Compile flags (other than standard)"
    echo -e "\t-x Compiler (g++/clang++/..)"
-   echo -h "\t-x USE SSL? (0/1)"
+   echo -e "\t-h USE SSL? (0/1)"
+   echo -e "\t-j Number of parallel processes to use"
+   echo -e "\t-v Random Number Generator (0: XOR_Shift/1 AES Bitsliced/2: AES_NI)"
    exit 1 # Exit script after printing help
 }
 
@@ -41,6 +43,8 @@ do
       x ) COMPILER="$OPTARG" ;;
       e ) PREPROCESSING="$OPTARG" ;;
       h ) USE_SSL="$OPTARG" ;;
+      j ) PROCESS_NUM="$OPTARG" ;;
+      v ) RANDOM_ALGORITHM="$OPTARG" ;;
       ? ) helpFunction ;; # Print helpFunction in case parameter is non-existent
    esac
 done
@@ -131,7 +135,20 @@ if [ ! -z "$PREPROCESSING" ]
 then
     sed -i -e "s/\(define PRE \).*/\1$PREPROCESSING/" config.h
 fi
+if [ ! -z "$RANDOM_ALGORITHM" ]
+then
+    sed -i -e "s/\(define RANDOM_ALGORITHM \).*/\1$RANDOM_ALGORITHM/" config.h
+fi
 
+if [ ! -z "$USE_SSL" ]
+then
+    sed -i -e "s/\(define USE_SSL \).*/\1$USE_SSL/" config.h
+fi
+
+if [ ! -z "$PROCESS_NUM" ]
+then
+    sed -i -e "s/\(define PROCESS_NUM \).*/\1$PROCESS_NUM/" config.h
+fi
 for i in {0..2}
 do
     if [ "$i" = "$PARTY" ] || [ "$PARTY" = "all" ];

@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <x86intrin.h>
 #include <stdint.h>
+#include <wmmintrin.h>
 
 #ifndef AVX
 #define AVX
@@ -17,6 +18,14 @@
 
 #ifndef BITS_PER_REG
 #define BITS_PER_REG 256
+#endif
+
+#ifdef __VAES__
+#define MM_XOR _mm256_xor_si256
+#define MM_AES_ENC _mm256_aesenc_si256
+#define MM_AES_DEC _mm256_aesdec_si256
+#define MM_AES_ENC_LAST _mm256_aesenclast_si256
+#define MM_AES_DEC_LAST _mm256_aesdeclast_si256
 #endif
 
 /* Defining 0 and 1 */

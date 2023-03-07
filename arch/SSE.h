@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <x86intrin.h>
 #include <stdint.h>
-
+#include <wmmintrin.h>
 #ifndef SSE
 #define SSE
 #endif
@@ -18,6 +18,17 @@
 #ifndef BITS_PER_REG
 #define BITS_PER_REG 128
 #endif
+
+/* #ifdef __WMMINTRIN_AES_H */
+#define MM_XOR _mm_xor_si128
+#define MM_AES_ENC _mm_aesenc_si128
+#define MM_AES_ENC_LAST _mm_aesenclast_si128
+#define MM_AES_DEC _mm_aesdec_si128
+#define MM_AES_DEC_LAST _mm_aesdeclast_si128
+#define MM_AES_KEYGEN _mm_aeskeygenassist_si128
+#define MM_AES_KEYGEN_LAST _mm_aeskeygenassist_si128
+/* #endif */
+
 
 /* Defining 0 and 1 */
 #define ZERO _mm_setzero_si128()

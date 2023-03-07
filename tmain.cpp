@@ -1,5 +1,7 @@
 #include "config.h"
 #include "searchMain_template.hpp"
+#include <sys/types.h>
+#include <sys/wait.h>
 
 int main(int argc, char *argv[])
 {

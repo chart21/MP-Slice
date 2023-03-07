@@ -21,6 +21,16 @@ int input_length[num_players] = {0};
 int reveal_length[num_players] = {0};
 DATATYPE* player_input;
 DATATYPE(*srng)[BITLENGTH];
+
+#if RANDOM_ALGORITHM == 1
+DATATYPE(*counter)[128];
+DATATYPE(*cipher)[128];
+DATATYPE(*key)[11][128];
+#elif RANDOM_ALGORITHM == 2
+DATATYPE(*counter);
+DATATYPE(*key)[11];
+#endif
+
 //DATATYPE srng[num_players -1] = {0};
 //DATATYPE* input_seed;
 int num_generated[num_players] = {0};
