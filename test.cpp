@@ -7,6 +7,7 @@
 /* #include "arch/AES_BS.h" */
 #include "circuits/xorshift.h"
 #include "arch/SHA_256.h"
+#include "config.h"
 #ifdef __SHA__
 #include "arch/SHA_256_x86.h"
 #endif
@@ -17,7 +18,7 @@ int main() {
 #endif
 
 #ifdef __VAES__
-    std::cout << "AES-NI is supported" << std::endl;
+    std::cout << "VAES is supported" << std::endl;
 #endif
 
 #ifdef __SSE4_1__
@@ -133,13 +134,18 @@ for (int i = 0; i < 1000; i++) {
 }
  finish5 = std::chrono::high_resolution_clock::now();
 std::cout << "SHA256 (Intrinsics): " << std::chrono::duration_cast<std::chrono::milliseconds>(finish5 - finish4).count() << std::endl;
+std::cout << "SHA256 (Intrinsics) Throughput: " << 1.024 / std::chrono::duration_cast<std::chrono::milliseconds>(finish5 - finish4).count() * 1000 << "GB/s"<< std::endl;
 #endif
 
 std::cout << "AES_NI: " << std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count() << std::endl;
+std::cout << "AES_NI Throughput: " << 16.384*DATTYPE/128 / std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count() * 1000 << "GB/s"<< std::endl;
 std::cout << "AES_BS: " << std::chrono::duration_cast<std::chrono::milliseconds>(finish2 - finish).count() << std::endl;
+std::cout << "AES_BS Throughput: " << 16.384*DATTYPE/128 / std::chrono::duration_cast<std::chrono::milliseconds>(finish2 - finish).count()* 1000 << "GB/s"<< std::endl;
 std::cout << "XOR_Shift: " << std::chrono::duration_cast<std::chrono::milliseconds>(finish3 - finish2).count() << std::endl;
-std::cout << "SHA256: " << std::chrono::duration_cast<std::chrono::milliseconds>(finish4 - finish3).count() << std::endl;
-std::cout << "16384MB for AES, 1024MB for SHA256" << std::endl;
+std::cout << "XOR_Shift Throughput: " << 16.384*DATTYPE/128 / std::chrono::duration_cast<std::chrono::milliseconds>(finish3 - finish2).count() * 1000 << "GB/s"<< std::endl;
+std::cout << "SHA256: " << std::chrono::duration_cast<std::chrono::milliseconds>(finish4 - finish3).count() * 1000 << std::endl;
+std::cout << "SHA256 Throughput: " << 1.024 / std::chrono::duration_cast<std::chrono::milliseconds>(finish4 - finish3).count() * 1000 << "GB/s"<< std::endl;
+std::cout << "Tested with 16384MB for AES, 1024MB for SHA256" << std::endl;
 
 
 std::cout << m[0] << std::endl;
