@@ -68,7 +68,7 @@ void Bind(const std::string& addr, int port) {
     throw std::runtime_error("Invalid address: " + addr);
   }
   if (bind(sock_, reinterpret_cast<sockaddr*>(&addr_in), sizeof(addr_in)) < 0) {
-    throw std::runtime_error("Error binding socket to local address");
+    throw std::runtime_error("Error binding socket to local address on port " + std::to_string(port));
   }
 }// Bind the socket to a local address
 
@@ -127,7 +127,7 @@ void Connect(const std::string& addr, int port) {
 
   // Perform the SSL handshake
   if (SSL_connect(ssl_) != 1) {
-    throw std::runtime_error("Error performing SSL handshake");
+    throw std::runtime_error("Error performing SSL handshake on port " + std::to_string(port));
   }
 #endif
 }
