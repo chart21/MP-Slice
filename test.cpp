@@ -99,7 +99,15 @@ for (int i = 0; i < 1000; i++) {
         xor_shift(seed);
     }
 
-
+for (int i = 0; i < 1000; i++) {
+    sha256_process(state, message, sizeof(message));
+}
+ 
+#ifdef __SHA__
+for (int i = 0; i < 1000; i++) {
+    sha256_process_x86(state, message, sizeof(message));
+}
+#endif
 
 start = std::chrono::high_resolution_clock::now();
 
