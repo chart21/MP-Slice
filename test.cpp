@@ -16,6 +16,10 @@ int main() {
     std::cout << "AES-NI is supported" << std::endl;
 #endif
 
+#ifdef __VAES__
+    std::cout << "AES-NI is supported" << std::endl;
+#endif
+
 #ifdef __SSE4_1__
     std::cout << "SSE4.1 is supported" << std::endl;
 #endif
@@ -75,6 +79,7 @@ std::chrono::system_clock::time_point finish;
 std::chrono::system_clock::time_point finish2;
 std::chrono::system_clock::time_point finish3;
 std::chrono::system_clock::time_point finish4;
+std::chrono::system_clock::time_point finish5;
 
 // Warmup
     for (int i = 0; i < 1000; i++) {

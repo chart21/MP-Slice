@@ -81,6 +81,7 @@ static void aes128_load_key(uint8_t *enc_key, __m128i *key_schedule){
     key_schedule[19] = _mm_aesimc_si128(key_schedule[1]);
 }
 
+#if DATATYPE == 128
 static void aes128_enc(__m128i *key_schedule, uint8_t *plainText,uint8_t *cipherText){
     __m128i m = _mm_loadu_si128((__m128i *) plainText);
 
@@ -116,4 +117,5 @@ static int aes128_self_test(void){
     if(memcmp(plain,computed_plain,sizeof(plain))) out|=2;
     return out;
 }
+#endif
 #endif
