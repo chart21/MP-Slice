@@ -7,7 +7,9 @@
 /* #include "arch/AES_BS.h" */
 #include "circuits/xorshift.h"
 #include "arch/SHA_256.h"
-
+#ifdef __SHA__
+#include "arch/SHA_256_x86.h"
+#endif
 int main() {
 
 #ifdef __AES__
@@ -95,7 +97,7 @@ for (int i = 0; i < 1000; i++) {
 
 start = std::chrono::high_resolution_clock::now();
 
-    for (int i = 0; i < 10000; i++) {
+    for (int i = 0; i < 1000000; i++) {
     for (int j = 0; j < 128; j++) {
         DO_ENC_BLOCK(m, k);
         k[0] = m;
@@ -103,12 +105,12 @@ start = std::chrono::high_resolution_clock::now();
     }
     }
  finish = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < 10000; i++) {
+    for (int i = 0; i < 1000000; i++) {
         AES__(plain__, key__, cipher__);
         plain__[0] = cipher__[0];
     }
  finish2 = std::chrono::high_resolution_clock::now();
-for (int i = 0; i < 10000; i++) {
+for (int i = 0; i < 1000000; i++) {
     for (int j = 0; j < 2; j++) 
         xor_shift(seed);
     }
@@ -119,11 +121,22 @@ for (int i = 0; i < 1000; i++) {
     sha256_process(state, message, sizeof(message));
 }
  finish4 = std::chrono::high_resolution_clock::now();
+ 
+#ifdef __SHA__
+for (int i = 0; i < 1000; i++) {
+    sha256_process_x86(state, message, sizeof(message));
+}
+ finish5 = std::chrono::high_resolution_clock::now();
+std::cout << "SHA256 (Intrinsics): " << std::chrono::duration_cast<std::chrono::milliseconds>(finish5 - finish4).count() << std::endl;
+#endif
 
 std::cout << "AES_NI: " << std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count() << std::endl;
 std::cout << "AES_BS: " << std::chrono::duration_cast<std::chrono::milliseconds>(finish2 - finish).count() << std::endl;
 std::cout << "XOR_Shift: " << std::chrono::duration_cast<std::chrono::milliseconds>(finish3 - finish2).count() << std::endl;
 std::cout << "SHA256: " << std::chrono::duration_cast<std::chrono::milliseconds>(finish4 - finish3).count() << std::endl;
+std::cout << "16384MB for AES, 1024MB for SHA256" << std::endl;
+
+
 std::cout << m[0] << std::endl;
 std::cout << plain__[0][0] << std::endl;
 std::cout << seed << std::endl;
