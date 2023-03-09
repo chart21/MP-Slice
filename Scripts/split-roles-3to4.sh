@@ -10,7 +10,7 @@ helpFunction()
    exit 1 # Exit script after printing help
 }
 
-while getopts "p:a:b:c:d" opt
+while getopts "p:a:b:c:d:" opt
 do
    case "$opt" in
       p ) O_PARTY="$OPTARG" ;;
