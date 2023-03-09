@@ -50,27 +50,25 @@ public:
   }
 
 // Bind the socket to a local address
-void Bind(const std::string& addr, int port) {
+void Bind(int port) {
 // reuse the address
-    std::cout << "binding to ip addr at port" << addr << " " << port << std::endl;
+    std::cout << "binding to port" << " " << port << std::endl;
     int yes = 1;
     if (setsockopt(sock_, SOL_SOCKET, SO_REUSEADDR, &yes,
 				sizeof(int)) == -1) {
 			perror("setsockopt");
 			exit(1);
 		}
+   struct sockaddr_in address;
+    int addrlen = sizeof(address);
 
-
-    sockaddr_in addr_in;
-  std::memset(&addr_in, 0, sizeof(addr_in));
-  addr_in.sin_family = AF_INET;
-  addr_in.sin_port = htons(port);
-  if (inet_aton(addr.c_str(), &addr_in.sin_addr) == 0) {
-    throw std::runtime_error("Invalid address: " + addr);
-  }
-  if (bind(sock_, reinterpret_cast<sockaddr*>(&addr_in), sizeof(addr_in)) < 0) {
+     address.sin_family = AF_INET;
+    address.sin_addr.s_addr = INADDR_ANY;
+    address.sin_port = htons(port);
+    if (bind(sock_, (struct sockaddr *)&address, sizeof(address)) < 0) {
     throw std::runtime_error("Error binding socket to local address on port " + std::to_string(port));
-  }
+    }
+
 }// Bind the socket to a local address
 
 // Listen for incoming connections

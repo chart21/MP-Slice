@@ -42,7 +42,7 @@ void server_signal_connection_established(int player_count)
 void *sender(void* threadParameters)
 {
     Socket server;
-    server.Bind("127.0.0.1",  ((sender_args*) threadParameters)->port);
+    server.Bind(((sender_args*) threadParameters)->port);
     server.Listen(1);
     Socket client = server.Accept();
     printf("Connected to Player %i\n", ((sender_args*) threadParameters)->connected_to);
