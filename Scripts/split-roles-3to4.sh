@@ -1,6 +1,6 @@
 helpFunction()
 {
-   echo "Script to compile and run 6 mixed constellations of players in parallel"
+   echo "Script to compile and run 24 mixed constellations of a 3-PC protocol with 4 players in parallel"
    echo -e "\t-p Party number or all for running locally"
    echo -e "\t-a IP address of player 1 (if ip matches player_id can be empty)"
    echo -e "\t-b IP address of player 2 (if ip matches player_id can be empty)"
@@ -10,7 +10,7 @@ helpFunction()
    exit 1 # Exit script after printing help
 }
 
-while getopts "p:a:b:" opt
+while getopts "p:a:b:c:d" opt
 do
    case "$opt" in
       p ) O_PARTY="$OPTARG" ;;
