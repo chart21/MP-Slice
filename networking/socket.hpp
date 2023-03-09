@@ -52,6 +52,7 @@ public:
 // Bind the socket to a local address
 void Bind(const std::string& addr, int port) {
 // reuse the address
+    std::cout << "binding to ip addr at port" << addr << " " << port << std::endl;
     int yes = 1;
     if (setsockopt(sock_, SOL_SOCKET, SO_REUSEADDR, &yes,
 				sizeof(int)) == -1) {
@@ -97,7 +98,8 @@ void Listen(int backlog) {
 
 // Connect to a remote server
 void Connect(const std::string& addr, int port) {
-  sockaddr_in addr_in;
+    std::cout << "connecting to ip addr at port" << addr << " " << port << std::endl;
+    sockaddr_in addr_in;
   std::memset(&addr_in, 0, sizeof(addr_in));
   addr_in.sin_family = AF_INET;
   addr_in.sin_port = htons(port);

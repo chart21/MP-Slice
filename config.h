@@ -21,7 +21,7 @@
 #define BASE_PORT 29000
 int base_port = BASE_PORT; // temporary solution
 
-#define USE_SSL 0
+#define USE_SSL 1
 
 #define PROCESS_NUM 1
 
