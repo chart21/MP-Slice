@@ -64,7 +64,7 @@ then
     "$comp" tmain.cpp -o ./search-P1--1-2-3.o $flags
     
     sed -i -e "s/\(PARTY \).*/\1"0"/" config.h
-    sed -i -e "s/\(BASE_PORT \).*/\1"38000"/" config.h
+    sed -i -e "s/\(BASE_PORT \).*/\1"39000"/" config.h
     "$comp" tmain.cpp -o ./search-P1--1-3-2.o $flags
 
     sed -i -e "s/\(PARTY \).*/\1"1"/" config.h
@@ -145,7 +145,7 @@ then
     "$comp" tmain.cpp -o ./search-P2--1-2-3.o $flags
 
     sed -i -e "s/\(PARTY \).*/\1"2"/" config.h
-    sed -i -e "s/\(BASE_PORT \).*/\1"38000"/" config.h
+    sed -i -e "s/\(BASE_PORT \).*/\1"39000"/" config.h
     "$comp" tmain.cpp -o ./search-P2--1-3-2.o $flags
 
     sed -i -e "s/\(PARTY \).*/\1"0"/" config.h
@@ -226,7 +226,7 @@ then
     "$comp" tmain.cpp -o ./search-P3--1-2-3.o $flags
 
     sed -i -e "s/\(PARTY \).*/\1"1"/" config.h
-    sed -i -e "s/\(BASE_PORT \).*/\1"38000"/" config.h
+    sed -i -e "s/\(BASE_PORT \).*/\1"39000"/" config.h
     "$comp" tmain.cpp -o ./search-P3--1-3-2.o $flags
 
     sed -i -e "s/\(PARTY \).*/\1"2"/" config.h
