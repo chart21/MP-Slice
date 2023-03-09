@@ -11,7 +11,7 @@
 #define LIVE 1
 #define PRE 0
 #define SHARE_PREP 1
-#define PARTY 0
+#define PARTY 2
 
 #define INPUT 'r'
 #define NUM_INPUTS 1 << 8
@@ -21,7 +21,7 @@
 #define BASE_PORT 29000
 int base_port = BASE_PORT; // temporary solution
 
-#define USE_SSL 1
+#define USE_SSL 0
 
 #define PROCESS_NUM 1
 

@@ -6,7 +6,7 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <arpa/inet.h>
-#ifdef USE_SSL
+#if USE_SSL == 1
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 #endif
@@ -18,7 +18,7 @@ private:
   // The socket descriptor
   int sock_;
 
-#ifdef USE_SSL
+#if USE_SSL == 1
   // The SSL structure
   SSL* ssl_;
 
@@ -77,7 +77,7 @@ void Listen(int backlog) {
   if (listen(sock_, backlog) < 0) {
     throw std::runtime_error("Error listening on socket");
   }
-#ifdef USE_SSL
+#if USE_SSL == 1
   // Create an SSL context
   ssl_ctx_ = SSL_CTX_new(TLS_server_method());
   if (ssl_ctx_ == nullptr) {
@@ -107,7 +107,7 @@ void Connect(const std::string& addr, int port) {
   while (connect(sock_, reinterpret_cast<sockaddr*>(&addr_in), sizeof(addr_in)) < 0) {
       /* throw std::runtime_error("Error connecting to remote server"); */
   }
-#ifdef USE_SSL
+#if USE_SSL == 1
   // Create an SSL context
   ssl_ctx_ = SSL_CTX_new(SSLv23_client_method());
   if (ssl_ctx_ == nullptr) {
@@ -137,7 +137,7 @@ Socket Accept() {
   int client_sock;
   sockaddr_in client_addr;
   socklen_t addr_len = sizeof(client_addr);
-#ifdef USE_SSL
+#if USE_SSL == 1
   // Accept the incoming connection and create an SSL structure
   SSL* ssl = nullptr;
   if ((client_sock = accept(sock_, reinterpret_cast<sockaddr*>(&client_addr), &addr_len)) < 0) {
@@ -177,7 +177,7 @@ int n_sent;
 
   // Send data to the client
   int Send(char* buffer, int size) {
-#ifdef USE_SSL
+#if USE_SSL == 1
     int num_bytes = SSL_write(ssl_, buffer, size);
 #else
     int num_bytes = send(sock_, buffer, size, 0);
@@ -206,7 +206,7 @@ int n_rec;
 
   // Receive data from the client
 int Receive(char* buffer, int size) {
-#ifdef USE_SSL
+#if USE_SSL == 1
   int num_bytes = SSL_read(ssl_, buffer, size);
 #else
   int num_bytes = recv(sock_, buffer, size, 0);
