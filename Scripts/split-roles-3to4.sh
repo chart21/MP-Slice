@@ -57,8 +57,8 @@ fi
 
 # Compile all executables for P1
 if [ "$O_PARTY" = "1" ] || [ "$O_PARTY" = "all" ]
-echo "Compiling executables for P1 ..."
 then
+    echo "Compiling executables for P1 ..."
     sed -i -e "s/\(PARTY \).*/\1"0"/" config.h
     sed -i -e "s/\(BASE_PORT \).*/\1"6000"/" config.h
     "$comp" tmain.cpp -o ./search-P1--1-2-3.o $flags
@@ -138,8 +138,8 @@ fi
 
 # Compile all executables for P2
 if [ "$O_PARTY" = "2" ] || [ "$O_PARTY" = "all" ]
-echo "Compiling executables for P2 ..."
 then
+    echo "Compiling executables for P2 ..."
     sed -i -e "s/\(PARTY \).*/\1"1"/" config.h
     sed -i -e "s/\(BASE_PORT \).*/\1"6000"/" config.h
     "$comp" tmain.cpp -o ./search-P2--1-2-3.o $flags
@@ -219,8 +219,8 @@ fi
 
 # Compile all executables for P3
 if [ "$O_PARTY" = "3" ] || [ "$O_PARTY" = "all" ]
-echo "Compiling executables for P3 ..."
 then
+    echo "Compiling executables for P3 ..."
     sed -i -e "s/\(PARTY \).*/\1"2"/" config.h
     sed -i -e "s/\(BASE_PORT \).*/\1"6000"/" config.h
     "$comp" tmain.cpp -o ./search-P3--1-2-3.o $flags
@@ -299,9 +299,9 @@ then
 fi
 
 # Compile all executables for P4
-echo "Compiling executables for P4 ..."
 if [ "$O_PARTY" = "4" ] || [ "$O_PARTY" = "all" ]
 then
+    echo "Compiling executables for P4 ..."
     sed -i -e "s/\(PARTY \).*/\1"2"/" config.h
     sed -i -e "s/\(BASE_PORT \).*/\1"61000"/" config.h
     "$comp" tmain.cpp -o ./search-P4--1-2-4.o $flags
