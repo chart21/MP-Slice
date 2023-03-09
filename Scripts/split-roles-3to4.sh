@@ -56,53 +56,45 @@ fi
 
 
 # Compile all executables for P1
-echo "Compiling executables for P1 ..."
 if [ "$O_PARTY" = "1" ] || [ "$O_PARTY" = "all" ]
+echo "Compiling executables for P1 ..."
 then
     sed -i -e "s/\(PARTY \).*/\1"0"/" config.h
     sed -i -e "s/\(BASE_PORT \).*/\1"6000"/" config.h
     "$comp" tmain.cpp -o ./search-P1--1-2-3.o $flags
-    echo "P1--1-2-3.o compiled"
     
     sed -i -e "s/\(PARTY \).*/\1"0"/" config.h
-    sed -i -e "s/\(BASE_PORT \).*/\1"7000"/" config.h
+    sed -i -e "s/\(BASE_PORT \).*/\1"38000"/" config.h
     "$comp" tmain.cpp -o ./search-P1--1-3-2.o $flags
-    echo "P1--1-3-2.o compiled"
 
     sed -i -e "s/\(PARTY \).*/\1"1"/" config.h
     sed -i -e "s/\(BASE_PORT \).*/\1"8000"/" config.h
     "$comp" tmain.cpp -o ./search-P1--2-1-3.o $flags
-    echo "P1--2-1-3.o compiled"
 
     sed -i -e "s/\(PARTY \).*/\1"2"/" config.h
     sed -i -e "s/\(BASE_PORT \).*/\1"9000"/" config.h
     "$comp" tmain.cpp -o ./search-P1--2-3-1.o $flags
-    echo "P1--2-3-1.o compiled"
 
     sed -i -e "s/\(PARTY \).*/\1"1"/" config.h
     sed -i -e "s/\(BASE_PORT \).*/\1"10000"/" config.h
     "$comp" tmain.cpp -o ./search-P1--3-1-2.o $flags
-    echo "P1--3-1-2.o compiled"
 
     sed -i -e "s/\(PARTY \).*/\1"2"/" config.h
     sed -i -e "s/\(BASE_PORT \).*/\1"11000"/" config.h
     "$comp" tmain.cpp -o ./search-P1--3-2-1.o $flags
-    echo "P1--3-2-1.o compiled"
 
-
-    echo "P1: 1/3"
     
 
     sed -i -e "s/\(PARTY \).*/\1"0"/" config.h
-    sed -i -e "s/\(BASE_PORT \).*/\1"12000"/" config.h
+    sed -i -e "s/\(BASE_PORT \).*/\1"61000"/" config.h
     "$comp" tmain.cpp -o ./search-P1--1-2-4.o $flags
 
     sed -i -e "s/\(PARTY \).*/\1"0"/" config.h
-    sed -i -e "s/\(BASE_PORT \).*/\1"13000"/" config.h
+    sed -i -e "s/\(BASE_PORT \).*/\1"64000"/" config.h
     "$comp" tmain.cpp -o ./search-P1--1-4-2.o $flags
 
     sed -i -e "s/\(PARTY \).*/\1"1"/" config.h
-    sed -i -e "s/\(BASE_PORT \).*/\1"14000"/" config.h
+    sed -i -e "s/\(BASE_PORT \).*/\1"62000"/" config.h
     "$comp" tmain.cpp -o ./search-P1--2-1-4.o $flags
 
     sed -i -e "s/\(PARTY \).*/\1"2"/" config.h
@@ -110,14 +102,12 @@ then
     "$comp" tmain.cpp -o ./search-P1--2-4-1.o $flags
 
     sed -i -e "s/\(PARTY \).*/\1"1"/" config.h
-    sed -i -e "s/\(BASE_PORT \).*/\1"16000"/" config.h
+    sed -i -e "s/\(BASE_PORT \).*/\1"63000"/" config.h
     "$comp" tmain.cpp -o ./search-P1--4-1-2.o $flags
 
     sed -i -e "s/\(PARTY \).*/\1"2"/" config.h
-    sed -i -e "s/\(BASE_PORT \).*/\1"17000"/" config.h
+    sed -i -e "s/\(BASE_PORT \).*/\1"65000"/" config.h
     "$comp" tmain.cpp -o ./search-P1--4-2-1.o $flags
-
-    echo "P1: 2/3"
 
 
     sed -i -e "s/\(PARTY \).*/\1"0"/" config.h
@@ -144,19 +134,18 @@ then
     sed -i -e "s/\(BASE_PORT \).*/\1"23000"/" config.h
     "$comp" tmain.cpp -o ./search-P1--4-3-1.o $flags
     
-    echo "P1: 3/3"
 fi
 
 # Compile all executables for P2
-echo "Compiling executables for P2 ..."
 if [ "$O_PARTY" = "2" ] || [ "$O_PARTY" = "all" ]
+echo "Compiling executables for P2 ..."
 then
     sed -i -e "s/\(PARTY \).*/\1"1"/" config.h
     sed -i -e "s/\(BASE_PORT \).*/\1"6000"/" config.h
     "$comp" tmain.cpp -o ./search-P2--1-2-3.o $flags
 
     sed -i -e "s/\(PARTY \).*/\1"2"/" config.h
-    sed -i -e "s/\(BASE_PORT \).*/\1"7000"/" config.h
+    sed -i -e "s/\(BASE_PORT \).*/\1"38000"/" config.h
     "$comp" tmain.cpp -o ./search-P2--1-3-2.o $flags
 
     sed -i -e "s/\(PARTY \).*/\1"0"/" config.h
@@ -178,15 +167,15 @@ then
 
     
     sed -i -e "s/\(PARTY \).*/\1"1"/" config.h
-    sed -i -e "s/\(BASE_PORT \).*/\1"12000"/" config.h
+    sed -i -e "s/\(BASE_PORT \).*/\1"61000"/" config.h
     "$comp" tmain.cpp -o ./search-P2--1-2-4.o $flags
 
     sed -i -e "s/\(PARTY \).*/\1"2"/" config.h
-    sed -i -e "s/\(BASE_PORT \).*/\1"13000"/" config.h
+    sed -i -e "s/\(BASE_PORT \).*/\1"64000"/" config.h
     "$comp" tmain.cpp -o ./search-P2--1-4-2.o $flags
 
     sed -i -e "s/\(PARTY \).*/\1"0"/" config.h
-    sed -i -e "s/\(BASE_PORT \).*/\1"14000"/" config.h
+    sed -i -e "s/\(BASE_PORT \).*/\1"62000"/" config.h
     "$comp" tmain.cpp -o ./search-P2--2-1-4.o $flags
 
     sed -i -e "s/\(PARTY \).*/\1"0"/" config.h
@@ -194,11 +183,11 @@ then
     "$comp" tmain.cpp -o ./search-P2--2-4-1.o $flags
 
     sed -i -e "s/\(PARTY \).*/\1"2"/" config.h
-    sed -i -e "s/\(BASE_PORT \).*/\1"16000"/" config.h
+    sed -i -e "s/\(BASE_PORT \).*/\1"63000"/" config.h
     "$comp" tmain.cpp -o ./search-P2--4-1-2.o $flags
 
     sed -i -e "s/\(PARTY \).*/\1"1"/" config.h
-    sed -i -e "s/\(BASE_PORT \).*/\1"17000"/" config.h
+    sed -i -e "s/\(BASE_PORT \).*/\1"65000"/" config.h
     "$comp" tmain.cpp -o ./search-P2--4-2-1.o $flags
 
 
@@ -229,15 +218,15 @@ then
 fi
 
 # Compile all executables for P3
-echo "Compiling executables for P3 ..."
 if [ "$O_PARTY" = "3" ] || [ "$O_PARTY" = "all" ]
+echo "Compiling executables for P3 ..."
 then
     sed -i -e "s/\(PARTY \).*/\1"2"/" config.h
     sed -i -e "s/\(BASE_PORT \).*/\1"6000"/" config.h
     "$comp" tmain.cpp -o ./search-P3--1-2-3.o $flags
 
     sed -i -e "s/\(PARTY \).*/\1"1"/" config.h
-    sed -i -e "s/\(BASE_PORT \).*/\1"7000"/" config.h
+    sed -i -e "s/\(BASE_PORT \).*/\1"38000"/" config.h
     "$comp" tmain.cpp -o ./search-P3--1-3-2.o $flags
 
     sed -i -e "s/\(PARTY \).*/\1"2"/" config.h
@@ -314,15 +303,15 @@ echo "Compiling executables for P4 ..."
 if [ "$O_PARTY" = "4" ] || [ "$O_PARTY" = "all" ]
 then
     sed -i -e "s/\(PARTY \).*/\1"2"/" config.h
-    sed -i -e "s/\(BASE_PORT \).*/\1"12000"/" config.h
+    sed -i -e "s/\(BASE_PORT \).*/\1"61000"/" config.h
     "$comp" tmain.cpp -o ./search-P4--1-2-4.o $flags
 
     sed -i -e "s/\(PARTY \).*/\1"1"/" config.h
-    sed -i -e "s/\(BASE_PORT \).*/\1"13000"/" config.h
+    sed -i -e "s/\(BASE_PORT \).*/\1"64000"/" config.h
     "$comp" tmain.cpp -o ./search-P4--1-4-2.o $flags
 
     sed -i -e "s/\(PARTY \).*/\1"2"/" config.h
-    sed -i -e "s/\(BASE_PORT \).*/\1"14000"/" config.h
+    sed -i -e "s/\(BASE_PORT \).*/\1"62000"/" config.h
     "$comp" tmain.cpp -o ./search-P4--2-1-4.o $flags
 
     sed -i -e "s/\(PARTY \).*/\1"1"/" config.h
@@ -330,11 +319,11 @@ then
     "$comp" tmain.cpp -o ./search-P4--2-4-1.o $flags
 
     sed -i -e "s/\(PARTY \).*/\1"0"/" config.h
-    sed -i -e "s/\(BASE_PORT \).*/\1"16000"/" config.h
+    sed -i -e "s/\(BASE_PORT \).*/\1"63000"/" config.h
     "$comp" tmain.cpp -o ./search-P4--4-1-2.o $flags
 
     sed -i -e "s/\(PARTY \).*/\1"0"/" config.h
-    sed -i -e "s/\(BASE_PORT \).*/\1"17000"/" config.h
+    sed -i -e "s/\(BASE_PORT \).*/\1"65000"/" config.h
     "$comp" tmain.cpp -o ./search-P4--4-2-1.o $flags
 
 
@@ -473,12 +462,12 @@ then
     ./search-P4--4-1-2.o $O_IP2 $O_IP1 &
     ./search-P4--4-2-1.o $O_IP1 $O_IP2 &
 
-    ./search-P4--1-2-4.o $O_IP2 $O_IP1 &
-    ./search-P4--1-4-2.o $O_IP1 $O_IP2 &
-    ./search-P4--2-1-4.o $O_IP1 $O_IP2 &
-    ./search-P4--2-4-1.o $O_IP2 $O_IP1 &
-    ./search-P4--4-1-2.o $O_IP2 $O_IP1 &
-    ./search-P4--4-2-1.o $O_IP1 $O_IP2 &
+    ./search-P4--1-3-4.o $O_IP3 $O_IP1 &
+    ./search-P4--1-4-3.o $O_IP1 $O_IP3 &
+    ./search-P4--3-1-4.o $O_IP1 $O_IP3 &
+    ./search-P4--3-4-1.o $O_IP3 $O_IP1 &
+    ./search-P4--4-1-3.o $O_IP3 $O_IP1 &
+    ./search-P4--4-3-1.o $O_IP1 $O_IP3 &
 
     ./search-P4--2-3-4.o $O_IP3 $O_IP2 &
     ./search-P4--2-4-3.o $O_IP2 $O_IP3 &
