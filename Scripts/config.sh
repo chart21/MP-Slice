@@ -24,7 +24,7 @@ helpFunction()
    exit 1 # Exit script after printing help
 }
 
-while getopts "b:a:d:c:f:n:s:i:l:p:o:u:g:x:e:h:" opt
+while getopts "b:a:d:c:f:n:s:i:l:p:o:u:g:x:e:h:j:v:" opt
 do
    case "$opt" in
       b ) BASE_PORT="$OPTARG" ;;
