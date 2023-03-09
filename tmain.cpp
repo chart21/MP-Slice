@@ -15,7 +15,7 @@ int status = 0;
 
 for (int id=0; id<PROCESS_NUM; id++) {
     if ((child_pid = fork()) == 0) {
-        base_port += PROCESS_NUM*(PROCESS_NUM-1)*id;
+        base_port += num_players*(num_players-1)*id;
         search_main(argc, argv, child_pid, PROCESS_NUM); //child code
         exit(0);
     }
