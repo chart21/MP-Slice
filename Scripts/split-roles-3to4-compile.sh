@@ -2,10 +2,10 @@ helpFunction()
 {
    echo "Script to compile and run 24 mixed constellations of a 3-PC protocol with 4 players in parallel"
    echo -e "\t-p Party number or all for running locally"
-   echo -e "\t-a IP address of player 1 (if ip matches player_id can be empty)"
-   echo -e "\t-b IP address of player 2 (if ip matches player_id can be empty)"
-   echo -e "\t-c IP address of player 3 (if ip matches player_id can be empty)"
-   echo -e "\t-d IP address of player 4 (if ip matches player_id can be empty)"
+   echo -e "\t-a IP address of player 0 (if ip matches player_id can be empty)"
+   echo -e "\t-b IP address of player 1 (if ip matches player_id can be empty)"
+   echo -e "\t-c IP address of player 2 (if ip matches player_id can be empty)"
+   echo -e "\t-d IP address of player 3 (if ip matches player_id can be empty)"
 
    exit 1 # Exit script after printing help
 }
@@ -55,10 +55,10 @@ fi
 
 
 
-# Compile all executables for P1
-if [ "$O_PARTY" = "1" ] || [ "$O_PARTY" = "all" ]
+# Compile all executables for P0
+if [ "$O_PARTY" = "0" ] || [ "$O_PARTY" = "all" ]
 then
-    echo "Compiling executables for P1 ..."
+    echo "Compiling executables for P0 ..."
     sed -i -e "s/\(PARTY \).*/\1"0"/" config.h
     sed -i -e "s/\(BASE_PORT \).*/\1"6000"/" config.h
     "$comp" tmain.cpp -o ./search-P1--1-2-3.o $flags
@@ -137,9 +137,9 @@ then
 fi
 
 # Compile all executables for P2
-if [ "$O_PARTY" = "2" ] || [ "$O_PARTY" = "all" ]
+if [ "$O_PARTY" = "1" ] || [ "$O_PARTY" = "all" ]
 then
-    echo "Compiling executables for P2 ..."
+    echo "Compiling executables for P1 ..."
     sed -i -e "s/\(PARTY \).*/\1"1"/" config.h
     sed -i -e "s/\(BASE_PORT \).*/\1"6000"/" config.h
     "$comp" tmain.cpp -o ./search-P2--1-2-3.o $flags
@@ -217,10 +217,10 @@ then
     "$comp" tmain.cpp -o ./search-P2--4-3-2.o $flags
 fi
 
-# Compile all executables for P3
-if [ "$O_PARTY" = "3" ] || [ "$O_PARTY" = "all" ]
+# Compile all executables for P2
+if [ "$O_PARTY" = "2" ] || [ "$O_PARTY" = "all" ]
 then
-    echo "Compiling executables for P3 ..."
+    echo "Compiling executables for P2 ..."
     sed -i -e "s/\(PARTY \).*/\1"2"/" config.h
     sed -i -e "s/\(BASE_PORT \).*/\1"6000"/" config.h
     "$comp" tmain.cpp -o ./search-P3--1-2-3.o $flags
@@ -298,8 +298,8 @@ then
     "$comp" tmain.cpp -o ./search-P3--4-3-2.o $flags
 fi
 
-# Compile all executables for P4
-if [ "$O_PARTY" = "4" ] || [ "$O_PARTY" = "all" ]
+# Compile all executables for P3
+if [ "$O_PARTY" = "3" ] || [ "$O_PARTY" = "all" ]
 then
     echo "Compiling executables for P4 ..."
     sed -i -e "s/\(PARTY \).*/\1"2"/" config.h
