@@ -22,10 +22,6 @@
 #include "networking/buffers.h"
 #include "utils/printing.hpp"
 
-struct timespec t1, t2;
-int modulo(int x,int N){
-    return (x % N + N) %N;
-}
 
 
 void print_bool(uint8_t* found)

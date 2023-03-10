@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <pthread.h>
 #include <stdint.h>
@@ -6,7 +7,8 @@
 #include "../networking/buffers.h"
 #include <chrono>
 /* Do NOT change the order of those define/include */
-
+#include <bitset>
+#include <cstring>
 /* #ifndef BITS_PER_REG */
 /* #define BITS_PER_REG 64 */
 /* #endif */
@@ -25,6 +27,8 @@
 
 #include "../protocols/Protocols.h"
 
+
+#define RESULTTYPE DATATYPE
 /* void receive_from_SRNG(DATATYPE a[], int id, int l) */
 /* { */
 /* if(id == player_id) */
@@ -143,3 +147,16 @@ found = P.complete_Reveal(sfound);
 
 }
 // Reveal
+//
+
+void print_result(DATATYPE var) 
+{
+    uint8_t v8val[sizeof(DATATYPE)];
+    std::memcpy(v8val, &var, sizeof(v8val));
+    for (uint i = sizeof(DATATYPE); i > 0; i--)
+        std::cout << std::bitset<sizeof(uint8_t)*8>(v8val[i-1]) << std::endl;
+        //std::cout << v8val[i]<< std::endl;
+}
+
+
+

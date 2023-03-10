@@ -7,7 +7,7 @@
 //#define pprev player_id == 0 ? 1 : player_id == 1 ? 0 : 1 
 /* #define pprev (player_id - 1)%3 */
 // XOR_Share of each player is ~a
-#include "../utils/printing.hpp"
+
 #include "../utils/randomizer.h"
 #include "sharemind_base.hpp"
 class OEC2_init
@@ -176,7 +176,7 @@ rb = 0;
 sb = 0;
 }
 
-void finalize(char** ips, receiver_args* ra, sender_args* sa)
+void finalize(std::string* ips, receiver_args* ra, sender_args* sa)
 {
 for(int t=0;t<(num_players-1);t++) {
     int offset = 0;

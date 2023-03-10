@@ -20,15 +20,21 @@ int* elements_per_round;
 int input_length[num_players] = {0};
 int reveal_length[num_players] = {0};
 DATATYPE* player_input;
-DATATYPE(*srng)[BITLENGTH];
 
-#if RANDOM_ALGORITHM == 1
-DATATYPE(*counter)[128];
-DATATYPE(*cipher)[128];
-DATATYPE(*key)[11][128];
+#if RANDOM_ALGORITHM == 0
+DATATYPE srng[num_players][64]{0};
+#elif RANDOM_ALGORITHM == 1
+DATATYPE counter[num_players][128]{0};
+DATATYPE cipher[num_players][128]{0};
+DATATYPE key[num_players][11][128]{0};
 #elif RANDOM_ALGORITHM == 2
-DATATYPE(*counter);
-DATATYPE(*key)[11];
+#if DATTYPE >= 128
+DATATYPE counter[num_players]{0};
+DATATYPE key[num_players][11]{0};
+#else
+#define BUFFER_SIZE 128/DATTYPE 
+DATATYPE counter[num_players][BUFFER_SIZE]{0};
+#endif
 #endif
 
 //DATATYPE srng[num_players -1] = {0};
