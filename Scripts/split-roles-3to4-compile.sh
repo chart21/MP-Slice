@@ -64,7 +64,7 @@ then
     "$comp" tmain.cpp -o ./search-P1--1-2-3.o $flags
     
     sed -i -e "s/\(PARTY \).*/\1"0"/" config.h
-    sed -i -e "s/\(BASE_PORT \).*/\1"39000"/" config.h
+    sed -i -e "s/\(BASE_PORT \).*/\1"7000"/" config.h
     "$comp" tmain.cpp -o ./search-P1--1-3-2.o $flags
 
     sed -i -e "s/\(PARTY \).*/\1"1"/" config.h
@@ -145,7 +145,7 @@ then
     "$comp" tmain.cpp -o ./search-P2--1-2-3.o $flags
 
     sed -i -e "s/\(PARTY \).*/\1"2"/" config.h
-    sed -i -e "s/\(BASE_PORT \).*/\1"39000"/" config.h
+    sed -i -e "s/\(BASE_PORT \).*/\1"7000"/" config.h
     "$comp" tmain.cpp -o ./search-P2--1-3-2.o $flags
 
     sed -i -e "s/\(PARTY \).*/\1"0"/" config.h
@@ -226,7 +226,7 @@ then
     "$comp" tmain.cpp -o ./search-P3--1-2-3.o $flags
 
     sed -i -e "s/\(PARTY \).*/\1"1"/" config.h
-    sed -i -e "s/\(BASE_PORT \).*/\1"39000"/" config.h
+    sed -i -e "s/\(BASE_PORT \).*/\1"7000"/" config.h
     "$comp" tmain.cpp -o ./search-P3--1-3-2.o $flags
 
     sed -i -e "s/\(PARTY \).*/\1"2"/" config.h
@@ -379,101 +379,4 @@ then
     "$comp" tmain.cpp -o ./search-P4--4-3-2.o $flags
 fi
 
-echo "Finished compiling, executing..."
-# Run all executables for P1
-if [ "$O_PARTY" = "1" ] || [ "$O_PARTY" = "all" ]
-then
-    ./search-P1--1-2-3.o $O_IP2 $O_IP3 &
-    ./search-P1--1-3-2.o $O_IP3 $O_IP2 &
-    ./search-P1--2-1-3.o $O_IP2 $O_IP3 &
-    ./search-P1--2-3-1.o $O_IP2 $O_IP3 &
-    ./search-P1--3-1-2.o $O_IP3 $O_IP2 &
-    ./search-P1--3-2-1.o $O_IP3 $O_IP2 &
-
-    ./search-P1--1-2-4.o $O_IP2 $O_IP4 &
-    ./search-P1--1-4-2.o $O_IP4 $O_IP2 &
-    ./search-P1--2-1-4.o $O_IP2 $O_IP4 &
-    ./search-P1--2-4-1.o $O_IP2 $O_IP4 &
-    ./search-P1--4-1-2.o $O_IP4 $O_IP2 &
-    ./search-P1--4-2-1.o $O_IP4 $O_IP2 &
-
-    ./search-P1--1-3-4.o $O_IP3 $O_IP4 &
-    ./search-P1--1-4-3.o $O_IP4 $O_IP3 &
-    ./search-P1--3-1-4.o $O_IP3 $O_IP4 &
-    ./search-P1--3-4-1.o $O_IP3 $O_IP4 &
-    ./search-P1--4-1-3.o $O_IP4 $O_IP3 &
-    ./search-P1--4-3-1.o $O_IP4 $O_IP3 &
-fi
-# Run all executables for P2
-if [ "$O_PARTY" = "2" ] || [ "$O_PARTY" = "all" ]
-then
-    ./search-P2--1-2-3.o $O_IP1 $O_IP3 &
-    ./search-P2--1-3-2.o $O_IP1 $O_IP3 &
-    ./search-P2--2-1-3.o $O_IP1 $O_IP3 &
-    ./search-P2--2-3-1.o $O_IP3 $O_IP1 &
-    ./search-P2--3-1-2.o $O_IP3 $O_IP1 &
-    ./search-P2--3-2-1.o $O_IP3 $O_IP1 &
-
-    ./search-P2--1-2-4.o $O_IP1 $O_IP4 &
-    ./search-P2--1-4-2.o $O_IP1 $O_IP4 &
-    ./search-P2--2-1-4.o $O_IP1 $O_IP4 &
-    ./search-P2--2-4-1.o $O_IP4 $O_IP1 &
-    ./search-P2--4-1-2.o $O_IP4 $O_IP1 &
-    ./search-P2--4-2-1.o $O_IP4 $O_IP1 &
-   
-    ./search-P2--2-3-4.o $O_IP3 $O_IP4 &
-    ./search-P2--2-4-3.o $O_IP4 $O_IP3 &
-    ./search-P2--3-2-4.o $O_IP3 $O_IP4 &
-    ./search-P2--3-4-2.o $O_IP3 $O_IP4 &
-    ./search-P2--4-2-3.o $O_IP4 $O_IP3 &
-    ./search-P2--4-3-2.o $O_IP4 $O_IP3 &
-fi
-# Run all executables for P3
-if [ "$O_PARTY" = "3" ] || [ "$O_PARTY" = "all" ]
-then
-    ./search-P3--1-2-3.o $O_IP1 $O_IP2 &
-    ./search-P3--1-3-2.o $O_IP1 $O_IP2 &
-    ./search-P3--2-1-3.o $O_IP2 $O_IP1 &
-    ./search-P3--2-3-1.o $O_IP2 $O_IP1 &
-    ./search-P3--3-1-2.o $O_IP1 $O_IP2 &
-    ./search-P3--3-2-1.o $O_IP2 $O_IP1 &
-
-    ./search-P3--1-3-4.o $O_IP1 $O_IP4 &
-    ./search-P3--1-4-3.o $O_IP1 $O_IP4 &
-    ./search-P3--3-1-4.o $O_IP1 $O_IP4 &
-    ./search-P3--3-4-1.o $O_IP4 $O_IP1 &
-    ./search-P3--4-1-3.o $O_IP4 $O_IP1 &
-    ./search-P3--4-3-1.o $O_IP4 $O_IP1 &
-
-    ./search-P3--2-3-4.o $O_IP2 $O_IP4 &
-    ./search-P3--2-4-3.o $O_IP2 $O_IP4 &
-    ./search-P3--3-2-4.o $O_IP2 $O_IP4 &
-    ./search-P3--3-4-2.o $O_IP4 $O_IP2 &
-    ./search-P3--4-2-3.o $O_IP4 $O_IP2 &
-    ./search-P3--4-3-2.o $O_IP4 $O_IP2 &
-fi
-# Run all executables for P4
-if [ "$O_PARTY" = "4" ] || [ "$O_PARTY" = "all" ]
-then
-    ./search-P4--1-2-4.o $O_IP1 $O_IP2 &
-    ./search-P4--1-4-2.o $O_IP1 $O_IP2 &
-    ./search-P4--2-1-4.o $O_IP2 $O_IP1 &
-    ./search-P4--2-4-1.o $O_IP2 $O_IP1 &
-    ./search-P4--4-1-2.o $O_IP1 $O_IP2 &
-    ./search-P4--4-2-1.o $O_IP2 $O_IP1 &
-
-    ./search-P4--1-3-4.o $O_IP1 $O_IP3 &
-    ./search-P4--1-4-3.o $O_IP1 $O_IP3 &
-    ./search-P4--3-1-4.o $O_IP3 $O_IP1 &
-    ./search-P4--3-4-1.o $O_IP3 $O_IP1 &
-    ./search-P4--4-1-3.o $O_IP1 $O_IP3 &
-    ./search-P4--4-3-1.o $O_IP3 $O_IP1 &
-
-    ./search-P4--2-3-4.o $O_IP2 $O_IP3 &
-    ./search-P4--2-4-3.o $O_IP2 $O_IP3 &
-    ./search-P4--3-2-4.o $O_IP3 $O_IP2 &
-    ./search-P4--3-4-2.o $O_IP3 $O_IP2 &
-    ./search-P4--4-2-3.o $O_IP2 $O_IP3 &
-    ./search-P4--4-3-2.o $O_IP3 $O_IP2 &
-fi
-
+echo "Finished compiling"

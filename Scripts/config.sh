@@ -21,10 +21,11 @@ helpFunction()
    echo -e "\t-h USE SSL? (0/1)"
    echo -e "\t-j Number of parallel processes to use"
    echo -e "\t-v Random Number Generator (0: XOR_Shift/1 AES Bitsliced/2: AES_NI)"
+   echo -e "\t-t Timeout in seconds for attempting to connect to a player"
    exit 1 # Exit script after printing help
 }
 
-while getopts "b:a:d:c:f:n:s:i:l:p:o:u:g:x:e:h:j:v:" opt
+while getopts "b:a:d:c:f:n:s:i:l:p:o:u:g:x:e:h:j:v:t:" opt
 do
    case "$opt" in
       b ) BASE_PORT="$OPTARG" ;;
@@ -45,6 +46,7 @@ do
       h ) USE_SSL="$OPTARG" ;;
       j ) PROCESS_NUM="$OPTARG" ;;
       v ) RANDOM_ALGORITHM="$OPTARG" ;;
+      t ) CONNECTION_TIMEOUT="$OPTARG" ;;
       ? ) helpFunction ;; # Print helpFunction in case parameter is non-existent
    esac
 done
@@ -149,6 +151,11 @@ if [ ! -z "$PROCESS_NUM" ]
 then
     sed -i -e "s/\(define PROCESS_NUM \).*/\1$PROCESS_NUM/" config.h
 fi
+if [ ! -z "$CONNECTION_TIMEOUT" ]
+then
+    sed -i -e "s/\(define CONNECTION_TIMEOUT \).*/\1$CONNECTION_TIMEOUT/" config.h
+fi
+
 for i in {0..2}
 do
     if [ "$i" = "$PARTY" ] || [ "$PARTY" = "all" ];

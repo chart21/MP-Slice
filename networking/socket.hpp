@@ -6,6 +6,8 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <chrono>
+#include "../config.h"
 #if USE_SSL == 1
 #include <openssl/ssl.h>
 #include <openssl/err.h>
@@ -104,8 +106,12 @@ void Connect(const std::string& addr, int port) {
   if (inet_aton(addr.c_str(), &addr_in.sin_addr) == 0) {
     throw std::runtime_error("Invalid address: " + addr);
   }
+  std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
   while (connect(sock_, reinterpret_cast<sockaddr*>(&addr_in), sizeof(addr_in)) < 0) {
       /* throw std::runtime_error("Error connecting to remote server"); */
+    if( std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - t1).count() > CONNECTION_TIMEOUT) {
+        throw std::runtime_error("Timeout exceeded while connecting to server on port " + std::to_string(port));
+    }
   }
 #if USE_SSL == 1
   // Create an SSL context
