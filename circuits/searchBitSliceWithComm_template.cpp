@@ -27,7 +27,7 @@
 
 #include "../protocols/Protocols.h"
 
-
+#define FUNCTION searchComm__
 #define RESULTTYPE DATATYPE
 /* void receive_from_SRNG(DATATYPE a[], int id, int l) */
 /* { */
@@ -48,7 +48,7 @@
 /* } */
 
 template<typename Pr, typename S>
-void searchComm__ (Pr P,/*outputs*/ DATATYPE &found)
+void searchComm__ (Pr P,/*outputs*/ DATATYPE *found)
 {
 
 // allocate memory for shares
@@ -126,7 +126,7 @@ std::chrono::high_resolution_clock::time_point p =
 
   }
  
-  found = SET_ALL_ZERO(); 
+  *found = SET_ALL_ZERO(); 
   /* S sfound = P.public_val(found); */
 
   /* for (int i = 0; i < n; i++) { */
@@ -143,16 +143,16 @@ std::chrono::high_resolution_clock::time_point p =
 
 P.prepare_reveal_to_all(sfound);
 P.communicate();
-found = P.complete_Reveal(sfound);
+*found = P.complete_Reveal(sfound);
 
 }
 // Reveal
 //
 
-void print_result(DATATYPE var) 
+void print_result(DATATYPE* var) 
 {
     uint8_t v8val[sizeof(DATATYPE)];
-    std::memcpy(v8val, &var, sizeof(v8val));
+    std::memcpy(v8val, var, sizeof(v8val));
     for (uint i = sizeof(DATATYPE); i > 0; i--)
         std::cout << std::bitset<sizeof(uint8_t)*8>(v8val[i-1]) << std::endl;
         //std::cout << v8val[i]<< std::endl;

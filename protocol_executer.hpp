@@ -11,7 +11,13 @@
 #include <memory>
 #include "arch/DATATYPE.h"
 /* #include "circuits/searchBitSlice.c" */
-#include "circuits/searchBitSliceWithComm_template.cpp"
+
+#if FUNCTION_IDENTIFIER == 0
+#include "searchMain_template.hpp"
+#elif FUNCTION_IDENTIFIER == 1
+#include "XORNOTAND_Main.hpp"
+#endif
+
 #include "circuits/xorshift.h"
 
 #include "config.h"
@@ -27,7 +33,6 @@
 
 #include "protocols/CircuitInfo.hpp"
 
-#include "searchMain_template.hpp"
 
 struct timespec t1, t2, p1, p2;
 
@@ -123,8 +128,8 @@ for(int t=0;t<(num_players-1);t++) { // ???
     }
     #if INIT == 1 && NO_INI == 0
     auto p_init = PROTOCOL_INIT(OPT_SHARE);
-    RESULTTYPE* garbage = new RESULTTYPE;
-    FUNCTION<PROTOCOL_INIT,INIT_SHARE>(p_init,*garbage);
+    auto garbage = new RESULTTYPE;
+    FUNCTION<PROTOCOL_INIT,INIT_SHARE>(p_init,garbage);
     
     #if PRE == 1
     p_init.finalize(ips,receiving_args_pre,sending_args_pre);
@@ -196,8 +201,8 @@ std::chrono::high_resolution_clock::time_point p =
             // receive only
     #else
         auto p_pre = PROTOCOL_PRE(OPT_SHARE);
-        RESULTTYPE* garbage_PRE = new RESULTTYPE;
-        FUNCTION<PROTOCOL_PRE,INIT_SHARE>(p_pre,*garbage_PRE);
+        auto garbage_PRE = new RESULTTYPE;
+        FUNCTION<PROTOCOL_PRE,INIT_SHARE>(p_pre,garbage_PRE);
     #endif
     // manual send
 
@@ -323,8 +328,8 @@ int ret;
             std::chrono::high_resolution_clock::now();
     
     auto p_live = PROTOCOL_LIVE(OPT_SHARE);
-    RESULTTYPE* result = new RESULTTYPE;
-    FUNCTION<PROTOCOL_LIVE,SHARE>(p_live,*result);
+    auto result = new RESULTTYPE;
+    FUNCTION<PROTOCOL_LIVE,SHARE>(p_live,result);
     
 
     double time = std::chrono::duration_cast<std::chrono::microseconds>(
@@ -334,7 +339,7 @@ int ret;
     clock_gettime(CLOCK_REALTIME, &t2);
     double accum = ( t2.tv_sec - t1.tv_sec )
     + (double)( t2.tv_nsec - t1.tv_nsec ) / (double) 1000000000L;
-    print_result(*result); //different for other functions
+    print_result(result); //different for other functions
     clock_t time_function_finished = clock ();
     /* printf("Time measured to read and receive inputs: %fs \n", double((time_data_received - time_application_start)) / CLOCKS_PER_SEC); */
     printf("Time measured to perform computation clock: %fs \n", double((time_function_finished - time_function_start)) / CLOCKS_PER_SEC);
@@ -402,6 +407,7 @@ init_circuit(ips);
 #if LIVE == 1
     live_circuit();
 #endif
+
 }
 
 

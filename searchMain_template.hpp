@@ -52,14 +52,14 @@ void search_Compare(uint64_t origData[NUM_INPUTS][BITS_PER_REG], uint64_t origEl
 
 void insertManually(DATATYPE dataset[NUM_INPUTS][BITLENGTH], DATATYPE elements[NUM_INPUTS], uint64_t origData[NUM_INPUTS][BITS_PER_REG], uint64_t origElements[], int c, int b, uint64_t numElement, uint64_t numDataset ){
 
-unorthogonalize(elements, origElements);
+/* unorthogonalize(elements, origElements); */
 
-for (int i = 0; i < NUM_INPUTS; i++) {
- unorthogonalize(dataset[i], origData[i]);   
-}
+/* for (int i = 0; i < NUM_INPUTS; i++) { */
+/*  unorthogonalize(dataset[i], origData[i]); */   
+/* } */
 origData[c][b] = numDataset;
 origElements[b] = numElement;
-std::cout << origData[c][b] << origElements[b] << std::endl;
+/* std::cout << origData[c][b] << origElements[b] << std::endl; */
 
 
 uint8_t* cfound = new uint8_t[BITS_PER_REG]{0};
@@ -84,7 +84,7 @@ for (int i = 0; i < BITS_PER_REG; i++) {
     iseed[i] = rand();
 }
 DATATYPE* seed = new DATATYPE[BITLENGTH];
-funcTime("single ortho", orthogonalize,iseed, seed);
+orthogonalize(iseed, seed);
 
 //generate random data
 for (int i = 0; i < NUM_INPUTS; i++) {
@@ -140,20 +140,28 @@ void generateElements()
 uint64_t (*origData)[BITS_PER_REG] = NEW(uint64_t[NUM_INPUTS][BITS_PER_REG]);
 uint64_t *origElements = NEW(uint64_t[BITS_PER_REG]);
 
-DATATYPE (*dataset)[BITLENGTH] = NEW(DATATYPE[NUM_INPUTS][BITLENGTH]);
-DATATYPE* elements = NEW(DATATYPE[BITLENGTH]);
-for (int i = 0; i < NUM_INPUTS; i++) {
- orthogonalize(origData[i], dataset[i]);   
-}
-orthogonalize(origElements, elements);
+/* DATATYPE (*dataset)[BITLENGTH] = NEW(DATATYPE[NUM_INPUTS][BITLENGTH]); */
+/* DATATYPE* elements = NEW(DATATYPE[BITLENGTH]); */
+/* for (int i = 0; i < NUM_INPUTS; i++) { */
+/*  orthogonalize(origData[i], dataset[i]); */   
+/* } */
+/* orthogonalize(origElements, elements); */
 
 // generate random input data instead of reading from file
 /* funcTime("generating random inputs",randomizeInputs,dataset,elements); */
-randomizeInputs(dataset, elements);
 
+/* DATATYPE (*dataset)[BITLENGTH] = ((DATATYPE(*)[BITLENGTH]) origData); */ 
+/* DATATYPE* elements = ((DATATYPE*) origElements); */
+
+
+randomizeInputs( (DATATYPE(*)[BITLENGTH]) origData, (DATATYPE*)  origElements);
 
 //modify certain data to test functionality
 //
+DATATYPE (*dataset)[BITLENGTH] = NEW(DATATYPE[NUM_INPUTS][BITLENGTH]);
+DATATYPE* elements = NEW(DATATYPE[BITLENGTH]);
+
+
 insertManually(dataset, elements, origData, origElements, 1,7 , 200, 200);
 
 if(player_id == 0)
