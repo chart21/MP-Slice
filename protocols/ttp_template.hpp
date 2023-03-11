@@ -22,7 +22,11 @@ TTP(bool use_srngs) {input_srngs = use_srngs;}
 
 DATATYPE share(DATATYPE a)
 {
+#if player_id == 3
+sending_args[2].elements_to_send[sending_args[1].send_rounds] += 1;
+#else
 sending_args[1].sent_elements[sending_rounds][sb] = a;
+#endif
 sb+=1;
 return a;
 }
@@ -83,7 +87,11 @@ DATATYPE complete_Reveal(DATATYPE a)
 DATATYPE result = a;
 if(player_id != 2)
 {
+    #if player_id == 3
+    result = receiving_args[2].received_elements[rounds-1][rb];
+    #else
     result = receiving_args[1].received_elements[rounds-1][rb];
+    #endif
     rb+=1;
 }
 
@@ -149,6 +157,9 @@ void complete_receive_from(DATATYPE a[], int id, int l)
 if(id != player_id && player_id == 2)
 {
 for (int i = 0; i < l; i++) {
+   #if id == 3
+    a[i] = receiving_args[2].received_elements[rounds-1][share_buffer[id]];
+#endif
     a[i] = receiving_args[id].received_elements[rounds-1][share_buffer[id]];
     share_buffer[id]+=1;
     }

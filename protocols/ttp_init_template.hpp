@@ -11,6 +11,7 @@
 #include "../utils/randomizer.h"
 #include "sharemind_base.hpp"
 #define INIT_SHARE DATATYPE
+
 class TTP_init
 {
 bool input_srngs;
@@ -40,7 +41,11 @@ return dummy;
 
 DATATYPE share(DATATYPE a)
 {
+#if player_id == 3
+sending_args[2].elements_to_send[sending_args[1].send_rounds] += 1;
+#else
 sending_args[1].elements_to_send[sending_args[1].send_rounds] += 1;
+#endif
 return a;
 }
 
@@ -103,7 +108,11 @@ DATATYPE complete_Reveal(DATATYPE a)
 {
 if(player_id != 2)
 {
+#if player_id == 3
+    receiving_args[2].elements_to_rec[receiving_args[1].rec_rounds -1]+=1;
+#else
     receiving_args[1].elements_to_rec[receiving_args[1].rec_rounds -1]+=1;
+#endif
 }
 return a;
 }
@@ -127,7 +136,11 @@ if(id == player_id)
 if(player_id == 2)
 {
         for (int i = 0; i < l; i++) {
-        receiving_args[id].elements_to_rec[receiving_args[id].rec_rounds -1] += 1;
+#if player_id == 3
+            receiving_args[2].elements_to_rec[receiving_args[id].rec_rounds -1] += 1;
+#else
+            receiving_args[id].elements_to_rec[receiving_args[id].rec_rounds -1] += 1;
+#endif
         }
     }
 }
@@ -145,10 +158,15 @@ receive_from_comm(a, id, l);
 
 void prepare_receive_from_comm(DATATYPE a[], int id, int l)
 {
+
 if(id == player_id && player_id != 2)
 {
     for(int i = 0; i < l; i++) 
-        sending_args[1].elements_to_send[sending_args[1].send_rounds] += 1;
+#if player_id == 3
+sending_args[2].elements_to_send[sending_args[1].send_rounds] += 1;
+#else
+sending_args[1].elements_to_send[sending_args[1].send_rounds] += 1;
+#endif
 }
 }
 
