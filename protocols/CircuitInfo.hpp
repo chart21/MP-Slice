@@ -1,4 +1,5 @@
 #pragma once
+#if NO_INI == 1
 #include "../config.h"
 #include "../networking/buffers.h"
 #include "CircuitDetails.h"
@@ -132,3 +133,4 @@ sending_rounds = 0;
 rb = 0;
 sb = 0;
 }
+#endif

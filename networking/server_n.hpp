@@ -23,7 +23,7 @@ void server_signal_connection_established(int player_count)
         num_successful_connections += 1; 
     if(num_successful_connections == 2 * (player_count -1)) {
         pthread_cond_signal(&cond_successful_connection); //signal main thread that all threads have connected
-        printf("server %i \n",num_successful_connections);
+        /* printf("server %i \n",num_successful_connections); */
     }
     pthread_mutex_unlock(&mtx_connection_established);
     /* printf("Player: Unlocked conn \n"); */
@@ -46,7 +46,9 @@ void *sender(void* threadParameters)
     server.Bind(((sender_args*) threadParameters)->port);
     server.Listen(1);
     Socket client = server.Accept();
+    #if PRINT == 1
     printf("Connected to Player %i\n", ((sender_args*) threadParameters)->connected_to);
+    #endif
     server_signal_connection_established(((sender_args*) threadParameters)->player_count);
     // Send data to the client
         int rounds = 0;
@@ -72,9 +74,9 @@ pack(((sender_args*) threadParameters)->sent_elements[rounds],send_buf,((sender_
 #endif
 
 client.Send_all( ((char*) ((sender_args*) threadParameters)->sent_elements[rounds]), &elements_to_send);
-            
+#if PRINT == 1
 printf("sent %i bytes to player %i in round %i out of %i \n", elements_to_send , ((sender_args*) threadParameters)->connected_to, rounds + 1, ((sender_args*) threadParameters)->send_rounds);
-
+#endif
             }
                 //Delete sent data
            //free(((thargs_p*) threadParameters)->sent_elements[rounds]);
@@ -89,8 +91,9 @@ printf("sent %i bytes to player %i in round %i out of %i \n", elements_to_send ,
 
 
 
-
+#if PRINT == 1
 printf("Closing connection to Player %i\n", ((sender_args*) threadParameters)->connected_to);
+#endif
 pthread_exit( NULL );
 
 }

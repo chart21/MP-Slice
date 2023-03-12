@@ -42,6 +42,7 @@ DATATYPE counter[num_players][BUFFER_SIZE]{0};
 int num_generated[num_players] = {0};
 int pnext;
 int pprev;
+int pmiddle;
 
 int use_srng_for_inputs = 1;
 

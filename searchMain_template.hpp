@@ -27,7 +27,6 @@
 #include "networking/sockethelper.h"
 #include "networking/buffers.h"
 
-#include "protocols/CircuitInfo.hpp"
 
 
 
@@ -64,9 +63,11 @@ origElements[b] = numElement;
 
 uint8_t* cfound = new uint8_t[BITS_PER_REG]{0};
 /* funcTime("Plain search", search_Compare, origData, origElements, cfound); */
+
+#if PRINT == 1
 search_Compare(origData, origElements, cfound);
 print_bool(cfound);
-
+#endif
 
 
 

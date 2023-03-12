@@ -158,9 +158,9 @@ fi
 
 for i in {0..2}
 do
-    if [ "$i" = "$PARTY" ] || [ "$PARTY" = "all" ];
+    if [ "$i" = "$PARTY" ] || [ "$PARTY" = "all" ] || [ "$PARTY" = "all4" ];
     then
-        if [ "$PARTY" = "all" ];
+        if [ "$PARTY" = "all" ] || [ "$PARTY" = "all4" ];
         then        
             sed -i -e "s/\(PARTY \).*/\1"$i"/" config.h
         fi
@@ -178,4 +178,22 @@ do
             "$comp" tmain.cpp -o ./search-P"$i".o $flags
     fi
 done
+
+if [ "$PARTY" = "all4" ] || [ "$PARTY" = "3" ];
+then
+        sed -i -e "s/\(PARTY \).*/\1"3"/" config.h
+        if [ "$LIVE" = "0" ] && [ "$INIT" = "1" ]; 
+        then
+            sed -i -e "s/\(LIVE \).*/\10/" config.h
+            sed -i -e "s/\(INIT \).*/\11/" config.h
+            echo "Compiling INIT executable for P-3 ..."
+            "$comp" tmain.cpp -o ./search-P3-INIT.o $flags
+            ./search-P"$i"-INIT.o
+            sed -i -e "s/\(LIVE \).*/\11/" config.h
+            sed -i -e "s/\(INIT \).*/\10/" config.h
+        fi
+            echo "Compiling executable for P-3 ..."
+            "$comp" tmain.cpp -o ./search-P3.o $flags
+    fi
+
 echo "Finished compiling"

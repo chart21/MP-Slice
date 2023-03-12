@@ -121,8 +121,8 @@ std::chrono::high_resolution_clock::time_point p =
 
     double time_and = std::chrono::duration_cast<std::chrono::microseconds>(
                          std::chrono::high_resolution_clock::now() - p).count();
-    printf("Time measured to perform AND in batch %i: %fs \n", c, time_and / 1000000);
-      c++;
+    /* printf("Time measured to perform AND in batch %i: %fs \n", c, time_and / 1000000); */
+      /* c++; */
 
   }
  

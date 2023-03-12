@@ -42,7 +42,7 @@ return dummy;
 DATATYPE share(DATATYPE a)
 {
 #if player_id == 3
-sending_args[2].elements_to_send[sending_args[1].send_rounds] += 1;
+sending_args[2].elements_to_send[sending_args[2].send_rounds] += 1;
 #else
 sending_args[1].elements_to_send[sending_args[1].send_rounds] += 1;
 #endif
@@ -108,8 +108,8 @@ DATATYPE complete_Reveal(DATATYPE a)
 {
 if(player_id != 2)
 {
-#if player_id == 3
-    receiving_args[2].elements_to_rec[receiving_args[1].rec_rounds -1]+=1;
+#if PARTY == 3
+    receiving_args[2].elements_to_rec[receiving_args[2].rec_rounds -1]+=1;
 #else
     receiving_args[1].elements_to_rec[receiving_args[1].rec_rounds -1]+=1;
 #endif
@@ -136,11 +136,10 @@ if(id == player_id)
 if(player_id == 2)
 {
         for (int i = 0; i < l; i++) {
-#if player_id == 3
-            receiving_args[2].elements_to_rec[receiving_args[id].rec_rounds -1] += 1;
-#else
+if (id == 3)
+            receiving_args[2].elements_to_rec[receiving_args[2].rec_rounds -1] += 1;
+else
             receiving_args[id].elements_to_rec[receiving_args[id].rec_rounds -1] += 1;
-#endif
         }
     }
 }
@@ -162,8 +161,8 @@ void prepare_receive_from_comm(DATATYPE a[], int id, int l)
 if(id == player_id && player_id != 2)
 {
     for(int i = 0; i < l; i++) 
-#if player_id == 3
-sending_args[2].elements_to_send[sending_args[1].send_rounds] += 1;
+#if PARTY == 3
+sending_args[2].elements_to_send[sending_args[2].send_rounds] += 1;
 #else
 sending_args[1].elements_to_send[sending_args[1].send_rounds] += 1;
 #endif

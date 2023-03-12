@@ -23,7 +23,7 @@ void client_signal_connection_established(int player_count)
     num_successful_connections += 1; 
     if(num_successful_connections == 2 * (player_count -1)) {
         pthread_cond_signal(&cond_successful_connection); //signal main thread that all threads have connected
-        printf("client %i \n",num_successful_connections);
+        /* printf("client %i \n",num_successful_connections); */
     }
     pthread_mutex_unlock(&mtx_connection_established);
 
@@ -56,9 +56,9 @@ void *receiver(void* threadParameters)
 {
     Socket client;
     client.Connect(((receiver_args*) threadParameters)->ip, ((receiver_args*) threadParameters)->port);
-
+    #if PRINT == 1
     printf("Player %i: Client Connected to Player %i \n",  ((receiver_args*) threadParameters)->player_id, ((receiver_args*) threadParameters)->connected_to);
-   
+    #endif
     client_signal_connection_established(((receiver_args*) threadParameters)->player_count);
 
         
@@ -84,8 +84,9 @@ unpack(rec_buffer,((receiver_args*) threadParameters)->received_elements[rounds]
 delete[] rec_buffer;
 #endif
     client.Receive_all( ((char*) ((receiver_args*) threadParameters)->received_elements[rounds]), &elements_to_rec);
-
+    #if PRINT == 1
     printf("received %i bytes from player %i in round %i out of %i \n", elements_to_rec, ((receiver_args*) threadParameters)->connected_to, rounds + 1, ((receiver_args*) threadParameters)->rec_rounds);
+#endif
 }
 //If all sockets received, signal main_thread
 signal_all_data_received_in_round(rounds, ((receiver_args*) threadParameters)->player_count);

@@ -22,8 +22,8 @@ TTP(bool use_srngs) {input_srngs = use_srngs;}
 
 DATATYPE share(DATATYPE a)
 {
-#if player_id == 3
-sending_args[2].elements_to_send[sending_args[1].send_rounds] += 1;
+#if PARTY == 3
+sending_args[2].sent_elements[sending_rounds][sb] = a;
 #else
 sending_args[1].sent_elements[sending_rounds][sb] = a;
 #endif
@@ -87,7 +87,7 @@ DATATYPE complete_Reveal(DATATYPE a)
 DATATYPE result = a;
 if(player_id != 2)
 {
-    #if player_id == 3
+    #if PARTY == 3
     result = receiving_args[2].received_elements[rounds-1][rb];
     #else
     result = receiving_args[1].received_elements[rounds-1][rb];
@@ -117,17 +117,17 @@ void receive(){
       //wait until all sockets have finished received their last data
       pthread_mutex_lock(&mtx_receive_next);
       
-std::chrono::high_resolution_clock::time_point c1 =
-        std::chrono::high_resolution_clock::now();
+/* std::chrono::high_resolution_clock::time_point c1 = */
+/*         std::chrono::high_resolution_clock::now(); */
       while(rounds > receiving_rounds) //wait until all threads received their data
           pthread_cond_wait(&cond_receive_next, &mtx_receive_next);
       
-double time = std::chrono::duration_cast<std::chrono::microseconds>(
-                     std::chrono::high_resolution_clock::now() - c1)
-                     .count();
+/* double time = std::chrono::duration_cast<std::chrono::microseconds>( */
+/*                      std::chrono::high_resolution_clock::now() - c1) */
+/*                      .count(); */
       /* printf("finished waiting for receive in round %i \n", rounds - 1); */
       pthread_mutex_unlock(&mtx_receive_next);
-printf("Time spent waiting for data chrono: %fs \n", time / 1000000);
+/* printf("Time spent waiting for data chrono: %fs \n", time / 1000000); */
 
 rb = 0;
 }
@@ -145,7 +145,7 @@ if(id == player_id && player_id != 2)
 {
     for(int s = 0; s < l; s++)
     {
-        a[s] = share(player_input[share_buffer[id]]);  
+        share(player_input[share_buffer[id]]);  
         share_buffer[id]+=1;
     }
 }
@@ -154,18 +154,31 @@ if(id == player_id && player_id != 2)
 void complete_receive_from(DATATYPE a[], int id, int l)
 {
 
-if(id != player_id && player_id == 2)
+#if PARTY == 2
+if(id == 2)
 {
-for (int i = 0; i < l; i++) {
-   #if id == 3
-    a[i] = receiving_args[2].received_elements[rounds-1][share_buffer[id]];
-#endif
-    a[i] = receiving_args[id].received_elements[rounds-1][share_buffer[id]];
-    share_buffer[id]+=1;
+    for(int s = 0; s < l; s++)
+    {
+        a[s] = player_input[share_buffer[3]];
+        share_buffer[3]+=1;
     }
 }
+else
+{
+for (int i = 0; i < l; i++) {
+        if(id == 3)
+        {a[i] = receiving_args[2].received_elements[rounds-1][share_buffer[2]];
+        share_buffer[2]+=1;
+        }
+        else
+        {
+        a[i] = receiving_args[id].received_elements[rounds-1][share_buffer[id]];
+        share_buffer[id]+=1;
+        }
+    }
 }
-
+#endif
+}
 
 
 XOR_Share* alloc_Share(int l)

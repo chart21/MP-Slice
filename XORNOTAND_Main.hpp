@@ -22,7 +22,6 @@
 #include "networking/sockethelper.h"
 #include "networking/buffers.h"
 
-#include "protocols/CircuitInfo.hpp"
 
 #define FUNCTION XORNOTAND
 
@@ -65,7 +64,7 @@ for (int i = 0; i < num_players; i++) {
     }
 }
 
-player_input = dataset[player_id];
+player_input = dataset[PARTY];
 
 alignas(DATTYPE) uint64_t regular_data[num_players][DATTYPE];
 alignas(DATTYPE) uint64_t result[DATTYPE];
@@ -73,10 +72,11 @@ for (int i = 0; i < num_players; i++) {
 UNORTHOGONALIZE(dataset[i], regular_data[i]);
     }
     //
+#if PRINT == 1
 print_result(dataset[0]);
 compare(regular_data, result);
 print_bool((uint8_t*)result);
-
+#endif
 }
 
 

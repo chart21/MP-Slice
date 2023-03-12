@@ -16,6 +16,10 @@
 #include "searchMain_template.hpp"
 #elif FUNCTION_IDENTIFIER == 1
 #include "XORNOTAND_Main.hpp"
+#elif FUNCTION_IDENTIFIER == 2
+#include "AND_Main.hpp"
+#elif FUNCTION_IDENTIFIER == 3
+#include "AND_Main.hpp"
 #endif
 
 #include "circuits/xorshift.h"
@@ -30,9 +34,9 @@
 
 #include "networking/sockethelper.h"
 #include "networking/buffers.h"
-
+#if LIVE == 1 && INIT == 0 && NO_INI == 0
 #include "protocols/CircuitInfo.hpp"
-
+#endif
 
 struct timespec t1, t2, p1, p2;
 
@@ -110,15 +114,25 @@ void init_circuit(std::string ips[])
 
 //TODO replace with chrono
 clock_t time_init_start = clock ();
+#if PRINT == 1
 std::cout << "Initialzing circuit ..." << "\n";
-
+#endif
 /* //replace with vector soon !! */
-sockets_received = new int[10]{0}; 
+#if FUNCTION_IDENTIFIER == 3
+sockets_received = new int[COMMUNICATION_ROUNDS+2]{0};  //TODO: replace with vector
+#else
+sockets_received = new int[10]{0};  //TODO: replace with vector
+#endif
 for(int t=0;t<(num_players-1);t++) { // ???
     #if LIVE == 1 
+    #if FUNCTION_IDENTIFIER == 3
+    receiving_args[t].elements_to_rec = new int[COMMUNICATION_ROUNDS + 2]{0}; //TODO: replace with vector
+    sending_args[t].elements_to_send = new int[COMMUNICATION_ROUNDS + 2]{0};
+    #else
     receiving_args[t].elements_to_rec = new int[10]{0}; //TODO: replace with vector
     sending_args[t].elements_to_send = new int[10]{0};
-    #endif
+    #endif    
+#endif
     #if PRE == 1
     sending_args_pre[t].elements_to_send = new int[1]{0};
     receiving_args_pre[t].elements_to_rec = new int[1]{0};
@@ -190,8 +204,9 @@ int ret_pre;
     pthread_mutex_unlock(&mtx_connection_established);
 
 
-
+#if PRINT == 1
 std::cout << "Preprocessing phase ..." << "\n";
+#endif
 clock_t time_pre_function_start = clock ();
 clock_gettime(CLOCK_REALTIME, &p1);
 std::chrono::high_resolution_clock::time_point p =
@@ -339,7 +354,9 @@ int ret;
     clock_gettime(CLOCK_REALTIME, &t2);
     double accum = ( t2.tv_sec - t1.tv_sec )
     + (double)( t2.tv_nsec - t1.tv_nsec ) / (double) 1000000000L;
+    #if PRINT == 1
     print_result(result); //different for other functions
+    #endif
     clock_t time_function_finished = clock ();
     /* printf("Time measured to read and receive inputs: %fs \n", double((time_data_received - time_application_start)) / CLOCKS_PER_SEC); */
     printf("Time measured to perform computation clock: %fs \n", double((time_function_finished - time_function_start)) / CLOCKS_PER_SEC);
@@ -357,6 +374,8 @@ int ret;
 void executeProgram(int argc, char *argv[], int process_id, int process_num)
 {
 player_id = PARTY;
+
+//TODO: Replace with macros
 #if num_players == 3
 pnext = (player_id == 1);
 pprev = (player_id != 1);

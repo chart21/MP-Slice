@@ -262,7 +262,7 @@ sb = 0;
     pthread_mutex_lock(&mtx_send_next); 
      sending_rounds +=1;
       pthread_cond_broadcast(&cond_send_next); //signal all threads that sending buffer contains next data
-      printf("boradcasted round %i \n", sending_rounds);
+      /* printf("boradcasted round %i \n", sending_rounds); */
       pthread_mutex_unlock(&mtx_send_next); 
 }
 

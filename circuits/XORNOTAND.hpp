@@ -20,6 +20,8 @@ void XORNOTAND (Pr P,/*outputs*/ DATATYPE result[])
 S (*data)[BITLENGTH] = (S ((*)[BITLENGTH])) P.alloc_Share(((int) num_players)*BITLENGTH);
 
 
+
+
 for (int i = 0; i < num_players; i++) {
 P.prepare_receive_from(data[i],i,BITLENGTH);
   }
@@ -31,6 +33,7 @@ P.communicate();
 for (int i = 0; i < num_players; i++) {
 P.complete_receive_from(data[i],i,BITLENGTH);
   }
+
 
     for (int j = 0; j < BITLENGTH; j++) {
 

@@ -176,17 +176,17 @@ void receive(){
       //wait until all sockets have finished received their last data
       pthread_mutex_lock(&mtx_receive_next);
       
-std::chrono::high_resolution_clock::time_point c1 =
-        std::chrono::high_resolution_clock::now();
+/* std::chrono::high_resolution_clock::time_point c1 = */
+/*         std::chrono::high_resolution_clock::now(); */
       while(rounds > receiving_rounds) //wait until all threads received their data
           pthread_cond_wait(&cond_receive_next, &mtx_receive_next);
       
-double time = std::chrono::duration_cast<std::chrono::microseconds>(
-                     std::chrono::high_resolution_clock::now() - c1)
-                     .count();
+/* double time = std::chrono::duration_cast<std::chrono::microseconds>( */
+/*                      std::chrono::high_resolution_clock::now() - c1) */
+/*                      .count(); */
       /* printf("finished waiting for receive in round %i \n", rounds - 1); */
       pthread_mutex_unlock(&mtx_receive_next);
-printf("Time spent waiting for data chrono: %fs \n", time / 1000000);
+/* printf("Time spent waiting for data chrono: %fs \n", time / 1000000); */
 
 share_buffer[0] = 0;
 share_buffer[1] = 0;
