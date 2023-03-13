@@ -8,6 +8,7 @@
 #include <arpa/inet.h>
 #include <chrono>
 #include "../config.h"
+#include "signal.h"
 #if USE_SSL == 1
 #include <openssl/ssl.h>
 #include <openssl/err.h>
@@ -94,6 +95,13 @@ void Listen(int backlog) {
   if (SSL_CTX_use_PrivateKey_file(ssl_ctx_, "server.key", SSL_FILETYPE_PEM) != 1) {
     throw std::runtime_error("Error loading private key from file");
   }
+
+  signal(SIGPIPE, SIG_IGN);
+
+      // Set session ID context
+    /* const unsigned char *sid_ctx = reinterpret_cast<const unsigned char *>("MySessionIDContext"); */
+    /* SSL_CTX_set_session_id_context(ssl_ctx_, sid_ctx, strlen(reinterpret_cast<const char *>(sid_ctx))); */
+
 #endif
 }
 
@@ -228,5 +236,14 @@ int Receive(char* buffer, int size) {
 }  
 
 
+void Close_Context() {
+#if USE_SSL == 1
+    SSL_shutdown(ssl_);
+    SSL_free(ssl_);
+    SSL_CTX_free(ssl_ctx_);
+#endif
+}
+
 
 };
+

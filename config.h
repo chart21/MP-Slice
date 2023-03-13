@@ -2,7 +2,7 @@
 #define PROTOCOL 4
 
 //0: search 1: XORNOTAND, 2: AND 1 comm round 3: AND 1000 comm rounds 
-#define FUNCTION_IDENTIFIER 1
+#define FUNCTION_IDENTIFIER 0
 
 
 // Registersize to use for SIMD parallelization (Bitslicing/vectorization)
@@ -37,7 +37,7 @@
 #define INPUT 'r'
 
 // Number of inputs (depends on the problem)
-#define NUM_INPUTS 1 << 12
+#define NUM_INPUTS 1000
 
 // Bitlength of integers
 #define BITLENGTH 64
@@ -61,4 +61,11 @@ int base_port = BASE_PORT; // temporary solution
 // Timeout in seconds when connecting to a socket
 #define CONNECTION_TIMEOUT 30 
 
+// How many gates should be buffered until sending them to the receiving party? 0 means the data of an entire communication round is buffered
+#define SEND_BUFFER 0
+
+// How many reciving messages should be buffered until the main thread is signaled that data is ready? 0 means that all data of a communication round needs to be ready before the main thread is signaled.
+#define RECV_BUFFER 0
+
+// Print additional info?
 #define PRINT 0

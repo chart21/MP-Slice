@@ -94,6 +94,7 @@ printf("sent %i bytes to player %i in round %i out of %i \n", elements_to_send ,
 #if PRINT == 1
 printf("Closing connection to Player %i\n", ((sender_args*) threadParameters)->connected_to);
 #endif
+client.Close_Context();
 pthread_exit( NULL );
 
 }

@@ -91,6 +91,6 @@ delete[] rec_buffer;
 //If all sockets received, signal main_thread
 signal_all_data_received_in_round(rounds, ((receiver_args*) threadParameters)->player_count);
         }
-       
+    client.Close_Context();
     pthread_exit( NULL );
 }

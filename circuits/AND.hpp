@@ -10,11 +10,14 @@
 #include <cstring>
 #include "../arch/DATATYPE.h"
 #include "../protocols/Protocols.h"
+#include "../networking/buffer_helper.hpp"
 #define RESULTTYPE DATATYPE
 
 template<typename Pr, typename S>
 void AND_BENCH_1 (Pr P,/*outputs*/ DATATYPE* result)
 {
+
+BufferHelper buffer_helper = BufferHelper();
 
 // allocate memory for shares
 
@@ -26,6 +29,7 @@ P.communicate(); // dummy communication round to simulate secret sharing
 
 for (int i = 0; i < NUM_INPUTS; i++) {
 P.prepare_and(gates_a[i],gates_b[i]);
+buffer_helper.update_Buffers(P);
 }
 
 
@@ -33,6 +37,7 @@ P.communicate();
 
 for (int i = 0; i < NUM_INPUTS; i++) {
 gates_c[i] = P.complete_and(gates_a[i],gates_b[i]);
+buffer_helper.update_Buffers(P);
 }
 
 
@@ -41,4 +46,4 @@ gates_c[i] = P.complete_and(gates_a[i],gates_b[i]);
 void print_result(DATATYPE result[]) 
 {
 }
-     
+ 
