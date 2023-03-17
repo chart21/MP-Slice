@@ -1,6 +1,7 @@
 #pragma once
 #include <pthread.h>
 #include <string>
+#include <vector>
 #include "../arch/DATATYPE.h"
 
 pthread_mutex_t mtx_connection_established;
@@ -15,7 +16,7 @@ int receiving_rounds = 0;
 pthread_mutex_t mtx_receive_next;
 pthread_cond_t cond_receive_next;
 
-int* sockets_received;
+std::vector<int> sockets_received;
 pthread_mutex_t mtx_data_received;
 pthread_cond_t cond_data_received;
 
@@ -39,7 +40,7 @@ typedef struct receiver_arguments {
   int port;
   char *hostname;
   int rec_rounds;
-  int *elements_to_rec;
+  std::vector<int> elements_to_rec;
   int total_rounds; //depricated
   //char *data;
   //char *length
@@ -53,7 +54,7 @@ typedef struct sender_arguments {
   int player_count;
   int connected_to;
   int send_rounds;
-  int *elements_to_send;
+  std::vector<int> elements_to_send;
   int total_rounds; //depricated
   //char *data;
 } sender_args;

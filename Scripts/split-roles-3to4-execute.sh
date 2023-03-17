@@ -143,7 +143,7 @@ FAIL=0
 for job in `jobs -p`
 do
 # echo $job
-    wait $job || let "FAIL+=1"
+timeout 300s bash -c 'wait $job' || FAIL=$((FAIL+1))
 done
 
 echo $FAIL

@@ -6,6 +6,8 @@
 #define odup 4
 #define orep 5
 #define ttp 6
+
+
 #if PROTOCOL == rep3 
     #define PROTOCOL_LIVE Replicated
     #define PROTOCOL_INIT Replicated_init

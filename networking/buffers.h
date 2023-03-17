@@ -14,6 +14,8 @@ int rb;
 int sb;
 int send_count[num_players] = {0};
 int share_buffer[num_players] = {0}; //TODO: move to protocol layer
+int send_count_pre[num_players] = {0};
+int share_buffer_pre[num_players] = {0}; //TODO: move to protocol layer
 int reveal_buffer[num_players] = {0};
 int total_comm;
 int* elements_per_round;

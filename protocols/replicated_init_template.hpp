@@ -5,11 +5,14 @@
 
 #include "../utils/randomizer.h"
 #include "sharemind_base.hpp"
-
+#include "init_protocol_base.hpp"
 class Replicated_init{
 bool input_srngs;
     public:
 Replicated_init(bool use_srngs) {input_srngs = use_srngs;}
+
+
+
 XOR_Share share_SRNG(DATATYPE a)
 {
 
@@ -107,35 +110,6 @@ receiving_args[pprev].elements_to_rec[receiving_args[pprev].rec_rounds - 1] +=1;
 return result;
 }
 
-void send_and_receive()
-{
-for (int t = 0; t < num_players-1; t++)
-{
-/* if(sending_args[t].elements_to_send[sending_args[t].send_rounds] != 0) */
-/* { */
-/*     sending_args[t].total_rounds += 1; */
-/*     sending_args[t].send_rounds += 1; */
-/* } */
-/* if(receiving_args[t].elements_to_rec[receiving_args[t].rec_rounds] != 0) */
-/* { */
-/*     receiving_args[t].total_rounds += 1; */
-/*     receiving_args[t].rec_rounds +=1; */
-        
-/* } */
-    /* sending_args[t].total_rounds += 1; */
-    /* sending_args[t].send_rounds += 1; */
-    /* /1* receiving_args[t].total_rounds += 1; *1/ */
-    /* receiving_args[t].rec_rounds +=1; */
-    sending_args[t].total_rounds += 1;
-    sending_args[t].send_rounds += 1;
-    receiving_args[t].total_rounds += 1;
-    receiving_args[t].rec_rounds +=1;
-}
-}
-void communicate()
-{
-    send_and_receive();
-}
 
 XOR_Share* alloc_Share(int l)
 {
@@ -172,54 +146,22 @@ receiving_args[player].elements_to_rec[receiving_args[player].rec_rounds -1] += 
 }
 }
 
-void finalize(std::string* ips)
+void send()
 {
-for(int t=0;t<(num_players-1);t++) {
-    int offset = 0;
-    if(t >= player_id)
-        offset = 1; // player should not receive from itself
-    receiving_args[t].player_count = num_players;
-    receiving_args[t].received_elements = new DATATYPE*[receiving_args[t].rec_rounds]; //every thread gets its own pointer array for receiving elements
-    
-    /* receiving_args[t].elements_to_rec = new int[total_comm]; */
-    /* for (int i = 1 - use_srng_for_inputs; i < total_comm -1; i++) { */
-    /* receiving_args[t].elements_to_rec[i] = elements_per_round[i]; */
-    /* } */
-    /* receiving_args[t].elements_to_rec[0] = 0; // input sharing with SRNG */ 
-    /* if(use_srng_for_inputs == 0) */
-    /*     receiving_args[t].elements_to_rec[0] = input_length[t+offset]; //input shares to receive from that player */
-    /* receiving_args[t].elements_to_rec[total_comm-1] = reveal_length[player_id]; //number of revealed values to receive from other players */
-    receiving_args[t].player_id = player_id;
-    receiving_args[t].connected_to = t+offset;
-    receiving_args[t].ip = ips[t];
-    receiving_args[t].hostname = (char*)"hostname";
-    receiving_args[t].port = (int) base_port + player_id * (num_players-1) + t; //e.g. P0 receives on base port from P1, P2 on base port + num_players from P0 6000,6002
-    /* std::cout << "In main: creating thread " << t << "\n"; */
-    //init_srng(t, (t+offset) + player_id); 
+send_();
 }
-for(int t=0;t<(num_players-1);t++) {
-    int offset = 0;
-    if(t >= player_id)
-        offset = 1; // player should not send to itself
-    sending_args[t].sent_elements = new DATATYPE*[sending_args[t].send_rounds];
-    /* sending_args[t].elements_to_send[0] = 0; //input sharing with SRNGs */ 
-    sending_args[t].player_id = player_id;
-    sending_args[t].player_count = num_players;
-    sending_args[t].connected_to = t+offset;
-    sending_args[t].port = (int) base_port + (t+offset) * (num_players -1) + player_id - 1 + offset; //e.g. P0 sends on base port + num_players  for P1, P2 on base port + num_players for P0 (6001,6000)
-    /* std::cout << "In main: creating thread " << t << "\n"; */
-    sending_args[t].sent_elements[0] = NEW(DATATYPE[sending_args[t].elements_to_send[0]]); // Allocate memory for first round
-       
+void receive()
+{
+    receive_();
 }
-rounds = 0;
-sending_rounds = 0;
-rb = 0;
-sb = 0;
+void communicate()
+{
+communicate_();
 }
-void init(){
-    for(int t=0;t<(num_players-1);t++) {
-sending_args[t].elements_to_send[0] = 0;
-receiving_args[t].elements_to_rec[0] = 0;
+
+void finalize_ips(std::string* ips)
+{
+    finalize_ips_(ips);
 }
-}
+
 };

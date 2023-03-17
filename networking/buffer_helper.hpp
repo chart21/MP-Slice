@@ -12,8 +12,9 @@ BufferHelper()
 }
 
 template<typename Pr>
-void update_Buffers(Pr P)
+void update_Buffers(Pr& P)
 {
+
 # if SEND_BUFFER > 0
 num_send_instructions++;
 if( num_send_instructions == SEND_BUFFER)
@@ -23,9 +24,9 @@ if( num_send_instructions == SEND_BUFFER)
 
 }
 # endif
-# if RECEIVE_BUFFER > 0
+# if RECV_BUFFER > 0
 num_receive_instructions++;
-if( num_receive_instructions == RECEIVE_BUFFER)
+if( num_receive_instructions == RECV_BUFFER)
 {
     P.receive();
     num_receive_instructions = 0;

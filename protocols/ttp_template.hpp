@@ -11,6 +11,7 @@
 
 #include "../utils/randomizer.h"
 #include "sharemind_base.hpp"
+#include "live_protocol_base.hpp"
 //#define XOR_Share DATATYPE
 #define SHARE DATATYPE
 
@@ -99,44 +100,6 @@ return result;
 }
 
 
-void send()
-{
-sb = 0;      
-    for(int t = 0; t < num_players-1; t++)
-        sending_args[t].sent_elements[sending_rounds + 1] = NEW(DATATYPE[sending_args[t].elements_to_send[sending_rounds + 1]]); // Allocate memory for all sending buffers for next round
-    pthread_mutex_lock(&mtx_send_next); 
-     sending_rounds +=1;
-      pthread_cond_broadcast(&cond_send_next); //signal all threads that sending buffer contains next data
-      /* printf("boradcasted round %i \n", sending_rounds); */
-      pthread_mutex_unlock(&mtx_send_next); 
-}
-
-void receive(){
-        rounds+=1;  
-        // receive_data
-      //wait until all sockets have finished received their last data
-      pthread_mutex_lock(&mtx_receive_next);
-      
-/* std::chrono::high_resolution_clock::time_point c1 = */
-/*         std::chrono::high_resolution_clock::now(); */
-      while(rounds > receiving_rounds) //wait until all threads received their data
-          pthread_cond_wait(&cond_receive_next, &mtx_receive_next);
-      
-/* double time = std::chrono::duration_cast<std::chrono::microseconds>( */
-/*                      std::chrono::high_resolution_clock::now() - c1) */
-/*                      .count(); */
-      /* printf("finished waiting for receive in round %i \n", rounds - 1); */
-      pthread_mutex_unlock(&mtx_receive_next);
-/* printf("Time spent waiting for data chrono: %fs \n", time / 1000000); */
-
-rb = 0;
-}
-
-void send_and_receive()
-{
-    send();
-    receive();
-}
 
 
 void prepare_receive_from(DATATYPE a[], int id, int l)
@@ -186,11 +149,6 @@ XOR_Share* alloc_Share(int l)
     return new DATATYPE[l];
 }
 
-void communicate()
-{
-    send();
-    receive();
-}   
 
 
 void finalize()
@@ -198,5 +156,20 @@ void finalize()
 
 }
 
+
+void send()
+{
+    send_live();
+}
+
+void receive()
+{
+    receive_live();
+}
+
+void communicate()
+{
+    communicate_live();
+}
 
 };

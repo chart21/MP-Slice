@@ -5,7 +5,7 @@
 
 #include "../utils/randomizer.h"
 #include "replicated_base.hpp"
-
+#include "live_protocol_base.hpp"
 
 class Replicated{
 bool input_srngs;
@@ -254,44 +254,25 @@ void communicate_Shares()
 }
 
 
-void send()
-{
-sb = 0;      
-    for(int t = 0; t < num_players-1; t++)
-        sending_args[t].sent_elements[sending_rounds + 1] = NEW(DATATYPE[sending_args[t].elements_to_send[sending_rounds + 1]]); // Allocate memory for all sending buffers for next round
-    pthread_mutex_lock(&mtx_send_next); 
-     sending_rounds +=1;
-      pthread_cond_broadcast(&cond_send_next); //signal all threads that sending buffer contains next data
-      /* printf("boradcasted round %i \n", sending_rounds); */
-      pthread_mutex_unlock(&mtx_send_next); 
-}
-
-void receive(){
-        rounds+=1;  
-        // receive_data
-      //wait until all sockets have finished received their last data
-      pthread_mutex_lock(&mtx_receive_next);
-      while(rounds > receiving_rounds) //wait until all threads received their data
-          pthread_cond_wait(&cond_receive_next, &mtx_receive_next);
-      /* printf("finished waiting for receive in round %i \n", rounds - 1); */
-      pthread_mutex_unlock(&mtx_receive_next);
-
-rb = 0;
-}
-
-void send_and_receive()
-{
-    send();
-    receive();
-}
 Share* alloc_Share(int l)
 {
     return new Share[l];
 }
 
+
+void send()
+{
+    send_live();
+}
+
+void receive()
+{
+    receive_live();
+}
+
 void communicate()
 {
-    send();
-    receive();
-}   
+    communicate_live();
+}
+
 };

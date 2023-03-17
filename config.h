@@ -25,7 +25,7 @@
 #define LIVE 1
 
 // Use the offline phase?
-#define PRE 0
+#define PRE 1
 
 // Allow sharing of inputs in offline phase
 #define SHARE_PREP 1
@@ -37,7 +37,7 @@
 #define INPUT 'r'
 
 // Number of inputs (depends on the problem)
-#define NUM_INPUTS 1000
+#define NUM_INPUTS 40960
 
 // Bitlength of integers
 #define BITLENGTH 64
@@ -68,4 +68,4 @@ int base_port = BASE_PORT; // temporary solution
 #define RECV_BUFFER 0
 
 // Print additional info?
-#define PRINT 0
+#define PRINT 1

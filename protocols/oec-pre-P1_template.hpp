@@ -72,6 +72,25 @@ rb+=1;
 return a;
 }
 
+void send()
+{
+for (int t = 0; t < 2; t++)
+{
+    sending_args[t].total_rounds += 1;
+    sending_args[t].send_rounds += 1;
+}
+}
+
+void receive()
+{
+for (int t = 0; t < 2; t++)
+{
+    receiving_args[t].total_rounds += 1;
+    receiving_args[t].rec_rounds +=1;
+}
+}
+
+
 void communicate()
 {
     send_and_receive();

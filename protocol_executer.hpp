@@ -118,24 +118,19 @@ clock_t time_init_start = clock ();
 std::cout << "Initialzing circuit ..." << "\n";
 #endif
 /* //replace with vector soon !! */
-#if FUNCTION_IDENTIFIER == 3
-sockets_received = new int[COMMUNICATION_ROUNDS+2]{0};  //TODO: replace with vector
-#else
-sockets_received = new int[10]{0};  //TODO: replace with vector
-#endif
+sockets_received.push_back(0);
 for(int t=0;t<(num_players-1);t++) { // ???
     #if LIVE == 1 
-    #if FUNCTION_IDENTIFIER == 3
-    receiving_args[t].elements_to_rec = new int[COMMUNICATION_ROUNDS + 2]{0}; //TODO: replace with vector
-    sending_args[t].elements_to_send = new int[COMMUNICATION_ROUNDS + 2]{0};
-    #else
-    receiving_args[t].elements_to_rec = new int[10]{0}; //TODO: replace with vector
-    sending_args[t].elements_to_send = new int[10]{0};
-    #endif    
+    /* receiving_args[t].elements_to_rec = std::vector<int>(); */ 
+    /* sending_args[t].elements_to_send = std::vector<int>(); */
+    receiving_args[t].elements_to_rec.push_back(0);
+    sending_args[t].elements_to_send.push_back(0);
 #endif
     #if PRE == 1
-    sending_args_pre[t].elements_to_send = new int[1]{0};
-    receiving_args_pre[t].elements_to_rec = new int[1]{0};
+    /* receiving_args_pre[t].elements_to_rec = std::vector<int>(); */ 
+    /* sending_args_pre[t].elements_to_send = std::vector<int>(); */
+    receiving_args_pre[t].elements_to_rec.push_back(0);
+    sending_args_pre[t].elements_to_send.push_back(0);
     receiving_args_pre[t].rec_rounds = 1;
     sending_args_pre[t].send_rounds = 1;
     #endif
@@ -266,8 +261,11 @@ std::chrono::high_resolution_clock::time_point p =
 #if LIVE == 1
     // reset all variables
 num_successful_connections = 0;
-delete[] sockets_received;
-sockets_received = new int[10]{0};
+std::fill(sockets_received.begin(), sockets_received.end(), 0);
+share_buffer[0] = 0;
+share_buffer[1] = 0;
+send_count[0] = 0;
+send_count[1] = 0;
 rb = 0;
 sb = 0;
 rounds = 0;

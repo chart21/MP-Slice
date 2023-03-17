@@ -81,7 +81,8 @@ std::chrono::system_clock::time_point finish2;
 std::chrono::system_clock::time_point finish3;
 std::chrono::system_clock::time_point finish4;
 std::chrono::system_clock::time_point finish5;
-
+std::chrono::system_clock::time_point finish6;
+std::chrono::system_clock::time_point finish7;
 // Warmup
     for (int i = 0; i < 1000; i++) {
     for (int j = 0; j < 128; j++) {
@@ -145,6 +146,15 @@ std::cout << "SHA256 (Intrinsics): " << std::chrono::duration_cast<std::chrono::
 std::cout << "SHA256 (Intrinsics) Throughput: " << 1.024 / std::chrono::duration_cast<std::chrono::milliseconds>(finish5 - finish4).count() * 1000 << "GB/s"<< std::endl;
 #endif
 
+auto a = new uint64_t[1000000000];
+auto b = new uint64_t[1000000000];
+auto c= new uint64_t[1000000000];
+finish6 = std::chrono::high_resolution_clock::now();
+for (int i = 0; i < 1000000000; i++) {
+c[i] = a[i] * b[i];
+}
+finish7 = std::chrono::high_resolution_clock::now();
+
 std::cout << "AES_NI: " << std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count() << std::endl;
 std::cout << "AES_NI Throughput: " << 16.384*DATTYPE/128 / std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count() * 1000 << "GB/s"<< std::endl;
 std::cout << "AES_BS: " << std::chrono::duration_cast<std::chrono::milliseconds>(finish2 - finish).count() << std::endl;
@@ -155,13 +165,14 @@ std::cout << "SHA256: " << std::chrono::duration_cast<std::chrono::milliseconds>
 std::cout << "SHA256 Throughput: " << 1.024 / std::chrono::duration_cast<std::chrono::milliseconds>(finish4 - finish3).count() * 1000 << "GB/s"<< std::endl;
 std::cout << "Tested with 16384MB for AES, 1024MB for SHA256" << std::endl;
 
+std::cout << "64-bit Mult: " << std::chrono::duration_cast<std::chrono::milliseconds>(finish7 - finish6).count() << std::endl;
 
 std::cout << m[0] << std::endl;
 std::cout << plain__[0][0] << std::endl;
 std::cout << seed << std::endl;
 std::cout << state[0] << std::endl;
 std::cout << message << std::endl;
-
+std::cout << c[999999999] << std::endl;
 
 
 
