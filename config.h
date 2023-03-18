@@ -30,7 +30,7 @@
 #define LIVE 1
 
 // Use the offline phase?
-#define PRE 1
+#define PRE 0
 
 // Allow sharing of inputs in offline phase
 #define SHARE_PREP 1
@@ -72,4 +72,4 @@ int base_port = BASE_PORT; // temporary solution
 #define RECV_BUFFER 0
 
 // Print additional info?
-#define PRINT 1
+#define PRINT 0
