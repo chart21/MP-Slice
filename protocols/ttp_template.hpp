@@ -23,12 +23,7 @@ TTP(bool use_srngs) {input_srngs = use_srngs;}
 
 DATATYPE share(DATATYPE a)
 {
-#if PARTY == 3
-sending_args[2].sent_elements[sending_rounds][sb] = a;
-#else
-sending_args[1].sent_elements[sending_rounds][sb] = a;
-#endif
-sb+=1;
+send_to_live(P2, a);
 return a;
 }
 
@@ -37,7 +32,7 @@ return a;
 
 void share(DATATYPE a[], int length)
 {
-if(player_id != 2)
+if(PARTY != 2)
 {
 for(int l = 0; l < length; l++)
     a[l] = share(a[l]);
@@ -62,22 +57,21 @@ DATATYPE Xor(DATATYPE a, DATATYPE b)
 
 
 
-void prepare_and(XOR_Share &a, XOR_Share &b)
+void prepare_and(XOR_Share a, XOR_Share b, XOR_Share &c)
 {
+c = AND(a,b);
 }
 
 // NAND both real Values to receive sharing of ~ (a&b) 
-XOR_Share complete_and(XOR_Share a, XOR_Share b)
+void complete_and(XOR_Share &c)
 {
-return AND(a,b);
 }
 
 void prepare_reveal_to_all(DATATYPE a)
 {
-    if(player_id == 2){
+    if(PARTY == 2){
     for(int t = 0; t < num_players-1; t++) // for other protocols, sending buffers may be different for each player
-        sending_args[t].sent_elements[sending_rounds][sb] = a;
-    sb += 1;
+        send_to_live(t, a);
     }   
 }
 
@@ -86,14 +80,9 @@ void prepare_reveal_to_all(DATATYPE a)
 DATATYPE complete_Reveal(DATATYPE a)
 {
 DATATYPE result = a;
-if(player_id != 2)
+if(PARTY != 2)
 {
-    #if PARTY == 3
-    result = receiving_args[2].received_elements[rounds-1][rb];
-    #else
-    result = receiving_args[1].received_elements[rounds-1][rb];
-    #endif
-    rb+=1;
+    result = receive_from_live(P2);
 }
 
 return result;
@@ -104,12 +93,11 @@ return result;
 
 void prepare_receive_from(DATATYPE a[], int id, int l)
 {
-if(id == player_id && player_id != 2)
+if(id == PSELF && PARTY != P2)
 {
     for(int s = 0; s < l; s++)
     {
-        share(player_input[share_buffer[id]]);  
-        share_buffer[id]+=1;
+        share(get_input_live());
     }
 }
 }
@@ -118,27 +106,18 @@ void complete_receive_from(DATATYPE a[], int id, int l)
 {
 
 #if PARTY == 2
-if(id == 2)
+if(id == P2)
 {
     for(int s = 0; s < l; s++)
     {
-        a[s] = player_input[share_buffer[3]];
-        share_buffer[3]+=1;
+        a[s] = get_input_live();
     }
 }
 else
 {
 for (int i = 0; i < l; i++) {
-        if(id == 3)
-        {a[i] = receiving_args[2].received_elements[rounds-1][share_buffer[2]];
-        share_buffer[2]+=1;
-        }
-        else
-        {
-        a[i] = receiving_args[id].received_elements[rounds-1][share_buffer[id]];
-        share_buffer[id]+=1;
-        }
-    }
+    a[i] = receive_from_live(id);
+}
 }
 #endif
 }

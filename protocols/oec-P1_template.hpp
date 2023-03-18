@@ -38,20 +38,19 @@ DATATYPE Xor(DATATYPE a, DATATYPE b)
 
 
 //prepare AND -> send real value a&b to other P
-void prepare_and(DATATYPE &a, DATATYPE &b)
+void prepare_and(DATATYPE a, DATATYPE b, DATATYPE &c)
 {
-DATATYPE rl = getRandomVal(0);
-DATATYPE rr = getRandomVal(0);
-DATATYPE rx = getRandomVal(0);
-a = XOR(rx , XOR(AND(a,rl), AND(b,rr)));
+DATATYPE rl = getRandomVal(P0);
+DATATYPE rr = getRandomVal(P0);
+DATATYPE rx = getRandomVal(P0);
+c = XOR(rx , XOR(AND(a,rl), AND(b,rr)));
 send_to_live(P2,a);
 }
 
 // NAND both real Values to receive sharing of ~ (a&b) 
-DATATYPE complete_and(DATATYPE a, DATATYPE b)
+void complete_and(DATATYPE &c)
 {
-b = receive_from_live(P2);
-return XOR(a, b); 
+c = XOR(c, receive_from_live(P2));
 }
 
 void prepare_reveal_to_all(DATATYPE a)
@@ -82,12 +81,12 @@ XOR_Share* alloc_Share(int l)
 
 void prepare_receive_from(DATATYPE a[], int id, int l)
 {
-if(id == 1)
+if(id == P1)
 {
 for(int i = 0; i < l; i++)
 {
     a[i] = get_input_live();
-    a[i] = XOR(a[i],getRandomVal(0));
+    a[i] = XOR(a[i],getRandomVal(P0));
     send_to_live(P2,a[i]);
 }
 }
@@ -95,9 +94,7 @@ for(int i = 0; i < l; i++)
 
 void complete_receive_from(DATATYPE a[], int id, int l)
 {
-if(id == player_id)
-    return;
-else if(id == 0)
+if(id == P0)
 {
     #if OPT_SHARE == 1
         for(int i = 0; i < l; i++)
@@ -114,7 +111,7 @@ else if(id == 0)
     #endif
 }
 
-else if(id == 2)
+else if(id == P2)
 {
 for(int i = 0; i < l; i++)
 {
@@ -149,4 +146,4 @@ void communicate()
     communicate_live();
 }
 
-};
+    };

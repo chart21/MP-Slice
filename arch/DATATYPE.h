@@ -33,6 +33,7 @@
 #endif
 
 #if num_players == 3
+    #define PSELF 2
     #if PARTY == 0
         #define P0 2
         #define P1 0
@@ -53,6 +54,7 @@
         #define PNEXT 0
     #endif
 #elif num_players == 4
+    #define PSELF 3
     #if PARTY == 0
         #define P0 3
         #define P1 0

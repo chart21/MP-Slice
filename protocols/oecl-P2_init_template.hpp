@@ -38,7 +38,7 @@ DATATYPE Xor(DATATYPE a, DATATYPE b)
 
 
 //prepare AND -> send real value a&b to other P
-void prepare_and(DATATYPE &a, DATATYPE &b)
+void prepare_and(DATATYPE a, DATATYPE b, DATATYPE &c)
 {
 receiving_args[0].elements_to_rec[receiving_args[0].rec_rounds -1] += 1;
 sending_args[1].elements_to_send[sending_args[1].send_rounds] += 1;
@@ -46,10 +46,9 @@ sending_args[1].elements_to_send[sending_args[1].send_rounds] += 1;
 }
 
 // NAND both real Values to receive sharing of ~ (a&b) 
-DATATYPE complete_and(DATATYPE a, DATATYPE b)
+void complete_and(DATATYPE &c)
 {
 receiving_args[1].elements_to_rec[receiving_args[1].rec_rounds -1] += 1;
-return a;
 }
 
 void prepare_reveal_to_all(DATATYPE a)

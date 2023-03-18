@@ -39,13 +39,13 @@ DATATYPE Xor(DATATYPE a, DATATYPE b)
 
 
 //prepare AND -> send real value a&b to other P
-void prepare_and(DATATYPE &a, DATATYPE &b)
+void prepare_and(DATATYPE a, DATATYPE b, DATATYPE &c)
 {
-DATATYPE rl = getRandomVal(0);
-DATATYPE rr = getRandomVal(0);
+DATATYPE rl = getRandomVal(P1);
+DATATYPE rr = getRandomVal(P1);
 
-DATATYPE rx = getRandomVal(0);
-DATATYPE ry = getRandomVal(1);
+DATATYPE rx = getRandomVal(P1);
+DATATYPE ry = getRandomVal(P2);
 
 DATATYPE o1 = XOR(a,rr);
 DATATYPE o2 = XOR(b,rl);
@@ -56,17 +56,18 @@ DATATYPE o2 = XOR(b,rl);
     send_to_live(P2,o1);
     send_to_live(P2,o2);
 #endif
-a = AND(a,rl);
-b = XOR(AND(b,rr),AND(rl,rr));
-a = XOR(a,b);
-b = XOR(rx,ry);
+/* a = AND(a,rl); */
+/* b = XOR(AND(b,rr),AND(rl,rr)); */
+/* a = XOR(a,b); */
+/* b = XOR(rx,ry); */
+/* return XOR(a,b); */
 
+c = XOR( XOR (rx, ry), XOR ( AND(a,rl), XOR(AND(b,rr),AND(rl,rr))   ) );
 
 }
 
-DATATYPE complete_and(DATATYPE a, DATATYPE b)
+void complete_and(DATATYPE &c)
 {
-return XOR(a,b);
 }
 
 void prepare_reveal_to_all(DATATYPE a)
@@ -112,7 +113,7 @@ XOR_Share* alloc_Share(int l)
 void share_unoptimized(DATATYPE a[], int id, int l)
 {
 
-if(id == 0)
+if(id == P0)
 {
     for(int i = 0; i < l; i++)
     {
@@ -121,7 +122,7 @@ if(id == 0)
         /* sending_args[0].sent_elements[sending_rounds][sb] = 0; */
     /* sending_args[1].sent_elements[sending_rounds][sb] = 0; */
     /* sb += 1; */
-    DATATYPE r = getRandomVal(2); //should be an SRNG shared by P0,P1,P2 to save communication
+    DATATYPE r = getRandomVal(P0); //should be an SRNG shared by P0,P1,P2 to save communication
     a[i] = XOR(r,a[i]);
     send_to_live(P1,a[i]);
     send_to_live(P2,a[i]);
@@ -134,7 +135,7 @@ if(id == 0)
 
 void prepare_receive_from(DATATYPE a[], int id, int l)
 {
-if(id == 0)
+if(id == P0)
 {
     #if OPT_SHARE == 0
     share_unoptimized(a, id, l);
@@ -158,7 +159,7 @@ if(id == 0)
 else{
 for(int i = 0; i < l; i++)
     {
-    a[i] = getRandomVal(id - 1);
+    a[i] = getRandomVal(id);
     }
 }
 }

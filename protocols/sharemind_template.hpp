@@ -20,49 +20,39 @@ class Sharemind
 bool input_srngs;
     public:
 Sharemind(bool use_srngs) {input_srngs = use_srngs;}
-XOR_Share share_SRNG(DATATYPE a)
+Workaround_Share share_SRNG(DATATYPE a)
 {
 DATATYPE s[3]; //last share always belongs to player itself
 s[pprev] = getRandomVal(pprev);
 s[pnext] = getRandomVal(pnext);
 s[2] = XOR(s[pprev],s[pnext]);
 s[2] = XOR(a,s[2]);
-return s[2];
+return Workaround_Share(s[2]);
 }
 
-XOR_Share receive_share_SRNG(int player)
+Workaround_Share receive_share_SRNG(int player)
 {
-    return getRandomVal(player);
+
+    return Workaround_Share(getRandomVal(player));
 }
 
-DATATYPE share(DATATYPE a)
+Workaround_Share share(Workaround_Share a)
 {
 DATATYPE s[3]; //last share always belongs to player itself
-/* s[pprev] = getRandomVal(pprev); */ 
-/* s[pnext] = getRandomVal(pnext); */
-/* s[pprev] = SET_ALL_ONE(); */
-/* s[pnext] = SET_ALL_ONE(); */
 s[pprev] = getRandomVal(num_players -1);
 s[pnext] = getRandomVal(num_players -1);
 s[2] = XOR(s[pprev],s[pnext]);
-s[2] = XOR(a,s[2]);
-sending_args[pprev].sent_elements[sending_rounds][sb] = s[pprev];
-sending_args[pnext].sent_elements[sending_rounds][sb] = s[pnext];
-sb+=1;
-/* return a; */
-/* print_num(s[player_id]); */
-/* printf("\n"); */
-/* print_num(a); */
-/* printf("\n"); */
-/* printf("\n"); */
-return s[2];
+s[2] = XOR(a.val_,s[2]);
+send_to_live(pprev, s[pprev]);
+send_to_live(pprev, s[pnext]);
+return Workaround_Share(s[2]);
       }
 
 
 
 
 
-void share(DATATYPE a[], int length)
+void share(Workaround_Share a[], int length)
 {
 if(input_srngs == true)
 {
@@ -75,20 +65,20 @@ for(int l = 0; l < length; l++)
 }
                                            //
 }
-XOR_Share public_val(DATATYPE a)
+Workaround_Share public_val(DATATYPE a)
 {
-    return a;
+    return Workaround_Share(a);
 }
 
-DATATYPE Not(DATATYPE a)
+Workaround_Share Not(Workaround_Share a)
 {
-   return NOT(a);
+   return NOT(a.val_);
 }
 
 // Receive sharing of ~XOR(a,b) locally
-DATATYPE Xor(DATATYPE a, DATATYPE b)
+Workaround_Share Xor(Workaround_Share a, Workaround_Share b)
 {
-   return XOR(a, b);
+   return XOR(a.val_, b.val_);
 }
 
 
@@ -102,105 +92,78 @@ u[2] = XOR(a,u[2]);
  
 }
 //prepare AND -> send real value a&b to other P
-void prepare_and(XOR_Share &a, XOR_Share &b)
+void prepare_and(Workaround_Share a, Workaround_Share b, Workaround_Share &c)
 {
 DATATYPE u[3];
 DATATYPE v[3];
-reshare(a,u);
-reshare(b,v);
-a = u[2];
-b = v[2];
-sending_args[pnext].sent_elements[sending_rounds][sb] = u[2]; //last share always belongs to player itself
-sending_args[pprev].sent_elements[sending_rounds][sb] = v[2];
-sb+=1;
+reshare(a.val_,u);
+reshare(b.val_,v);
+send_to_live(pnext, u[2]);
+send_to_live(pprev, v[2]);
+c.val_ = AND(u[2],v[2]);
+c.helper_ = b.val_;
 }
 
 // NAND both real Values to receive sharing of ~ (a&b) 
-XOR_Share complete_and(XOR_Share a, XOR_Share b)
+void complete_and(Workaround_Share &c)
 {
-DATATYPE w = AND(a,b);
-DATATYPE u_p = receiving_args[pprev].received_elements[rounds-1][rb];
-DATATYPE v_n = receiving_args[pnext].received_elements[rounds-1][rb];
+
+DATATYPE u_p = receive_from_live(pprev);
+DATATYPE v_n = receive_from_live(pnext);
 /* DATATYPE u_i = a; */
-DATATYPE v_i = b; 
-w = XOR (w,   XOR ( AND(u_p,v_i) , AND(u_p,v_n) ));
-rb+=1;
-return w;
+DATATYPE v_i = c.helper_;
+c.val_ = XOR (c.val_,   XOR ( AND(u_p,v_i) , AND(u_p,v_n) ));
 }
 
-void prepare_reveal_to_all(DATATYPE a)
+void prepare_reveal_to_all(Workaround_Share a)
 {
     for(int t = 0; t < num_players-1; t++) // for other protocols, sending buffers may be different for each player
-        sending_args[t].sent_elements[sending_rounds][sb] = a;
-    sb += 1;
+        send_to_live(t, a.val_);
     //add to send buffer
 }    
 
 
-//reveal to specific player
-void prepare_reveal_to(DATATYPE a, int id)
-{
-    if(player_id != id)
-    {
-    int offset = {player_id > id ? 1 : 0};
-        sending_args[id - offset].sent_elements[sending_rounds][reveal_buffer[id]] = a;
-    reveal_buffer[id] += 1;
-    //add to send buffer
-}
-}
 // These functions need to be somewhere else
 
-DATATYPE complete_Reveal(DATATYPE a)
+DATATYPE complete_Reveal(Workaround_Share a)
 {
-DATATYPE result = a;
+DATATYPE result = a.val_;
 for(int t = 0; t < num_players-1; t++) // for other protocols, sending buffers may be different for each player
-    result = XOR(result,receiving_args[t].received_elements[rounds-1][rb]);
-rb+=1;
+    result = XOR(result,receive_from_live(t));
 return result;
 }
 
 
-void receive_from_SRNG(XOR_Share a[], int id, int l)
+void receive_from_SRNG(Workaround_Share a[], int id, int l)
 {
-if(id == player_id)
+if(id == PSELF)
 {
 for (int i = 0; i < l; i++) {
-  a[i] = share_SRNG(player_input[share_buffer[id]]);  
-  share_buffer[id]+=1;
+  a[i] = get_input_live();
 }
 }
 else{
-int offset = {id > player_id ? 1 : 0};
 for (int i = 0; i < l; i++) {
-    a[i] = receive_share_SRNG(id - offset);
+    a[i] = receive_share_SRNG(id);
 }
 }
 }
-void receive_from_comm(XOR_Share a[], int id, int l)
+void receive_from_comm(Workaround_Share a[], int id, int l)
 {
-if(id == player_id)
+if(id == PSELF)
 {
-/* result = receiving_args[num_players-1].received_elements[rounds - 1][share_buffer[id]]; */
 
     return; // input is already set in sharing phase
 
-    /* for (int i = 0; i < l; i++) { */
-/*   a[i] = player_input[share_buffer[id]]; */
-/*     share_buffer[id]+=1; */
-
-
-    /* } */
 }
 else{
-int offset = {id > player_id ? 1 : 0};
 for (int i = 0; i < l; i++) {
-a[i] = receiving_args[id - offset].received_elements[rounds-1][share_buffer[id]];
-    share_buffer[id]+=1;
+a[i] = receive_from_live(id);
 }
 }
 }
 
-void receive_from(DATATYPE a[], int id, int l)
+void receive_from(Workaround_Share a[], int id, int l)
 {
 if(input_srngs == true)
 {
@@ -213,19 +176,18 @@ receive_from_comm(a, id, l);
 }
 
 
-void prepare_receive_from_comm(DATATYPE a[], int id, int length)
+void prepare_receive_from_comm(Workaround_Share a[], int id, int length)
 {
-if(id == player_id)
+if(id == PSELF)
 {
     for(int l = 0; l < length; l++)
     {
-        a[l] = share(player_input[share_buffer[id]]);  
-        share_buffer[id]+=1;
+        a[l] = get_input_live();
     }
 }
 }
 
-void prepare_receive_from(DATATYPE a[], int id, int l)
+void prepare_receive_from(Workaround_Share a[], int id, int l)
 {
 if(input_srngs == true)
 {
@@ -237,16 +199,16 @@ prepare_receive_from_comm(a, id, l);
 }
 }
 
-void complete_receive_from_comm(DATATYPE a[], int id, int l)
+void complete_receive_from_comm(Workaround_Share a[], int id, int l)
 {
 
-if(id != player_id)
+if(id != PSELF)
 {
     receive_from_comm(a,id,l);
 }
 }
 
-void complete_receive_from(DATATYPE a[], int id, int l)
+void complete_receive_from(Workaround_Share a[], int id, int l)
 {
 if(input_srngs == true)
 {
@@ -260,17 +222,13 @@ complete_receive_from_comm(a, id, l);
 
 
 
-XOR_Share* alloc_Share(int l)
+Workaround_Share* alloc_Share(int l)
 {
-    return new DATATYPE[l];
+    return new Workaround_Share[l];
 }
 
 
 
-void finalize()
-{
-
-}
 
 
 void send()

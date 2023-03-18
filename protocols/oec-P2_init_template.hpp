@@ -39,7 +39,7 @@ DATATYPE Xor(DATATYPE a, DATATYPE b)
 
 
 //prepare AND -> send real value a&b to other P
-void prepare_and(DATATYPE &a, DATATYPE &b)
+void prepare_and(DATATYPE a, DATATYPE b, DATATYPE &c)
 {
 #if PRE == 1
 pre_receive_from_(P0);
@@ -53,10 +53,9 @@ send_to_(P1);
 }
 
 // NAND both real Values to receive sharing of ~ (a&b) 
-DATATYPE complete_and(DATATYPE a, DATATYPE b)
+void complete_and(DATATYPE &c)
 {
 receive_from_(P1);
-return a;
 }
 
 void prepare_reveal_to_all(DATATYPE a)

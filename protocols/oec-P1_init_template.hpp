@@ -31,17 +31,16 @@ DATATYPE Xor(DATATYPE a, DATATYPE b)
 
 
 //prepare AND -> send real value a&b to other P
-void prepare_and(DATATYPE &a, DATATYPE &b)
+void prepare_and(DATATYPE a, DATATYPE b, DATATYPE &c)
 {
 send_to_(P2);
 //return u[player_id] * v[player_id];
 }
 
 // NAND both real Values to receive sharing of ~ (a&b) 
-DATATYPE complete_and(DATATYPE a, DATATYPE b)
+void complete_and(DATATYPE &c)
 {
 receive_from_(P2);
-return a;
 }
 
 void prepare_reveal_to_all(DATATYPE a)

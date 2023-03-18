@@ -22,9 +22,8 @@ s[pprev].a = XOR(s[pnext].x,a); //xi + x(i-1) + a
 s[pnext].a = XOR(s[2].x,a); //xi + x(i-1) + a
 s[2].a = XOR(s[pprev].x,a); //xi + x(i-1) + a
 
-sending_args[pprev].sent_elements[sending_rounds][sb] = s[pprev].a;
-sending_args[pnext].sent_elements[sending_rounds][sb] = s[pnext].a;
-sb+=1;
+send_to_live(pprev, s[pprev].a);
+send_to_live(pnext, s[pnext].a);
 
 return s[2];
 
@@ -33,8 +32,7 @@ return s[2];
 
 void receive_share_SRNG(Share &s, int player)
 {
-s.a = receiving_args[player].received_elements[rounds-1][share_buffer[player]];
-share_buffer[player] += 1;
+s.a = receive_from_live(player);
 }
 
 Share share(DATATYPE a)
@@ -48,9 +46,8 @@ s[pprev].a = XOR(s[pnext].x,a); //xi + x(i-1) + a
 s[pnext].a = XOR(s[2].x,a); //xi + x(i-1) + a
 s[2].a = XOR(s[pprev].x,a); //xi + x(i-1) + a
 
-sending_args[pprev].sent_elements[sending_rounds][sb] = s[pprev].a;
-sending_args[pnext].sent_elements[sending_rounds][sb] = s[pnext].a;
-sb+=1;
+send_to_live(pprev, s[pprev].a);
+send_to_live(pnext, s[pnext].a);
 
 return s[2];
       }
@@ -63,49 +60,37 @@ void share(Share a[], int length)
 {
     for(int l = 0; l < length; l++)
     {
-    a[l] = share_SRNG(player_input[share_buffer[2]]);  
-    share_buffer[2]+=1;
-    }                                      //
+    a[l] = share_SRNG(get_input_live());
+    }
 }
 
 
 void receive_from_SRNG(Share a[], int id, int l)
 {
-if(id == player_id)
+if(id == PSELF)
 {
 for (int i = 0; i < l; i++) {
-  a[i] = share_SRNG(player_input[share_buffer[2]]);  
-  share_buffer[2]+=1;
+  a[i] = share_SRNG(get_input_live());
 }
 }
 else{
-int offset = {id > player_id ? 1 : 0};
 for (int i = 0; i < l; i++) {
-    receive_share_SRNG(a[i], id - offset);
+    receive_share_SRNG(a[i], id);
 }
 }
 }
 
 void receive_from(Share a[], int id, int l)
 {
-if(id == player_id)
+if(id == PSELF)
 {
-/* for (int i = 0; i < l; i++) { */
-
-/* a[i] = share(player_input[share_buffer[id]]); */
-/* share_buffer[player_id] += 1; */
-
-/* } */
     return;
 }
 else{
-int offset = {id > player_id ? 1 : 0};
-int player = id - offset;
 for (int i = 0; i < l; i++) {
 Share s;
-s.x = getRandomVal(player);
-s.a = receiving_args[player].received_elements[rounds-1][share_buffer[player]];
-share_buffer[player] += 1;
+s.x = getRandomVal(id);
+s.a = receive_from_live(id);
 a[i] = s;
 }
 }
@@ -113,17 +98,15 @@ a[i] = s;
 
 void generate_SRNG(Share a[], int id, int length)
 {
-int offset = {id > player_id ? 1 : 0};
-int player = id - offset;
     for(int l = 0; l < length; l++)
     {
-        a[l].x = getRandomVal(player);
+        a[l].x = getRandomVal(id);
     }
 }
 
 void prepare_receive_from(Share a[], int id, int l)
 {
-    if(id == player_id)
+    if(id == PSELF)
         share(a,l);
     else
         generate_SRNG(a,id,l);
@@ -131,11 +114,10 @@ void prepare_receive_from(Share a[], int id, int l)
 
 void complete_receive_from(Share a[], int id, int l)
 {
-if(id == player_id)
+if(id == PSELF)
     return;
-int offset = {id > player_id ? 1 : 0};
 for (int i = 0; i < l; i++) {
-    receive_share_SRNG(a[i],id - offset);
+    receive_share_SRNG(a[i],id);
 
 }
 }
@@ -195,64 +177,41 @@ u[2] = XOR(a,u[2]);
  
 }
 //prepare AND -> send real value a&b to other P
-void prepare_and(Share &a, Share &b)
+void prepare_and(Share a, Share b, Share &c)
 {
 DATATYPE corr = XOR( getRandomVal(pprev), getRandomVal(pnext) );
 DATATYPE r =  XOR( XOR(  AND(a.x,b.x), AND(a.a,b.a) ) , corr);  
-a.x = r; //used to access value in complete and 
-sending_args[pnext].sent_elements[sending_rounds][sb] = r; //last share always belongs to player itself
-sb+=1;
+c.a = r; //used to access value in complete and 
+send_to_live(pnext, r);
 }
 
 // NAND both real Values to receive sharing of ~ (a&b) 
-Share complete_and(Share a, Share b)
+void complete_and(Share &c)
 {
-Share result;
-result.a = a.x; // c = ri 
-result.x = XOR(a.x, receiving_args[pprev].received_elements[rounds-1][rb]  ); // z = ri XOR rprev 
-rb+=1;
-return result;
+c.x = XOR(c.a, receive_from_live(pprev));
 }
 
 void prepare_reveal_to_all(Share a)
 {
-    sending_args[pnext].sent_elements[sending_rounds][sb] = a.x;
-    sb += 1;
-    //add to send buffer
+    send_to_live(pnext, a.x);
 }    
 
 
 //reveal to specific player
 void prepare_reveal_to(DATATYPE a, int id)
 {
-    if(player_id != id)
+    if(PSELF != id)
     {
-    int offset = {player_id > id ? 1 : 0};
-        sending_args[id - offset].sent_elements[sending_rounds][reveal_buffer[id]] = a;
-    reveal_buffer[id] += 1;
-    //add to send buffer
+        send_to_live(id, a);
 }
 }
-// These functions need to be somewhere else
 
 DATATYPE complete_Reveal(Share a)
 {
 DATATYPE result;
-result = XOR(a.a,receiving_args[pprev].received_elements[rounds-1][rb]);
-rb+=1;
+result = XOR(a.a,receive_from_live(pprev));
 return result;
 }
-
-void communicate_AND()
-{
-    // send all AND gates
-}
-
-void communicate_Shares()
-{
-    // send all reveals
-}
-
 
 Share* alloc_Share(int l)
 {

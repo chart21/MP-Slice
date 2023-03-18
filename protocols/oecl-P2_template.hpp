@@ -10,6 +10,7 @@
 // XOR_Share of each player is ~a
 
 #include "../utils/randomizer.h"
+#include "init_protocol_base.hpp"
 #include "sharemind_base.hpp"
 #include "live_protocol_base.hpp"
 //#include "oecl_base.hpp"
@@ -38,41 +39,29 @@ XOR_Share Xor(XOR_Share a, XOR_Share b)
 
 
 
-void prepare_and(XOR_Share &a, XOR_Share &b)
+void prepare_and(XOR_Share a, XOR_Share b, XOR_Share &c)
 {
 
-XOR_Share ap1 = getRandomVal(0); // P2 mask for P1
-a = XOR(receiving_args[0].received_elements[rounds-1][share_buffer[0]], AND(a,b)); // P0_message + (a+rr) (b+rl)
-sending_args[1].sent_elements[sending_rounds][send_count[1]] = XOR(ap1,a); // + P2 mask
-share_buffer[0]+=1;
-send_count[1]+=1;
+XOR_Share ap1 = getRandomVal(P0); // P2 mask for P1
+c = XOR(receive_from_live(P0), AND(a,b)); // P0_message + (a+rr) (b+rl)
+send_to_live(P1, XOR(ap1,a)); 
 }
 
-XOR_Share complete_and(XOR_Share a, XOR_Share b)
+void complete_and(XOR_Share &c)
 {
-a = XOR(a, receiving_args[1].received_elements[rounds-1][share_buffer[1]]);
-share_buffer[1]+=1;
-
-return a; 
+c = XOR(c, receive_from_live(P1)); 
 }
 
 void prepare_reveal_to_all(XOR_Share a)
 {
-sending_args[0].sent_elements[sending_rounds][send_count[0]] = a;
-send_count[0] += 1;
-}    
-
+send_to_live(P0, a);
+}
 
 
 DATATYPE complete_Reveal(XOR_Share a)
 {
-/* for(int t = 0; t < num_players-1; t++) */ 
-/*     receiving_args[t].elements_to_rec[rounds-1]+=1; */
-a = XOR(a,receiving_args[0].received_elements[rounds-1][share_buffer[0]]); 
-share_buffer[0]+=1;
-return a;
+return XOR(a, receive_from_live(P0));
 }
-
 
 XOR_Share* alloc_Share(int l)
 {
@@ -82,47 +71,34 @@ XOR_Share* alloc_Share(int l)
 
 void prepare_receive_from(XOR_Share a[], int id, int l)
 {
-if(id == 2)
+if(id == P2)
 {
 for(int i = 0; i < l; i++)
 {
-    a[i] = player_input[share_buffer[2]];
+    a[i] = get_input_live();     
     /* a[i].p1 = getRandomVal(0); *1/ */
-    share_buffer[2] += 1;
-    sending_args[1].sent_elements[sending_rounds][send_count[1]] = XOR(getRandomVal(0),a[i]);
-    send_count[1]+=1;
+    send_to_live(P0, XOR(getRandomVal(P0),a[i]));
 }
 }
 }
 
 void complete_receive_from(XOR_Share a[], int id, int l)
 {
-if(id == 0)
+if(id == P0)
 {
     for(int i = 0; i < l; i++)
     {
-        a[i] = receiving_args[0].received_elements[rounds-1][share_buffer[0]];
-        share_buffer[0] +=1;
+        a[i] = receive_from_live(P0);
     }
 }
-else if(id == 1)
+else if(id == P1)
 {
 for(int i = 0; i < l; i++)
 {
-/* a[i].p1 = SET_ALL_ZERO(); */
-a[i] = receiving_args[1].received_elements[rounds-1][share_buffer[1]];
-share_buffer[1] +=1;
-/* a[i].p1 = SET_ALL_ZERO(); */
+a[i] = receive_from_live(P1);
 }
 }
 
-/* int offset = {id > player_id ? 1 : 0}; */
-/* int player = id - offset; */
-/* for(int i = 0; i < l; i++) */
-/* { */
-/* a[i] = receiving_args[player].received_elements[rounds-1][share_buffer[player]]; */
-/* share_buffer[player] +=1; */
-/* } */
 }
 
 

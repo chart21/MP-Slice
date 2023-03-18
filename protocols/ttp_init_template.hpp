@@ -35,18 +35,14 @@ return dummy;
 
 DATATYPE share(DATATYPE a)
 {
-#if player_id == 3
-sending_args[2].elements_to_send[sending_args[2].send_rounds] += 1;
-#else
-sending_args[1].elements_to_send[sending_args[1].send_rounds] += 1;
-#endif
+send_to_(P2);
 return a;
 }
 
 
 void share(DATATYPE a[], int length)
 {
-if(player_id != 2)
+if(PARTY != 2)
 {
     for(int l = 0; l < length; l++)
         a[l] = share(a[l]);
@@ -71,25 +67,23 @@ DATATYPE Xor(DATATYPE a, DATATYPE b)
 
 
 //prepare AND -> send real value a&b to other P
-void prepare_and(DATATYPE &a, DATATYPE &b)
+void prepare_and(DATATYPE &a, DATATYPE &b, DATATYPE &c)
 {
 //return u[player_id] * v[player_id];
 }
 
 // NAND both real Values to receive sharing of ~ (a&b) 
-DATATYPE complete_and(DATATYPE a, DATATYPE b)
+void complete_and(DATATYPE c)
 {
-DATATYPE dummy;
-return dummy;
 }
 
 void prepare_reveal_to_all(DATATYPE a)
 {
-    if(player_id == 2)
+    if(PARTY == 2)
     {
         for(int t = 0; t < num_players-1; t++) 
         {
-            sending_args[t].elements_to_send[sending_args[t].send_rounds] += 1;
+            send_to_(t);
         }//add to send buffer
     
     }
@@ -100,13 +94,9 @@ void prepare_reveal_to_all(DATATYPE a)
 
 DATATYPE complete_Reveal(DATATYPE a)
 {
-if(player_id != 2)
+if(PARTY != 2)
 {
-#if PARTY == 3
-    receiving_args[2].elements_to_rec[receiving_args[2].rec_rounds -1]+=1;
-#else
-    receiving_args[1].elements_to_rec[receiving_args[1].rec_rounds -1]+=1;
-#endif
+    receive_from_(P2);
 }
 return a;
 }
@@ -118,17 +108,14 @@ XOR_Share* alloc_Share(int l)
 
 void receive_from_comm(DATATYPE a[], int id, int l)
 {
-if(id == player_id)
+if(id == PSELF)
 {
     return;
 }
-if(player_id == 2)
+if(PARTY == 2)
 {
         for (int i = 0; i < l; i++) {
-if (id == 3)
-            receiving_args[2].elements_to_rec[receiving_args[2].rec_rounds -1] += 1;
-else
-            receiving_args[id].elements_to_rec[receiving_args[id].rec_rounds -1] += 1;
+receive_from_(id);
         }
     }
 }
@@ -147,17 +134,12 @@ receive_from_comm(a, id, l);
 void prepare_receive_from_comm(DATATYPE a[], int id, int l)
 {
 
-if(id == player_id && player_id != 2)
+if(id == PSELF && player_id != 2)
 {
     for(int i = 0; i < l; i++) 
-#if PARTY == 3
-sending_args[2].elements_to_send[sending_args[2].send_rounds] += 1;
-#else
-sending_args[1].elements_to_send[sending_args[1].send_rounds] += 1;
-#endif
+    send_to_(P2);
 }
 }
-
 void prepare_receive_from(DATATYPE a[], int id, int l)
 {
 prepare_receive_from_comm(a, id, l);
