@@ -77,7 +77,7 @@ void prepare_receive_from(DATATYPE a[], int id, int l)
 /* return; */
 /* old: */
 
-if(id == 0)
+if(id == P0)
 {
 if(optimized_sharing == true)
 {

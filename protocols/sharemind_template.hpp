@@ -13,7 +13,7 @@
 #include "sharemind_base.hpp"
 #include "live_protocol_base.hpp"
 //#define XOR_Share DATATYPE
-#define SHARE DATATYPE
+#define SHARE Workaround_Share
 
 class Sharemind
 {

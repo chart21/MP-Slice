@@ -44,7 +44,7 @@ void prepare_and(XOR_Share a, XOR_Share b, XOR_Share &c)
 
 XOR_Share ap1 = getRandomVal(P0); // P2 mask for P1
 c = XOR(receive_from_live(P0), AND(a,b)); // P0_message + (a+rr) (b+rl)
-send_to_live(P1, XOR(ap1,a)); 
+send_to_live(P1, XOR(ap1,c)); 
 }
 
 void complete_and(XOR_Share &c)
@@ -77,7 +77,7 @@ for(int i = 0; i < l; i++)
 {
     a[i] = get_input_live();     
     /* a[i].p1 = getRandomVal(0); *1/ */
-    send_to_live(P0, XOR(getRandomVal(P0),a[i]));
+    send_to_live(P1, XOR(getRandomVal(P0),a[i]));
 }
 }
 }

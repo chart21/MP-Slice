@@ -114,7 +114,7 @@ else if(id == P2)
 {
 for(int i = 0; i < l; i++)
 {
-a[i].p1 = XOR(a[i].p1, receive_from_live(P2));
+a[i].p1 = receive_from_live(P2);
 a[i].p2 = SET_ALL_ZERO();
 }
 }
