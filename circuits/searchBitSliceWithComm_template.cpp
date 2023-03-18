@@ -103,7 +103,7 @@ std::chrono::high_resolution_clock::time_point p =
     for (int i = 0; i < k; i++) {
         int j = i * 2;
       for (int s = 0; s < NUM_INPUTS; s++) {
-          P.prepare_and(dataset[s][j],dataset[s][j +1]);
+          P.prepare_and(dataset[s][j],dataset[s][j +1], dataset[s][i]);
       }
     }
 
@@ -112,7 +112,7 @@ std::chrono::high_resolution_clock::time_point p =
     for (int i = 0; i < k; i++) {
         int j = i * 2;
       for (int s = 0; s < NUM_INPUTS; s++) {
-            dataset[s][i] = P.complete_and(dataset[s][j], dataset[s][j+1]);
+            P.complete_and(dataset[s][i]);
       }
       
 

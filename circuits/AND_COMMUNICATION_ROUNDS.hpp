@@ -27,18 +27,19 @@ P.communicate(); // dummy communication round to simulate secret sharing
 for(int j = 0; j < COMMUNICATION_ROUNDS; j++) {
 
 for (int i = 0; i < loop_num; i++) {
-P.prepare_and(gates_a[i+j*COMMUNICATION_ROUNDS],gates_b[i+j*COMMUNICATION_ROUNDS]);
+P.prepare_and(gates_a[i+j*COMMUNICATION_ROUNDS],gates_b[i+j*COMMUNICATION_ROUNDS], gates_c[i+j*COMMUNICATION_ROUNDS]);
 }
+
 
 
 P.communicate();
 
 for (int i = 0; i < loop_num; i++) {
-gates_c[i+j*COMMUNICATION_ROUNDS] = P.complete_and(gates_a[i+j*COMMUNICATION_ROUNDS],gates_b[i+j*COMMUNICATION_ROUNDS]);
+P.complete_and(gates_c[i+j*COMMUNICATION_ROUNDS]);
 }
 
 }
-}
+
 
 
 

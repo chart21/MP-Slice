@@ -54,7 +54,7 @@ data[2][j] = P.Not(data[2][j]);
 
 
 // AND
-P.prepare_and(data[0][j],data[2][j]);
+P.prepare_and(data[0][j],data[2][j],data[0][j]);
     
 }
 
@@ -63,7 +63,7 @@ P.prepare_and(data[0][j],data[2][j]);
 P.communicate();
 
 for (int j = 0; j < BITLENGTH; j++) {
-data[0][j] = P.complete_and(data[0][j],data[2][j]);
+P.complete_and(data[0][j]);
 P.prepare_reveal_to_all(data[0][j]);
   }
 
