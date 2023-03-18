@@ -1,5 +1,10 @@
 #pragma once
 #define PROTOCOL 4
+#if PROTOCOL < 7
+#define num_players 3
+#else
+#define num_players 4
+#endif
 
 //0: search 1: XORNOTAND, 2: AND 1 comm round 3: AND 1000 comm rounds 
 #define FUNCTION_IDENTIFIER 0
@@ -37,13 +42,12 @@
 #define INPUT 'r'
 
 // Number of inputs (depends on the problem)
-#define NUM_INPUTS 40960
+#define NUM_INPUTS 4096
 
 // Bitlength of integers
 #define BITLENGTH 64
 
 // Number of players in the protocol
-#define num_players 3
 
 // Starting port for required port range of the sockets
 #define BASE_PORT 29000

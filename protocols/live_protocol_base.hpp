@@ -49,12 +49,24 @@ void communicate_live()
 void send_to_live(int player_id, DATATYPE a)
 {
 /* sending_args[player_id].sent_elements[sending_args[player_id].send_rounds][send_count[player_id]] = a; */ 
+#if SEND_BUFFER > 0
+if(send_count[player_id] == SEND_BUFFER)
+{
+    send_live();
+}
+#endif
 sending_args[player_id].sent_elements[sending_rounds][send_count[player_id]] = a; 
 send_count[player_id]+=1;
 }
 
 DATATYPE receive_from_live(int player_id)
 {
+#if RECV_BUFFER > 0
+if(share_buffer[player_id] == RECV_BUFFER)
+{
+    receive_live();
+}
+#endif
 share_buffer[player_id] +=1;
 return receiving_args[player_id].received_elements[rounds-1][share_buffer[player_id] - 1];
 /* return receiving_args[player_id].received_elements[receiving_args[player_id].rec_rounds-1][share_buffer[player_id] -1]; */

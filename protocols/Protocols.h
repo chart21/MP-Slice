@@ -5,7 +5,8 @@
 #define astra 3
 #define odup 4
 #define orep 5
-#define ttp 6
+#define ttp3 6
+#define ttp4 7
 
 
 #if PROTOCOL == rep3 
@@ -130,7 +131,7 @@
             #include "oecl-P2_template.hpp"
         #endif
     #endif
-#elif PROTOCOL == ttp 
+#elif PROTOCOL == ttp3 || PROTOCOL == ttp4
         #define PROTOCOL_LIVE TTP
         #define PROTOCOL_INIT TTP_init
         #if INIT == 1 

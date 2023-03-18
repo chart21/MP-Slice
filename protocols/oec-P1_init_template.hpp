@@ -33,7 +33,7 @@ DATATYPE Xor(DATATYPE a, DATATYPE b)
 //prepare AND -> send real value a&b to other P
 void prepare_and(DATATYPE &a, DATATYPE &b)
 {
-sending_args[1].elements_to_send[sending_args[1].send_rounds] += 1;
+send_to_(P2);
 //return u[player_id] * v[player_id];
 }
 

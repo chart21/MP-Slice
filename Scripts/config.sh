@@ -5,10 +5,11 @@ helpFunction()
    echo "Script to configure and compile executables for a run."
    echo -e "Only arguments you want to change have to be set."
    echo -e "\t-n Number of elements"
+   echo -e "\t-a Default Bitlength of integers"
    echo -e "\t-b base_port: Needs to be the same for all players for successful networking (e.g. 6000)"
    echo -e "\t-d Datatype used for slicing: 1(bool),8(char),64(uint64),128(SSE),256(AVX),512(AVX512)"
    echo -e "\t-p Player ID (0/1/2). Use all for compilling all platers"
-   echo -e "\t-f Name of the function to execute"
+   echo -e "\t-f Function Idenftifier (0: Search, 1: AND, ...)"
    echo -e "\t-c Pack Bool in Char before sending? (0/1). Only used with -d 1"
    echo -e "\t-s MPC Protocol (1(Sharemind),2(Replicated),3(Astra),4(OEC DUP),5(OEC REP),6(TTP))"
    echo -e "\t-i Initialize circuit seperatly (0) or at runtime (1)?"
@@ -22,17 +23,21 @@ helpFunction()
    echo -e "\t-j Number of parallel processes to use"
    echo -e "\t-v Random Number Generator (0: XOR_Shift/1 AES Bitsliced/2: AES_NI)"
    echo -e "\t-t Timeout in seconds for attempting to connect to a player"
+   echo -e "\t-y SEND_BUFFER: How many gates should be buffered until sending them to the receiving party? 0 means the data of an entire communication round is buffered
+"
+   echo -e "\t-z RECV_BUFFER: How many reciving messages should be buffered until the main thread is signaled that data is ready? 0 means that all data of a communication round needs to be ready before the main thread is signaled.
+"
    exit 1 # Exit script after printing help
 }
 
-while getopts "b:a:d:c:f:n:s:i:l:p:o:u:g:x:e:h:j:v:t:" opt
+while getopts "b:a:d:c:f:n:s:i:l:p:o:u:g:x:e:h:j:v:t:y:z:" opt
 do
    case "$opt" in
       b ) BASE_PORT="$OPTARG" ;;
       a ) BITLENGTH="$OPTARG" ;;
       d ) DATTYPE="$OPTARG" ;;
       c ) COMPRESS="$OPTARG" ;;
-      f ) FUNCTION="$OPTARG" ;;
+      f ) FUNCTION_IDENTIFIER="$OPTARG" ;;
       n ) NUM_INPUTS="$OPTARG" ;;
       s ) PROTOCOL="$OPTARG" ;;
       i ) INIT="$OPTARG" ;;
@@ -47,6 +52,8 @@ do
       j ) PROCESS_NUM="$OPTARG" ;;
       v ) RANDOM_ALGORITHM="$OPTARG" ;;
       t ) CONNECTION_TIMEOUT="$OPTARG" ;;
+      y ) SEND_BUFFER="$OPTARG" ;;
+      z ) RECV_BUFFER="$OPTARG" ;;
       ? ) helpFunction ;; # Print helpFunction in case parameter is non-existent
    esac
 done
@@ -67,9 +74,9 @@ fi
 
 if [ "$ssl" = "1" ]
 then
-    flags="-march=native -g -std=c++2a -pthread -lssl -lcrypto"
+    flags="-march=native -Ofast -std=c++2a -pthread -lssl -lcrypto"
 else
-    flags="-march=native -g -std=c++2a -pthread"
+    flags="-march=native -Ofast -std=c++2a -pthread"
 fi
 
 if [ ! -z "$GNU_OPTIONS" ]
@@ -101,9 +108,9 @@ if [ ! -z "$DATTYPE" ]
 then
     sed -i -e "s/\(DATTYPE \).*/\1$DATTYPE/" config.h
 fi
-if [ ! -z "$FUNCTION" ]
+if [ ! -z "$FUNCTION_IDENTIFIER" ]
 then
-    sed -i -e "s/\(FUNCTION \).*/\1$FUNCTION/" config.h
+    sed -i -e "s/\(FUNCTION_IDENTIFIER \).*/\1$FUNCTION_IDENTIFIER/" config.h
 fi
 if [ ! -z "$COMPRESS" ]
 then
@@ -154,6 +161,16 @@ fi
 if [ ! -z "$CONNECTION_TIMEOUT" ]
 then
     sed -i -e "s/\(define CONNECTION_TIMEOUT \).*/\1$CONNECTION_TIMEOUT/" config.h
+fi
+
+if [ ! -z "$SEND_BUFFER" ]
+then
+    sed -i -e "s/\(define SEND_BUFFER \).*/\1$SEND_BUFFER/" config.h
+fi
+
+if [ ! -z "$RECV_BUFFER" ]
+then
+    sed -i -e "s/\(define RECV_BUFFER \).*/\1$RECV_BUFFER/" config.h
 fi
 
 for i in {0..2}

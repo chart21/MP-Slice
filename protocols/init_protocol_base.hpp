@@ -43,11 +43,23 @@ receiving_args_pre[player_index].elements_to_rec[0] += 1;
 
 void send_to_(int player_index)
 {
+#if SEND_BUFFER > 0
+if(sending_args[player_index].elements_to_send[sending_args[player_index].send_rounds] == SEND_BUFFER)
+{
+    send_();
+}
+#endif
 sending_args[player_index].elements_to_send[sending_args[player_index].send_rounds] += 1;
 }
 
 void receive_from_(int player_index)
 {
+#if RECV_BUFFER > 0
+if(receiving_args[player_index].elements_to_rec[receiving_args[player_index].rec_rounds -1] == RECV_BUFFER)
+{
+    receive_();
+}
+#endif
 receiving_args[player_index].elements_to_rec[receiving_args[player_index].rec_rounds -1] += 1;
 }
 
