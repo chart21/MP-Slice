@@ -1,5 +1,5 @@
 #pragma once
-#define PROTOCOL 1
+#define PROTOCOL 4
 #if PROTOCOL < 7
 #define num_players 3
 #else
@@ -72,4 +72,4 @@ int base_port = BASE_PORT; // temporary solution
 #define RECV_BUFFER 0
 
 // Print additional info?
-#define PRINT 0
+#define PRINT 1

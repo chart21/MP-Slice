@@ -73,7 +73,7 @@ XOR_Share* alloc_Share(int l)
 
 void prepare_receive_from(DATATYPE a[], int id, int l)
 {
-if(id == 1)
+if(id == P1)
 {
     for(int i = 0; i < l; i++)
     {
@@ -86,7 +86,7 @@ if(id == 1)
 
 void complete_receive_from(DATATYPE a[], int id, int l)
 {
-if(id == 2)
+if(id == P2)
 {
 for(int i = 0; i < l; i++)
 {
@@ -94,7 +94,7 @@ for(int i = 0; i < l; i++)
 }
 }
 #if OPT_SHARE == 0
-else if(id == 0)
+else if(id == P0)
 {
 for(int i = 0; i < l; i++)
     #if PRE == 1 && SHARE_PREP == 1

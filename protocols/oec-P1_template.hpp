@@ -44,7 +44,7 @@ DATATYPE rl = getRandomVal(P0);
 DATATYPE rr = getRandomVal(P0);
 DATATYPE rx = getRandomVal(P0);
 c = XOR(rx , XOR(AND(a,rl), AND(b,rr)));
-send_to_live(P2,a);
+send_to_live(P2,c);
 }
 
 // NAND both real Values to receive sharing of ~ (a&b) 

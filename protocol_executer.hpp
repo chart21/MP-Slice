@@ -384,12 +384,12 @@ pmiddle = (player_id + 2) % 4;
 #endif
 
 #if num_players == 3
-init_srng(PARTY, PARTY + 5000);
-init_srng( (PARTY + 1) % 3 , 6000);
-init_srng( (PARTY + 2) % 3 , 6000);
-/* init_srng(pprev, modulo((player_id - 1),  num_players) + 5000); */
-/* init_srng(pnext,player_id + 5000); */
-/* init_srng(num_players-1, player_id+6000); // used for sharing inputs */
+/* init_srng(PARTY, PARTY + 5000); */
+/* init_srng( (PARTY + 1) % 3 , 6000); */
+/* init_srng( (PARTY + 2) % 3 , 6000); */
+init_srng(pprev, modulo((player_id - 1),  num_players) + 5000);
+init_srng(pnext,player_id + 5000);
+init_srng(num_players-1, player_id+6000); // used for sharing inputs
 #elif num_players == 4
 //new logic
 init_srng(0, (player_id+1) * 1 + 5000); // 

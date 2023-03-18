@@ -85,7 +85,7 @@ XOR_Share* alloc_Share(int l)
 void share_unoptimized(DATATYPE a[], int id, int l)
 {
 
-if(id == 0)
+if(id == P0)
 {
     for(int i = 0; i < l; i++)
     {

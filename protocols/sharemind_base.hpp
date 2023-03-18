@@ -1,3 +1,4 @@
+#pragma once
 #include "../arch/DATATYPE.h"
 #define INIT_SHARE DATATYPE
 #define XOR_Share DATATYPE

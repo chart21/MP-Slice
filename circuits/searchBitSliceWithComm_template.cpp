@@ -75,8 +75,8 @@ S* element = P.alloc_Share(BITLENGTH);
 /* /1* P_share(element,BITLENGTH); *1/ */
 /* } */
 
-P.prepare_receive_from((S*) dataset,0,(NUM_INPUTS)*BITLENGTH);
-P.prepare_receive_from(element,1,BITLENGTH);
+P.prepare_receive_from((S*) dataset,P0,(NUM_INPUTS)*BITLENGTH);
+P.prepare_receive_from(element,P1,BITLENGTH);
 
 
 P.communicate();
@@ -84,8 +84,8 @@ P.communicate();
 // change to receive from
 
 
-P.complete_receive_from((S*) dataset,0,(NUM_INPUTS)*BITLENGTH);
-P.complete_receive_from(element,1,BITLENGTH);
+P.complete_receive_from((S*) dataset,P0,(NUM_INPUTS)*BITLENGTH);
+P.complete_receive_from(element,P1,BITLENGTH);
 /* P.receive_from_SRNG((Share*) dataset,0,BITLENGTH*n); */
 /* P.receive_from_SRNG(element,1,BITLENGTH); */
 

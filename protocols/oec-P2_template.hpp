@@ -54,7 +54,7 @@ DATATYPE o1 = receive_from_live(P0);
 DATATYPE o2 = receive_from_live(P0);
 #endif
 c = XOR(ry, AND(XOR(a,o1),XOR(b,o2)));
-send_to_live(P1,a);
+send_to_live(P1,c);
 }
 
 
@@ -78,6 +78,7 @@ DATATYPE complete_Reveal(DATATYPE a)
 #if PRE == 1 && (OPT_SHARE == 0 || SHARE_PREP == 1) 
     a = XOR(a,pre_receive_from_live(P0));
 #else 
+    a = XOR(a,receive_from_live(P0));
 #endif
 return a;
 }
