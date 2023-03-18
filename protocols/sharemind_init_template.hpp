@@ -30,8 +30,8 @@ return dummy;
 
 DATATYPE share(DATATYPE a)
 {
-sending_args[pprev].elements_to_send[sending_args[pprev].send_rounds] += 1;
-sending_args[pnext].elements_to_send[sending_args[pnext].send_rounds] +=1;
+send_to_(pnext);
+send_to_(pprev);
 /* DATATYPE dummy; */
 /* return dummy; */
 return a;
@@ -74,23 +74,22 @@ void reshare(DATATYPE a, DATATYPE u[])
 //prepare AND -> send real value a&b to other P
 void prepare_and(DATATYPE a, DATATYPE b, DATATYPE &c)
 {
-sending_args[pnext].elements_to_send[sending_args[pnext].send_rounds] += 1;
-sending_args[pprev].elements_to_send[sending_args[pprev].send_rounds] += 1;
+send_to_(pnext);
+send_to_(pprev);
 }
 
 // NAND both real Values to receive sharing of ~ (a&b) 
 void complete_and(DATATYPE &c)
 {
-receiving_args[pprev].elements_to_rec[receiving_args[pprev].rec_rounds -1] += 1;
-receiving_args[pnext].elements_to_rec[receiving_args[pnext].rec_rounds -1] += 1;
+receive_from_(pnext);
+receive_from_(pprev);
 }
 
 void prepare_reveal_to_all(DATATYPE a)
 {
     for(int t = 0; t < num_players-1; t++) 
     {
-        sending_args[t].elements_to_send[sending_args[t].send_rounds] += 1;
-        /* receiving_args[t].elements_to_rec[receiving_args[t].rec_rounds -1]+=1; */
+        send_to_(t);
     }//add to send buffer
 }    
 
@@ -98,11 +97,9 @@ void prepare_reveal_to_all(DATATYPE a)
 //reveal to specific player
 void prepare_reveal_to(DATATYPE a, int id)
 {
-    if(player_id != id)
+    if(PARTY != id)
     {
-    int offset = {player_id > id ? 1 : 0};
-        sending_args[id - offset].sent_elements[sending_rounds][reveal_buffer[id]] = a;
-    reveal_buffer[id] += 1;
+        send_to_(id);
     //add to send buffer
 }
 }
@@ -114,7 +111,7 @@ DATATYPE complete_Reveal(DATATYPE a)
 /*     receiving_args[t].elements_to_rec[rounds-1]+=1; */
     for(int t = 0; t < num_players-1; t++) 
     {
-        receiving_args[t].elements_to_rec[receiving_args[t].rec_rounds -1]+=1;
+        receive_from_(t);
     }
 return a;
 }
@@ -130,15 +127,13 @@ void receive_from_SRNG(XOR_Share a[], int id, int l)
 }
 void receive_from_comm(DATATYPE a[], int id, int l)
 {
-if(id == player_id)
+if(id == PSELF)
 {
     return;
 }
 else{
-int offset = {id > player_id ? 1 : 0};
-int player = id - offset;
 for (int i = 0; i < l; i++) {
-receiving_args[player].elements_to_rec[receiving_args[player].rec_rounds -1] += 1;
+receive_from_(id);
 }
 }
 }
@@ -158,13 +153,11 @@ receive_from_comm(a, id, l);
 
 void complete_receive_from_comm(DATATYPE a[], int id, int l)
 {
-if(id == player_id)
+if(id == PSELF)
     return;
 else{
-int offset = {id > player_id ? 1 : 0};
-int player = id - offset;
 for (int i = 0; i < l; i++) {
-    receiving_args[player].elements_to_rec[receiving_args[player].rec_rounds -1] += 1;
+    receive_from_(id);
 }
 }
 }
@@ -172,11 +165,11 @@ for (int i = 0; i < l; i++) {
 
 void prepare_receive_from_comm(DATATYPE a[], int id, int l)
 {
-if(id == player_id)
+if(id == PSELF)
 {
 for (int i = 0; i < l; i++) {
-    sending_args[pprev].elements_to_send[sending_args[pprev].send_rounds] += 1;
-    sending_args[pnext].elements_to_send[sending_args[pnext].send_rounds] +=1;
+    send_to_(pprev);
+    send_to_(pnext);
     }
 }
 else {

@@ -39,14 +39,15 @@ DATATYPE Xor(DATATYPE a, DATATYPE b)
 //prepare AND -> send real value a&b to other P
 void prepare_and(DATATYPE a, DATATYPE b, DATATYPE &c)
 {
-sending_args[1].elements_to_send[sending_args[1].send_rounds] += 1;
+send_to_(P2);
+
 //return u[player_id] * v[player_id];
 }
 
 // NAND both real Values to receive sharing of ~ (a&b) 
 void complete_and(DATATYPE &c)
 {
-receiving_args[1].elements_to_rec[receiving_args[1].rec_rounds -1] += 1;
+    receive_from_(P2);
 }
 
 void prepare_reveal_to_all(DATATYPE a)
@@ -60,7 +61,7 @@ DATATYPE complete_Reveal(DATATYPE a)
 {
 /* for(int t = 0; t < num_players-1; t++) */ 
 /*     receiving_args[t].elements_to_rec[rounds-1]+=1; */
-receiving_args[0].elements_to_rec[receiving_args[0].rec_rounds -1]+=1;
+receive_from_(P0);
 return a;
 }
 
@@ -77,7 +78,7 @@ if(id == 1)
 {
     for(int i = 0; i < l; i++)
     {
-        sending_args[1].elements_to_send[sending_args[1].send_rounds] += 1;
+        send_to_(P2);
     }
 
 }
@@ -89,7 +90,7 @@ void complete_receive_from(DATATYPE a[], int id, int l)
 if(id == 2)
 {
 for(int i = 0; i < l; i++)
-    receiving_args[1].elements_to_rec[receiving_args[1].rec_rounds -1] += 1;
+    receive_from_(P2);
 }
 else if(id == 0)
 {
@@ -100,7 +101,7 @@ if(optimized_sharing == true)
 else
 {
 for(int i = 0; i < l; i++)
-    receiving_args[0].elements_to_rec[receiving_args[0].rec_rounds -1] += 1;
+    receive_from_(P0);
 }
 } 
 /* if(id == player_id) */
