@@ -2,7 +2,7 @@
 #include "../networking/buffers.h"
 void send_()
 {
-for (int t = 0; t < 2; t++)
+for (int t = 0; t < num_players-1; t++)
 {
     /* if(sending_args[t].elements_to_send[sending_args[t].send_rounds] > 0) */
     /* { */
@@ -15,7 +15,7 @@ for (int t = 0; t < 2; t++)
 
 void receive_()
 {
-for (int t = 0; t < 2; t++)
+for (int t = 0; t < num_players-1; t++)
 {
     /* if(receiving_args[t].elements_to_rec[receiving_args[t].rec_rounds] > 0) */
     /* { */
