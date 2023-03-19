@@ -41,7 +41,7 @@ Coordinator_Share Xor(Coordinator_Share a, Coordinator_Share b)
 void prepare_and(Coordinator_Share a, Coordinator_Share b, Coordinator_Share &c)
 {
 DATATYPE yxy = AND(a,b);
-c = XOR(getRandomVal(1),getRandomVal(P2)); //yz
+c = XOR(getRandomVal(P1),getRandomVal(P2)); //yz
 DATATYPE yxy2 = XOR(getRandomVal(P1),yxy);
 send_to_live(P2, yxy2);
 }

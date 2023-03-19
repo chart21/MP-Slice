@@ -44,7 +44,7 @@ s[pnext] = getRandomVal(num_players -1);
 s[2] = XOR(s[pprev],s[pnext]);
 s[2] = XOR(a.val_,s[2]);
 send_to_live(pprev, s[pprev]);
-send_to_live(pprev, s[pnext]);
+send_to_live(pnext, s[pnext]);
 return Workaround_Share(s[2]);
       }
 
@@ -101,7 +101,7 @@ reshare(b.val_,v);
 send_to_live(pnext, u[2]);
 send_to_live(pprev, v[2]);
 c.val_ = AND(u[2],v[2]);
-c.helper_ = b.val_;
+c.helper_ = v[2];
 }
 
 // NAND both real Values to receive sharing of ~ (a&b) 

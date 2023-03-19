@@ -52,7 +52,7 @@ send_to_live(P2,c.mv);
 void complete_and(Evaluator_Share &c)
 {
 // a.p2 already set in last round
-c.mv = XOR(c.mv, receive_from_live(P1));
+c.mv = XOR(c.mv, receive_from_live(P2));
 }
 
 void prepare_reveal_to_all(Evaluator_Share a)

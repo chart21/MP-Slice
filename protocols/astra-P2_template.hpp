@@ -44,7 +44,7 @@ void prepare_and(Evaluator_Share a, Evaluator_Share b, Evaluator_Share &c)
 DATATYPE yz2 = getRandomVal(P0); //yz1
 DATATYPE yxy2 = receive_from_live(P0); 
 c.mv = XOR( AND(a.mv,b.mv), XOR( XOR(  XOR( AND(a.mv,b.lv), AND(b.mv, a.lv) ), yz2 ), yxy2)); 
-send_to_live(P1,a.mv); 
+send_to_live(P1,c.mv); 
 c.lv = yz2;
 }
 
@@ -52,7 +52,7 @@ c.lv = yz2;
 void complete_and(Evaluator_Share &c)
 {
 // a.p2 already set in last round
-c.mv = XOR(c.mv, receive_from_live(1)); 
+c.mv = XOR(c.mv, receive_from_live(P1)); 
 }
 
 void prepare_reveal_to_all(Evaluator_Share a)

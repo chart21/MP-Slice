@@ -134,7 +134,7 @@ receive_from_comm(a, id, l);
 void prepare_receive_from_comm(DATATYPE a[], int id, int l)
 {
 
-if(id == PSELF && player_id != 2)
+if(id == PSELF && PARTY != 2)
 {
     for(int i = 0; i < l; i++) 
     send_to_(P2);

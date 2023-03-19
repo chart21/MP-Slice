@@ -93,7 +93,7 @@ return result;
 
 void prepare_receive_from(DATATYPE a[], int id, int l)
 {
-if(id == PSELF && PARTY != P2)
+if(id == PSELF && PARTY != 2)
 {
     for(int s = 0; s < l; s++)
     {
