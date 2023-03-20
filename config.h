@@ -36,7 +36,7 @@
 #define SHARE_PREP 1
 
 // Party ID (starting from 0)
-#define PARTY 3
+#define PARTY 2
 
 // Use random inputs or inputs from a file? TODO: File inputs to be implemented
 #define INPUT 'r'

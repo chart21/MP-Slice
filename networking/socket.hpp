@@ -31,7 +31,7 @@ private:
 
   // Private constructor for creating a Socket object from an SSL structure
 // Constructor (used by the Accept method)
-  Socket(int sock, SSL* ssl) : sock_(sock), ssl_(ssl) {}
+  Socket(int sock, SSL* ssl) : sock_(sock), ssl_(ssl) {ssl_ctx_ = nullptr;}
 #endif
 
   // Private constructor for creating a Socket object from a socket descriptor
@@ -45,12 +45,28 @@ public:
     if (sock_ < 0) {
       throw std::runtime_error("Error creating socket");
     }
+#if USE_SSL == 1
+    ssl_ = nullptr;
+    ssl_ctx_ = nullptr;
+#endif
   }
 
   // Destroy the socket object
   ~Socket() {
     // Close the socket
     close(sock_);
+#if USE_SSL == 1
+    // Free the SSL structure
+    if (ssl_ != nullptr) {
+        SSL_shutdown(ssl_);
+        SSL_free(ssl_);
+    }
+
+    // Free the SSL context
+    if (ssl_ctx_ != nullptr) {
+      SSL_CTX_free(ssl_ctx_);
+    }
+#endif
   }
 
 // Bind the socket to a local address
