@@ -1,5 +1,5 @@
 #pragma once
-#define PROTOCOL 4
+#define PROTOCOL 7
 #if PROTOCOL < 7
 #define num_players 3
 #else
@@ -36,7 +36,7 @@
 #define SHARE_PREP 1
 
 // Party ID (starting from 0)
-#define PARTY 2
+#define PARTY 3
 
 // Use random inputs or inputs from a file? TODO: File inputs to be implemented
 #define INPUT 'r'
