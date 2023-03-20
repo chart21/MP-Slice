@@ -15,14 +15,14 @@
 #include <x86intrin.h>
 #include <immintrin.h>
 #include <memory>
-    #if defined(__VAES__) && defined(__AVX512F__)
+    #if defined(__VAES__) && defined(__AVX512F__) && defined (__AVX512VL__)
 #define MM_XOR _mm512_xor_si512
 #define MM_AES_ENC _mm512_aesenc_epi128
 #define MM_AES_DEC _mm512_aesdec_epi128
 #define MM_AES_ENC_LAST _mm512_aesenclast_epi128
 #define MM_AES_DEC_LAST _mm512_aesdeclast_epi128
 #define COUNT_TYPE __m512i
-#define load _mm512_load_epi64
+/* #define load _mm512_load_epi64 */
     #elif defined(__VAES__) && defined(__AVX2__)
 #define MM_XOR _mm256_xor_si256
 #define MM_AES_ENC _mm256_aesenc_epi128
@@ -30,7 +30,7 @@
 #define MM_AES_ENC_LAST _mm256_aesenclast_epi128
 #define MM_AES_DEC_LAST _mm256_aesdeclast_epi128
 #define COUNT_TYPE __m256i
-#define load _mm256_load_epi64
+/* #define load _mm256_load_epi64 */
     #elif defined __SSE2__
 #define MM_XOR _mm_xor_si128
 #define MM_AES_ENC _mm_aesenc_si128
