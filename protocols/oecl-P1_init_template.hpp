@@ -61,7 +61,11 @@ DATATYPE complete_Reveal(DATATYPE a)
 {
 /* for(int t = 0; t < num_players-1; t++) */ 
 /*     receiving_args[t].elements_to_rec[rounds-1]+=1; */
-receive_from_(P0);
+#if PRE == 1 && (OPT_SHARE == 0 || SHARE_PREP == 1) // OPT_SHARE is input dependent, can only be sent in prepocessing phase if allowed
+    pre_receive_from_(P0);
+#else
+    receive_from_(P0);
+#endif
 return a;
 }
 
@@ -92,25 +96,25 @@ if(id == P2)
 for(int i = 0; i < l; i++)
     receive_from_(P2);
 }
+#if OPT_SHARE == 0
 else if(id == P0)
 {
-if(optimized_sharing == true)
-{
-    return;
-}
-else
-{
 for(int i = 0; i < l; i++)
+    #if PRE == 1 && SHARE_PREP == 1
+    pre_receive_from_(P0);
+    #else
     receive_from_(P0);
+    #endif
 }
-} 
+#endif
+}
 /* if(id == player_id) */
 /*     return; */
 /* int offset = {id > player_id ? 1 : 0}; */
 /* int player = id - offset; */
 /* for(int i = 0; i < l; i++) */
 /*     receiving_args[player].elements_to_rec[receiving_args[player].rec_rounds -1] += 1; */
-}
+
 
 void send()
 {
@@ -128,6 +132,11 @@ communicate_();
 void finalize(std::string* ips)
 {
     finalize_(ips);
+}
+
+void finalize(std::string* ips, receiver_args* ra, sender_args* sa)
+{
+    finalize_(ips, ra, sa);
 }
 
 

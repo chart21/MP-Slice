@@ -11,7 +11,7 @@
 
 
 // Registersize to use for SIMD parallelization (Bitslicing/vectorization)
-#define DATTYPE 128
+#define DATTYPE 64
 
 // Compress binary data into chars before sending them over the netowrk? Only relevant for DATTYPE = 1
 #define COMPRESS 0
@@ -72,4 +72,4 @@ int base_port = BASE_PORT; // temporary solution
 #define RECV_BUFFER 0
 
 // Print additional info?
-#define PRINT 0
+#define PRINT 1

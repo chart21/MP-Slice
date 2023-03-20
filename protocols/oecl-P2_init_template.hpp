@@ -40,7 +40,12 @@ DATATYPE Xor(DATATYPE a, DATATYPE b)
 //prepare AND -> send real value a&b to other P
 void prepare_and(DATATYPE a, DATATYPE b, DATATYPE &c)
 {
+#if PRE == 1
+pre_receive_from_(P0);
+#else
 receive_from_(P0);
+#endif
+
 send_to_(P1);
 //return u[player_id] * v[player_id];
 }
@@ -62,7 +67,11 @@ DATATYPE complete_Reveal(DATATYPE a)
 {
 /* for(int t = 0; t < num_players-1; t++) */ 
 /*     receiving_args[t].elements_to_rec[rounds-1]+=1; */
-receive_from_(P0);
+#if PRE == 1 && (OPT_SHARE == 0 || SHARE_PREP == 1) // OPT_SHARE is input dependent, can only be sent in prepocessing phase if allowed
+    pre_receive_from_(P0);
+#else
+    receive_from_(P0);
+#endif
 return a;
 }
 
@@ -96,7 +105,11 @@ for(int i = 0; i < l; i++)
 else if(id == P0)
 {
 for(int i = 0; i < l; i++)
+#if (SHARE_PREP == 1 || OPT_SHARE == 0) && PRE == 1
+    pre_receive_from_(P0);
+#else
     receive_from_(P0);
+#endif
 } 
 /* if(id == player_id) */
 /*     return; */
@@ -126,5 +139,11 @@ void finalize(std::string* ips)
 {
     finalize_(ips);
 }
+
+void finalize(std::string* ips, receiver_args* ra, sender_args* sa)
+{
+    finalize_(ips, ra, sa);
+}
+
 
 };

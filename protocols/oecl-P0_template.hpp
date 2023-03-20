@@ -13,6 +13,7 @@
 //#include "sharemind_base.hpp"
 #include "oecl_base.hpp"
 #include "live_protocol_base.hpp"
+#define PRE_SHARE OECL_Share
 class OECL0
 {
 bool optimized_sharing;
@@ -53,7 +54,11 @@ void prepare_and(OECL_Share a, OECL_Share b, OECL_Share &c)
 DATATYPE maskP1 = getRandomVal(P1);
 DATATYPE maskP1_2 = getRandomVal(P1);
 DATATYPE maskP2 = getRandomVal(P2);
+#if PRE == 1
+pre_send_to_live(P2, XOR(maskP1,  XOR( XOR( AND(a.p1,b.p2) , AND(a.p2,b.p1) ) ,  AND(a.p2,b.p2) ) )); 
+#else
 send_to_live(P2, XOR(maskP1,  XOR( XOR( AND(a.p1,b.p2) , AND(a.p2,b.p1) ) ,  AND(a.p2,b.p2) ) )); 
+#endif
 c.p1 = maskP2;
 c.p2 = maskP1_2;
 }
@@ -64,15 +69,24 @@ void complete_and(OECL_Share &c)
 
 void prepare_reveal_to_all(OECL_Share a)
 {
+        #if PRE == 1 && (OPT_SHARE == 0 || SHARE_PREP == 1)
+    pre_send_to_live(P1, a.p1);
+    pre_send_to_live(P2, a.p2);
+    #else
     send_to_live(P1, a.p1);
     send_to_live(P2, a.p2);
+#endif
 }    
 
 
 
 DATATYPE complete_Reveal(OECL_Share a)
 {
+#if PRE == 1
+    return a.p1;
+#else
 return XOR(a.p2, receive_from_live(P2));
+#endif
 }
 
 
@@ -87,28 +101,33 @@ void prepare_receive_from(OECL_Share a[], int id, int l)
 {
 if(id == P0)
 {
-    if(optimized_sharing == true)
-    {
+#if OPT_SHARE == 1
     for(int i = 0; i < l; i++)
     {
     a[i].p1 = get_input_live();
     a[i].p2 = getRandomVal(P1);
-    send_to_live(P2, XOR(a[i].p1,a[i].p2));
+    #if PRE == 1 && SHARE_PREP == 1
+        pre_send_to_live(P2, XOR(a[i].p1,a[i].p2));
+    #else
+        send_to_live(P2, XOR(a[i].p1,a[i].p2));
+    #endif
     }
 
-    }
-    else
-    {
+#else
     for(int i = 0; i < l; i++)
     {
     a[i].p1 = getRandomVal(P0); // P1 does not need to the share -> thus not srng but 2 
     a[i].p2 = getRandomVal(P1);
     DATATYPE input = get_input_live();
+    #if PRE == 1
+    pre_send_to_live(P1, XOR(a[i].p1,input));
+    pre_send_to_live(P2, XOR(a[i].p2,input));
+    #else
     send_to_live(P1, XOR(a[i].p1,input));
     send_to_live(P2, XOR(a[i].p2,input));
+    #endif
     }
-
-    }
+#endif
 }
 else if(id == P1){
 for(int i = 0; i < l; i++)
@@ -151,7 +170,9 @@ void receive()
 
 void communicate()
 {
+#if PRE == 0
     communicate_live();
+#endif
 }
 
 };

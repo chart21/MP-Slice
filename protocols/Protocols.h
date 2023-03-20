@@ -103,6 +103,18 @@
         #endif
     #endif
 #elif PROTOCOL == orep 
+    #if PRE == 1
+        #if PARTY == 0
+            #define PROTOCOL_PRE OECL0
+            #include "oecl-P0_template.hpp"
+        #endif
+        #if PARTY == 1
+            #define PROTOCOL_PRE -1
+        #endif
+        #if PARTY == 2
+            #define PROTOCOL_PRE -1
+        #endif
+    #endif
     #if INIT == 1
         #if PARTY == 0
             #define PROTOCOL_INIT OECL0_init
@@ -119,8 +131,13 @@
     #endif
     #if LIVE == 1 
         #if PARTY == 0
-            #define PROTOCOL_LIVE OECL0
-            #include "oecl-P0_template.hpp"
+            #if PRE == 1
+                #define PROTOCOL_LIVE OECL0_POST
+                #include "oecl-P0-post_template.hpp"
+            #else
+                #define PROTOCOL_LIVE OECL0
+                #include "oecl-P0_template.hpp"
+            #endif
         #endif
         #if PARTY == 1
             #define PROTOCOL_LIVE OECL1

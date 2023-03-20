@@ -39,7 +39,11 @@ DATATYPE Xor(DATATYPE a, DATATYPE b)
 //prepare AND -> send real value a&b to other P
 void prepare_and(DATATYPE a, DATATYPE b, DATATYPE &c)
 {
+#if PRE == 1
+    pre_send_to_(P2);
+#else
 send_to_(P2);
+#endif
 }
 
 // NAND both real Values to receive sharing of ~ (a&b) 
@@ -51,7 +55,12 @@ void prepare_reveal_to_all(DATATYPE a)
 {
     for(int t = 0; t < 2; t++) 
     {
-        send_to_(t);
+        #if PRE == 1 && (OPT_SHARE == 0 || SHARE_PREP == 1)
+    pre_send_to_(t);
+#else
+    send_to_(t);
+#endif
+
     }//add to send buffer
 }    
 
@@ -79,23 +88,33 @@ void prepare_receive_from(DATATYPE a[], int id, int l)
 
 if(id == P0)
 {
-if(optimized_sharing == true)
+#if OPT_SHARE == 1
 {
     for(int i = 0; i < l; i++)
     {
-        send_to_(P2);
+        #if PRE == 1 && SHARE_PREP == 1
+            pre_send_to_(P2);
+        #else
+            send_to_(P2);
+        #endif
     }
 
 }
-else{
+#else
+{
     for(int i = 0; i < l; i++)
     {
+        #if PRE == 1
+        pre_send_to_(P1);
+        pre_send_to_(P2);
+#else
         send_to_(P1);
         send_to_(P2);
+#endif
     }
 
 }
-
+#endif
 }
 }
 
@@ -125,5 +144,11 @@ void finalize(std::string* ips)
 {
     finalize_(ips);
 }
+
+void finalize(std::string* ips, receiver_args* ra, sender_args* sa)
+{
+    finalize_(ips, ra, sa);
+}
+
 
 };

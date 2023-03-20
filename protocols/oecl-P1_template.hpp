@@ -61,7 +61,12 @@ return;
 
 DATATYPE complete_Reveal(OECL_Share a)
 {
+#if PRE == 1 && (OPT_SHARE == 0 || SHARE_PREP == 1) // OPT_SHARE is input dependent, can only be sent in prepocessing phase if allowed
+return XOR(a.p1, pre_receive_from_live(P0));
+#else
 return XOR(a.p1, receive_from_live(P0));
+#endif
+
 }
 
 
@@ -95,20 +100,22 @@ void complete_receive_from(OECL_Share a[], int id, int l)
 {
 if(id == P0)
 {
-if(optimized_sharing == true)
-{
+
+#if OPT_SHARE == 1
     for(int i = 0; i < l; i++)
     {
         a[i].p1 = SET_ALL_ZERO(); 
     }
-}
-else{
+#else
     for(int i = 0; i < l; i++)
     {
+    #if PRE == 1 && SHARE_PREP == 1
+        a[i].p1 = pre_receive_from_live(P0);
+    #else
         a[i].p1 = receive_from_live(P0);
+    #endif
     }
-    
-}
+#endif 
 }
 else if(id == P2)
 {

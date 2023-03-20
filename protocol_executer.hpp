@@ -212,7 +212,7 @@ std::chrono::high_resolution_clock::time_point p =
     #else
         auto p_pre = PROTOCOL_PRE(OPT_SHARE);
         auto garbage_PRE = new RESULTTYPE;
-        FUNCTION<PROTOCOL_PRE,INIT_SHARE>(p_pre,garbage_PRE);
+        FUNCTION<PROTOCOL_PRE,PRE_SHARE>(p_pre,garbage_PRE);
     #endif
     // manual send
 

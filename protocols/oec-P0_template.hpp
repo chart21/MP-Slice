@@ -12,6 +12,7 @@
 #include "../utils/randomizer.h"
 #include "sharemind_base.hpp"
 #include "live_protocol_base.hpp"
+#define PRE_SHARE DATATYPE
 #define SHARE DATATYPE
 class OEC0
 {

@@ -43,7 +43,13 @@ void prepare_and(XOR_Share a, XOR_Share b, XOR_Share &c)
 {
 
 XOR_Share ap1 = getRandomVal(P0); // P2 mask for P1
+
+#if PRE == 1
+c = XOR(pre_receive_from_live(P0), AND(a,b)); // P0_message + (a+rr) (b+rl)
+#else
 c = XOR(receive_from_live(P0), AND(a,b)); // P0_message + (a+rr) (b+rl)
+#endif
+
 send_to_live(P1, XOR(ap1,c)); 
 }
 
@@ -60,7 +66,11 @@ send_to_live(P0, a);
 
 DATATYPE complete_Reveal(XOR_Share a)
 {
+#if PRE == 1 && (OPT_SHARE == 0 || SHARE_PREP == 1) // OPT_SHARE is input dependent, can only be sent in prepocessing phase if allowed
+return XOR(a, pre_receive_from_live(P0));
+#else
 return XOR(a, receive_from_live(P0));
+#endif
 }
 
 XOR_Share* alloc_Share(int l)
@@ -88,7 +98,11 @@ if(id == P0)
 {
     for(int i = 0; i < l; i++)
     {
+#if (SHARE_PREP == 1 || OPT_SHARE == 0) && PRE == 1
+        a[i] = pre_receive_from_live(P0);
+#else
         a[i] = receive_from_live(P0);
+#endif
     }
 }
 else if(id == P1)
