@@ -9,6 +9,7 @@ for (int t = 0; t < num_players-1; t++)
     sending_args[t].total_rounds += 1;
     sending_args[t].send_rounds += 1;
     sending_args[t].elements_to_send.push_back(0);
+    sending_args[t].elements_to_send.push_back(0);
     /* } */
 }
 }
@@ -96,7 +97,7 @@ for(int t=0;t<(num_players-1);t++) {
     sending_args[t].connected_to = t+offset;
     sending_args[t].port = (int) base_port + (t+offset) * (num_players -1) + player_id - 1 + offset; //e.g. P0 sends on base port + num_players  for P1, P2 on base port + num_players for P0 (6001,6000)
     sending_args[t].sent_elements[0] = NEW(DATATYPE[sending_args[t].elements_to_send[0]]); // Allocate memory for first round
-       
+   
 }
 rounds = 0;
 sending_rounds = 0;
@@ -143,6 +144,7 @@ for(int t=0;t<(num_players-1);t++) {
     sa[t].port = (int) base_port + (t+offset) * (num_players -1) + player_id - 1 + offset; //e.g. P0 sends on base port + num_players  for P1, P2 on base port + num_players for P0 (6001,6000)
     sa[t].sent_elements[0] = NEW(DATATYPE[sa[t].elements_to_send[0]]); // Allocate memory for first round
     share_buffer[t] = 0;  
+
 }
 rounds = 0;
 sending_rounds = 0;

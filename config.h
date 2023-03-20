@@ -11,7 +11,7 @@
 
 
 // Registersize to use for SIMD parallelization (Bitslicing/vectorization)
-#define DATTYPE 64
+#define DATTYPE 128
 
 // Compress binary data into chars before sending them over the netowrk? Only relevant for DATTYPE = 1
 #define COMPRESS 0
@@ -50,7 +50,7 @@
 // Number of players in the protocol
 
 // Starting port for required port range of the sockets
-#define BASE_PORT 29000
+#define BASE_PORT 11000
 int base_port = BASE_PORT; // temporary solution
 
 // Use SSL encrypted communication?

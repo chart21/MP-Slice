@@ -7,7 +7,8 @@ sb = 0;
 send_count[0] = 0;
 send_count[1] = 0;
     // different in PRE
-    for(int t = 0; t < num_players-1; t++)
+    for(int t = 0; t < (num_players-1); t++)
+        if(sending_rounds < sending_args[t].send_rounds - 1) // don't allocate memory for the last+1 round
         sending_args[t].sent_elements[sending_rounds + 1] = NEW(DATATYPE[sending_args[t].elements_to_send[sending_rounds + 1]]); // Allocate memory for all sending buffers for next round
     pthread_mutex_lock(&mtx_send_next); 
      sending_rounds +=1;

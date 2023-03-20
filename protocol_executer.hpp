@@ -364,6 +364,8 @@ int ret;
     for(int t=0;t<(num_players-1);t++) {
         pthread_join(receiving_threads[t],NULL);
         pthread_join(sending_Threads[t],NULL);
+        /* sending_args[t].elements_to_send.clear(); */
+
     }
 
 }
