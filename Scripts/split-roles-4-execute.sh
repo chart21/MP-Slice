@@ -99,9 +99,9 @@ then
     ./search-P2--3-4-1-2.o $O_IP3 $O_IP1 $O_IP4 &
     ./search-P2--4-1-3-2.o $O_IP4 $O_IP1 $O_IP3 &
     ./search-P2--4-3-1-2.o $O_IP4 $O_IP1 $O_IP3 &
-    ./search-P2--2-3-4-1.o $O_IP2 $O_IP3 $O_IP4 &
-    ./search-P2--2-4-3-1.o $O_IP2 $O_IP4 $O_IP3 &
-    ./search-P2--3-2-4-1.o $O_IP3 $O_IP2 $O_IP4 &
+    ./search-P2--2-3-4-1.o $O_IP3 $O_IP4 $O_IP1 &
+    ./search-P2--2-4-3-1.o $O_IP4 $O_IP3 $O_IP1 &
+    ./search-P2--3-2-4-1.o $O_IP3 $O_IP4 $O_IP4 &
     ./search-P2--3-4-2-1.o $O_IP3 $O_IP4 $O_IP1 &
     ./search-P2--4-2-3-1.o $O_IP4 $O_IP3 $O_IP1 &
     ./search-P2--4-3-2-1.o $O_IP4 $O_IP3 $O_IP1 &
