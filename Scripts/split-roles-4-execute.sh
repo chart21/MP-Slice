@@ -96,12 +96,12 @@ then
     ./search-P2--1-3-4-2.o $O_IP1 $O_IP3 $O_IP4 &
     ./search-P2--1-4-3-2.o $O_IP1 $O_IP4 $O_IP3 &
     ./search-P2--3-1-4-2.o $O_IP3 $O_IP1 $O_IP4 &
-    ./search-P2--3-4-1-2.o $O_IP3 $O_IP1 $O_IP4 &
+    ./search-P2--3-4-1-2.o $O_IP3 $O_IP4 $O_IP1 &
     ./search-P2--4-1-3-2.o $O_IP4 $O_IP1 $O_IP3 &
-    ./search-P2--4-3-1-2.o $O_IP4 $O_IP1 $O_IP3 &
+    ./search-P2--4-3-1-2.o $O_IP4 $O_IP3 $O_IP1 &
     ./search-P2--2-3-4-1.o $O_IP3 $O_IP4 $O_IP1 &
     ./search-P2--2-4-3-1.o $O_IP4 $O_IP3 $O_IP1 &
-    ./search-P2--3-2-4-1.o $O_IP3 $O_IP4 $O_IP4 &
+    ./search-P2--3-2-4-1.o $O_IP3 $O_IP4 $O_IP1 &
     ./search-P2--3-4-2-1.o $O_IP3 $O_IP4 $O_IP1 &
     ./search-P2--4-2-3-1.o $O_IP4 $O_IP3 $O_IP1 &
     ./search-P2--4-3-2-1.o $O_IP4 $O_IP3 $O_IP1 &
@@ -148,7 +148,7 @@ then
     ./search-P4--2-1-4-3.o $O_IP2 $O_IP1 $O_IP3 &
     ./search-P4--2-4-1-3.o $O_IP2 $O_IP1 $O_IP3 &
     ./search-P4--4-1-2-3.o $O_IP1 $O_IP2 $O_IP3 &
-    ./search-P4--4-2-1-3.o $O_IP3 $O_IP1 $O_IP3 &
+    ./search-P4--4-2-1-3.o $O_IP3 $O_IP2 $O_IP1 &
     ./search-P4--1-3-4-2.o $O_IP1 $O_IP3 $O_IP2 &
     ./search-P4--1-4-3-2.o $O_IP1 $O_IP3 $O_IP2 &
     ./search-P4--3-1-4-2.o $O_IP3 $O_IP1 $O_IP2 &
@@ -164,13 +164,11 @@ then
     fi
 
 FAIL=0
-for job in `jobs -p`
-do
+for job in $(jobs -p); do
 # echo $job
-timeout 300s bash -c 'wait $job' || FAIL=$((FAIL+1))
+    wait "$job" || ((++FAIL))
 done
 
-echo $FAIL
 
 if [ "$FAIL" == "0" ];
 then
