@@ -140,10 +140,9 @@ then
 fi
 
 FAIL=0
-for job in `jobs -p`
-do
-# echo $job
-timeout 300s bash -c 'wait $job' || FAIL=$((FAIL+1))
+for job in $(jobs -p); do
+# timeout 300s bash -c 'wait $job' || FAIL=$((FAIL+1))
+    wait "$job" || ((++FAIL))
 done
 
 echo $FAIL
