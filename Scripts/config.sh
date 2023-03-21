@@ -22,7 +22,8 @@ helpFunction()
    echo -e "\t-h USE SSL? (0/1)"
    echo -e "\t-j Number of parallel processes to use"
    echo -e "\t-v Random Number Generator (0: XOR_Shift/1 AES Bitsliced/2: AES_NI)"
-   echo -e "\t-t Timeout in seconds for attempting to connect to a player"
+   echo -e "\t-t Total Timeout in seconds for attempting to connect to a player"
+   echo -e "\t-k Timeout in millisecond before attempting to connect again to a socket "
    echo -e "\t-y SEND_BUFFER: How many gates should be buffered until sending them to the receiving party? 0 means the data of an entire communication round is buffered
 "
    echo -e "\t-z RECV_BUFFER: How many reciving messages should be buffered until the main thread is signaled that data is ready? 0 means that all data of a communication round needs to be ready before the main thread is signaled.
@@ -30,7 +31,7 @@ helpFunction()
    exit 1 # Exit script after printing help
 }
 
-while getopts "b:a:d:c:f:n:s:i:l:p:o:u:g:x:e:h:j:v:t:y:z:" opt
+while getopts "b:a:d:c:f:n:s:i:l:p:o:u:g:x:e:h:j:v:t:k:y:z:" opt
 do
    case "$opt" in
       b ) BASE_PORT="$OPTARG" ;;
@@ -52,6 +53,7 @@ do
       j ) PROCESS_NUM="$OPTARG" ;;
       v ) RANDOM_ALGORITHM="$OPTARG" ;;
       t ) CONNECTION_TIMEOUT="$OPTARG" ;;
+      k ) CONNECTION_RETRY="$OPTARG" ;;
       y ) SEND_BUFFER="$OPTARG" ;;
       z ) RECV_BUFFER="$OPTARG" ;;
       ? ) helpFunction ;; # Print helpFunction in case parameter is non-existent
@@ -161,6 +163,11 @@ fi
 if [ ! -z "$CONNECTION_TIMEOUT" ]
 then
     sed -i -e "s/\(define CONNECTION_TIMEOUT \).*/\1$CONNECTION_TIMEOUT/" config.h
+fi
+
+if [ ! -z "$CONNECTION_RETRY" ]
+then
+    sed -i -e "s/\(define CONNECTION_RETRY \).*/\1$CONNECTION_RETRY/" config.h
 fi
 
 if [ ! -z "$SEND_BUFFER" ]

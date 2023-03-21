@@ -36,7 +36,7 @@
 #define SHARE_PREP 1
 
 // Party ID (starting from 0)
-#define PARTY 1
+#define PARTY 2
 
 // Use random inputs or inputs from a file? TODO: File inputs to be implemented
 #define INPUT 'r'
@@ -64,6 +64,9 @@ int base_port = BASE_PORT; // temporary solution
 
 // Timeout in seconds when connecting to a socket
 #define CONNECTION_TIMEOUT 30 
+
+// Timeout in millisecond before attempting to connect again to a socket
+#define CONNECTION_RETRY 5
 
 // How many gates should be buffered until sending them to the receiving party? 0 means the data of an entire communication round is buffered
 #define SEND_BUFFER 0

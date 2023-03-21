@@ -141,7 +141,7 @@ void Connect(const std::string& addr, int port) {
     if( std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - t1).count() > CONNECTION_TIMEOUT) {
         throw std::runtime_error("Timeout exceeded while connecting to server on port " + std::to_string(port));
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(5) );
+    std::this_thread::sleep_for(std::chrono::milliseconds(CONNECTION_RETRY) );
 
   }
 #if USE_SSL == 1
