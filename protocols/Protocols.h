@@ -7,7 +7,8 @@
 #define orep 5
 #define ttp3 6
 #define ttp4 7
-
+#define PC4_mal 8
+#define FantasticFour 9
 
 #if PROTOCOL == rep3 
     #define PROTOCOL_LIVE Replicated
@@ -148,7 +149,7 @@
             #include "oecl-P2_template.hpp"
         #endif
     #endif
-#elif PROTOCOL == ttp3 || PROTOCOL == ttp4
+#elif PROTOCOL == ttp3 || PROTOCOL == ttp4 || PROTOCOL == PC4_mal || PROTOCOL == FantasticFour
         #define PROTOCOL_LIVE TTP
         #define PROTOCOL_INIT TTP_init
         #if INIT == 1 
