@@ -9,7 +9,7 @@ helpFunction()
    echo -e "\t-b base_port: Needs to be the same for all players for successful networking (e.g. 6000)"
    echo -e "\t-d Datatype used for slicing: 1(bool),8(char),64(uint64),128(SSE),256(AVX),512(AVX512)"
    echo -e "\t-p Player ID (0/1/2). Use all for compilling all platers"
-   echo -e "\t-f Function Idenftifier (0: Search, 1: AND, ...)"
+   echo -e "\t-f Function Idenftifier (0: Search, 2: AND, ...)"
    echo -e "\t-c Pack Bool in Char before sending? (0/1). Only used with -d 1"
    echo -e "\t-s MPC Protocol (1(Sharemind),2(Replicated),3(Astra),4(OEC DUP),5(OEC REP),6(TTP))"
    echo -e "\t-i Initialize circuit seperatly (0) or at runtime (1)?"
