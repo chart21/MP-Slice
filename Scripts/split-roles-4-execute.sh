@@ -148,7 +148,7 @@ then
     ./search-P4--2-1-4-3.o $O_IP2 $O_IP1 $O_IP3 &
     ./search-P4--2-4-1-3.o $O_IP2 $O_IP1 $O_IP3 &
     ./search-P4--4-1-2-3.o $O_IP1 $O_IP2 $O_IP3 &
-    ./search-P4--4-2-1-3.o $O_IP3 $O_IP2 $O_IP1 &
+    ./search-P4--4-2-1-3.o $O_IP2 $O_IP1 $O_IP3 &
     ./search-P4--1-3-4-2.o $O_IP1 $O_IP3 $O_IP2 &
     ./search-P4--1-4-3-2.o $O_IP1 $O_IP3 $O_IP2 &
     ./search-P4--3-1-4-2.o $O_IP3 $O_IP1 $O_IP2 &
