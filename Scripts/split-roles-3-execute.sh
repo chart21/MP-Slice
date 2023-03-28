@@ -1,5 +1,4 @@
 #!/bin/bash
-
 helpFunction()
 {
    echo "Script to compile and run 6 mixed constellations of players in parallel"
@@ -63,7 +62,7 @@ done
 
 # echo $FAIL
 
-if [ "$FAIL" == "0" ]; then
+if [ "$FAIL" -eq 0 ]; then
     echo "No errors in Split roles ececution"
 else
     echo "$FAIL Erros detected in Split roles ececution"

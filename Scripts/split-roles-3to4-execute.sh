@@ -1,3 +1,4 @@
+#!/bin/bash
 helpFunction()
 {
    echo "Script to compile and run 24 mixed constellations of a 3-PC protocol with 4 players in parallel"
@@ -147,7 +148,7 @@ done
 
 echo $FAIL
 
-if [ "$FAIL" == "0" ];
+if [ "$FAIL" -eq 0 ];
 then
 echo "No errors in Split roles ececution"
 else

@@ -1,3 +1,4 @@
+#!/bin/bash
 helpFunction()
 {
    echo "Script to compile and run 6 mixed constellations of players in parallel"

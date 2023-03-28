@@ -1,5 +1,4 @@
 #!/bin/bash
-
 helpFunction()
 {
    echo "Script to configure and compile executables for a run."
