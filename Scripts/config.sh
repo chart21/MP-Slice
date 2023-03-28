@@ -95,39 +95,39 @@ fi
 
 if [ ! -z "$BASE_PORT" ]
 then
-    sed -i -e "s/\(BASE_PORT \).*/\1$BASE_PORT/" config.h
+    sed -i -e "s/\(define BASE_PORT \).*/\1$BASE_PORT/" config.h
 fi
 if [ ! -z "$BITLENGTH" ]
 then
-    sed -i -e "s/\(BITLENGTH \).*/\1$BITLENGTH/" config.h
+    sed -i -e "s/\(define BITLENGTH \).*/\1$BITLENGTH/" config.h
 fi
 if [ ! -z "$NUM_INPUTS" ]
 then
-    sed -i -e "s/\(NUM_INPUTS \).*/\1$NUM_INPUTS/" config.h
+    sed -i -e "s/\(define NUM_INPUTS \).*/\1$NUM_INPUTS/" config.h
 fi
 if [ ! -z "$DATTYPE" ]
 then
-    sed -i -e "s/\(DATTYPE \).*/\1$DATTYPE/" config.h
+    sed -i -e "s/\(define DATTYPE \).*/\1$DATTYPE/" config.h
 fi
 if [ ! -z "$FUNCTION_IDENTIFIER" ]
 then
-    sed -i -e "s/\(FUNCTION_IDENTIFIER \).*/\1$FUNCTION_IDENTIFIER/" config.h
+    sed -i -e "s/\(define FUNCTION_IDENTIFIER \).*/\1$FUNCTION_IDENTIFIER/" config.h
 fi
 if [ ! -z "$COMPRESS" ]
 then
-    sed -i -e "s/\(COMPRESS \).*/\1$COMPRESS/" config.h
+    sed -i -e "s/\(define COMPRESS \).*/\1$COMPRESS/" config.h
 fi
 if [ ! -z "$LIVE" ]
 then
-    sed -i -e "s/\(LIVE \).*/\1$LIVE/" config.h
+    sed -i -e "s/\(define LIVE \).*/\1$LIVE/" config.h
 fi
 if [ ! -z "$INIT" ]
 then
-    sed -i -e "s/\(INIT \).*/\1$INIT/" config.h
+    sed -i -e "s/\(define INIT \).*/\1$INIT/" config.h
 fi
 if [ ! -z "$OPT_SHARE" ]
 then
-    sed -i -e "s/\(OPT_SHARE \).*/\1$OPT_SHARE/" config.h
+    sed -i -e "s/\(define OPT_SHARE \).*/\1$OPT_SHARE/" config.h
 fi
 if [ ! -z "$PROTOCOL" ]
 then
@@ -135,11 +135,11 @@ then
 fi
 if [ ! -z "$PARTY" ]
 then
-    sed -i -e "s/\(PARTY \).*/\1$PARTY/" config.h
+    sed -i -e "s/\(define PARTY \).*/\1$PARTY/" config.h
 fi
 if [ ! -z "$NUM_PLAYERS" ]
 then
-    sed -i -e "s/\(num_players \).*/\1$NUM_PLAYERS/" config.h
+    sed -i -e "s/\(define num_players \).*/\1$NUM_PLAYERS/" config.h
 fi
 if [ ! -z "$PREPROCESSING" ]
 then

@@ -1,5 +1,5 @@
 #pragma once
-#define PROTOCOL 4
+#define PROTOCOL 1
 #if PROTOCOL < 7
 #define num_players 3
 #else
