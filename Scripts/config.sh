@@ -132,7 +132,7 @@ then
 fi
 if [ ! -z "$PROTOCOL" ]
 then
-    sed -i -e "s/\(PROTOCOL \).*/\1$PROTOCOL/" config.h
+    sed -i -e "s/\(define PROTOCOL \).*/\1$PROTOCOL/" config.h
 fi
 if [ ! -z "$PARTY" ]
 then
