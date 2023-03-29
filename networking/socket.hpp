@@ -53,20 +53,8 @@ public:
 
   // Destroy the socket object
   ~Socket() {
+      Close_Context();
     // Close the socket
-    close(sock_);
-#if USE_SSL == 1
-    // Free the SSL structure
-    if (ssl_ != nullptr) {
-        SSL_shutdown(ssl_);
-        SSL_free(ssl_);
-    }
-
-    // Free the SSL context
-    if (ssl_ctx_ != nullptr) {
-      SSL_CTX_free(ssl_ctx_);
-    }
-#endif
   }
 
 // Bind the socket to a local address
@@ -87,9 +75,16 @@ void Bind(int port) {
      address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(port);
-    if (bind(sock_, (struct sockaddr *)&address, sizeof(address)) < 0) {
-    throw std::runtime_error("Error binding socket to local address on port " + std::to_string(port));
+  std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+    while (bind(sock_, (struct sockaddr *)&address, sizeof(address)) < 0) {
+      /* throw std::runtime_error("Error connecting to remote server"); */
+    if( std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - t1).count() > CONNECTION_TIMEOUT) {
+    throw std::runtime_error("Timeout exceeded when trying to binding socket to local address on port " + std::to_string(port));
     }
+    std::this_thread::sleep_for(std::chrono::milliseconds(CONNECTION_RETRY) );
+    
+  }
+    
 
 }// Bind the socket to a local address
 
@@ -164,8 +159,10 @@ void Connect(const std::string& addr, int port) {
 
   // Perform the SSL handshake
   if (SSL_connect(ssl_) != 1) {
+     ERR_print_errors_fp(stderr);
+      /* throw std::runtime_error("Error connecting to remote server"); */
     throw std::runtime_error("Error performing SSL handshake on port " + std::to_string(port));
-  }
+    }
 #endif
 }
 
@@ -256,10 +253,31 @@ int Receive(char* buffer, int size) {
 
 
 void Close_Context() {
+    if (sock_ != -1)
+    {
+        close(sock_);
+        sock_ = -1;
+    }
 #if USE_SSL == 1
-    SSL_shutdown(ssl_);
-    SSL_free(ssl_);
-    SSL_CTX_free(ssl_ctx_);
+    // Free the SSL structure
+    if (ssl_ != nullptr) {
+        if (SSL_shutdown(ssl_) == 0)
+        {
+            if (SSL_shutdown(ssl_) < 0)
+            {
+                
+                std::cout << "SSL_shutdown failed" << std::endl;
+            }
+        }
+        SSL_free(ssl_);
+        ssl_ = nullptr;
+    }
+
+    // Free the SSL context
+    if (ssl_ctx_ != nullptr) {
+      SSL_CTX_free(ssl_ctx_);
+      ssl_ctx_ = nullptr;
+    }
 #endif
 }
 

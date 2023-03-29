@@ -44,7 +44,7 @@ void *sender(void* threadParameters)
 {
     Socket server;
     server.Bind(((sender_args*) threadParameters)->port);
-    server.Listen(1);
+    server.Listen(2);
     Socket client = server.Accept();
     #if PRINT == 1
     printf("Connected to Player %i\n", ((sender_args*) threadParameters)->connected_to);
@@ -95,6 +95,7 @@ printf("sent %i bytes to player %i in round %i out of %i \n", elements_to_send ,
 printf("Closing connection to Player %i\n", ((sender_args*) threadParameters)->connected_to);
 #endif
 /* client.Close_Context(); */
+/* server.Close_Context(); */
 pthread_exit( NULL );
 
 }

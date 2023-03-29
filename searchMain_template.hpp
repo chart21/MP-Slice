@@ -88,7 +88,7 @@ DATATYPE* seed = new DATATYPE[BITLENGTH];
 orthogonalize(iseed, seed);
 
 //generate random data
-for (int i = 0; i < NUM_INPUTS; i++) {
+for (int i = 0; i < int( NUM_INPUTS / (sizeof(DATATYPE)*8)/BITS_PER_REG ); i++) {
      xor_shift__(seed, dataset[i]);
  }
 xor_shift__(seed, elements);

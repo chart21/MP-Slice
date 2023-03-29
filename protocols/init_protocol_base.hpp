@@ -126,7 +126,7 @@ for(int t=0;t<(num_players-1);t++) {
     ra[t].connected_to = t+offset;
     ra[t].ip = ips[t];
     ra[t].hostname = (char*)"hostname";
-    ra[t].port = (int) base_port + player_id * (num_players-1) + t; //e.g. P0 receives on base port from P1, P2 on base port + num_players from P0 6000,6002
+    ra[t].port =(int) base_port + (t+offset) * (num_players -1) + player_id - 1 + offset; //e.g. P0 sends on base port + num_players  for P1, P2 on base port + num_players for P0 (6001,6000) 
 }
 for(int t=0;t<(num_players-1);t++) {
     int offset = 0;
@@ -141,7 +141,7 @@ for(int t=0;t<(num_players-1);t++) {
     sa[t].player_id = player_id;
     sa[t].player_count = num_players;
     sa[t].connected_to = t+offset;
-    sa[t].port = (int) base_port + (t+offset) * (num_players -1) + player_id - 1 + offset; //e.g. P0 sends on base port + num_players  for P1, P2 on base port + num_players for P0 (6001,6000)
+    sa[t].port = (int) base_port + player_id * (num_players-1) + t; //e.g. P0 receives on base port from P1, P2 on base port + num_players from P0 6000,6002
     sa[t].sent_elements[0] = NEW(DATATYPE[sa[t].elements_to_send[0]]); // Allocate memory for first round
     share_buffer[t] = 0;  
 
