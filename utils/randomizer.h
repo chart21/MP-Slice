@@ -39,13 +39,15 @@
 #define MM_AES_DEC_LAST _mm_aesdeclast_si128
 #define COUNT_TYPE __m128i
     #endif
-COUNT_TYPE key[num_players][11]{0};
+COUNT_TYPE key[num_players*multiplier][11]{0};
     #endif
 #endif
 
 
 DATATYPE getRandomVal(int link_id)
 {
+if(link_id > 3)
+    return SET_ALL_ZERO();
 #if RANDOM_ALGORITHM == 0
    if(num_generated[link_id] > 63)
    {
@@ -109,6 +111,11 @@ DATATYPE getRandomVal(int link_id)
 /*        } */
 /* } */
 /* #endif */
+
+DATATYPE getRandomVal(int link_id1, int link_id2)
+{
+    return getRandomVal( num_players * (link_id1+1) + link_id2);
+}
 uint64_t shuffle_table[4];
 // The actual algorithm
 uint64_t next(void)

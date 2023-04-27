@@ -11,11 +11,11 @@
 #include "../utils/randomizer.h"
 #include "sharemind_base.hpp"
 #include "init_protocol_base.hpp"
-class OECL1_init
+class OEC_MAL1_init
 {
 bool optimized_sharing;
 public:
-OECL1_init(bool optimized_sharing) {this->optimized_sharing = optimized_sharing;}
+OEC_MAL1_init(bool optimized_sharing) {this->optimized_sharing = optimized_sharing;}
 
 
 XOR_Share public_val(DATATYPE a)
@@ -61,10 +61,10 @@ DATATYPE complete_Reveal(DATATYPE a)
 {
 /* for(int t = 0; t < num_players-1; t++) */ 
 /*     receiving_args[t].elements_to_rec[rounds-1]+=1; */
-#if PRE == 1 && (OPT_SHARE == 0 || SHARE_PREP == 1) // OPT_SHARE is input dependent, can only be sent in prepocessing phase if allowed
-    pre_receive_from_(P0);
+#if PRE == 1 
+    pre_receive_from_(P3);
 #else
-    receive_from_(P0);
+    receive_from_(P3);
 #endif
 return a;
 }

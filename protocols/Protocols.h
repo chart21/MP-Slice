@@ -9,7 +9,7 @@
 #define ttp4 7
 #define PC4_mal 8
 #define FantasticFour 9
-
+#define OEC_mal 10
 #if PROTOCOL == rep3 
     #define PROTOCOL_LIVE Replicated
     #define PROTOCOL_INIT Replicated_init
@@ -158,4 +158,67 @@
         #if LIVE == 1
             #include "ttp_template.hpp"
         #endif
+#elif PROTOCOL == OEC_mal
+    #if PRE == 1
+        #if PARTY == 0
+            #define PROTOCOL_PRE OEC_MAL0
+            #include "oec_mal-P0_template.hpp"
+        #endif
+        #if PARTY == 1
+            #define PROTOCOL_PRE -1
+        #endif
+        #if PARTY == 2
+            #define PROTOCOL_PRE -1
+        #endif
+        #if PARTY == 3
+            #define PROTOCOL_PRE OEC_MAL3
+            #include "oec_mal-P3_template.hpp"
+        #endif
+#endif
+    #if INIT == 1
+        #if PARTY == 0
+            #define PROTOCOL_INIT OEC_MAL0_init
+            #include "oec-mal-P0_init_template.hpp"
+        #endif
+        #if PARTY == 1
+            #define PROTOCOL_INIT OEC_MAL1_init
+            #include "oec-mal-P1_init_template.hpp"
+        #endif
+        #if PARTY == 2
+            #define PROTOCOL_INIT OEC_MAL2_init
+            #include "oec-mal-P2_init_template.hpp"
+        #endif
+        #if PARTY == 3
+            #define PROTOCOL_INIT OEC_MAL3_init
+            #include "oec-mal-P3_init_template.hpp"
+        #endif
+    #endif
+    #if LIVE == 1 
+        #if PARTY == 0
+            #if PRE == 1
+                #define PROTOCOL_LIVE OEC_MAL0_POST
+                #include "oec-mal-P0-post_template.hpp"
+            #else
+                #define PROTOCOL_LIVE OEC_MAL0
+                #include "oec-mal-P0_template.hpp"
+            #endif
+        #endif
+        #if PARTY == 1
+            #define PROTOCOL_LIVE OEC_MAL1
+            #include "oec-mal-P1_template.hpp"
+        #endif
+        #if PARTY == 2
+            #define PROTOCOL_LIVE OEC_MAL2
+            #include "oec-mal-P2_template.hpp"
+        #endif
+        #if PARTY == 3
+            #if PRE == 1
+                #define PROTOCOL_LIVE OEC_MAL3_POST
+                #include "oec-mal-P3-post_template.hpp"
+            #else
+                #define PROTOCOL_LIVE OEC_MAL3
+                #include "oec-mal-P3_template.hpp"
+            #endif
+        #endif
+    #endif
 #endif

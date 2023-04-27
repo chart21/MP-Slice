@@ -11,11 +11,12 @@
 #include "../utils/randomizer.h"
 #include "sharemind_base.hpp"
 #include "init_protocol_base.hpp"
-class OECL0_init
+class OEC_MAL2_init
 {
 bool optimized_sharing;
 public:
-OECL0_init(bool optimized_sharing) {this->optimized_sharing = optimized_sharing;}
+OEC_MAL2_init(bool optimized_sharing) {this->optimized_sharing = optimized_sharing;}
+
 
 
 XOR_Share public_val(DATATYPE a)
@@ -40,34 +41,25 @@ DATATYPE Xor(DATATYPE a, DATATYPE b)
 void prepare_and(DATATYPE a, DATATYPE b, DATATYPE &c)
 {
 #if PRE == 1
-    pre_send_to_(P2);
+pre_receive_from_(P0);
 #else
-send_to_(P2);
+receive_from_(P0);
 #endif
+
+send_to_(P1);
+send_to_(P0);
+
+//return u[player_id] * v[player_id];
 }
 
 // NAND both real Values to receive sharing of ~ (a&b) 
 void complete_and(DATATYPE &c)
 {
-#if PRE == 1
-    pre_receive_from_(P3);
-#else
-receive_from_(P2);
-#endif
-receive_from_(P3);
+    receive_from_(P1);
 }
 
 void prepare_reveal_to_all(DATATYPE a)
 {
-    for(int t = 0; t < 2; t++) 
-    {
-        #if PRE == 1 && (OPT_SHARE == 0 || SHARE_PREP == 1)
-    pre_send_to_(t);
-#else
-    send_to_(t);
-#endif
-
-    }//add to send buffer
 }    
 
 
@@ -76,7 +68,11 @@ DATATYPE complete_Reveal(DATATYPE a)
 {
 /* for(int t = 0; t < num_players-1; t++) */ 
 /*     receiving_args[t].elements_to_rec[rounds-1]+=1; */
-receive_from_(P2);
+#if PRE == 1 
+    pre_receive_from_(P3);
+#else
+    receive_from_(P3);
+#endif
 return a;
 }
 
@@ -89,26 +85,25 @@ XOR_Share* alloc_Share(int l)
 
 void prepare_receive_from(DATATYPE a[], int id, int l)
 {
-/* return; */
-/* old: */
-
-if(id == P0)
+if(id == PSELF)
 {
     for(int i = 0; i < l; i++)
     {
+        send_to_(P0);
         send_to_(P1);
-        send_to_(P2);
     }
+
 }
 }
 
+
 void complete_receive_from(DATATYPE a[], int id, int l)
 {
-    if(id != PSELF)
-    {
-        for(int i = 0; i < l; i++)
-            receive_from_(id);
-    }
+if(id != PSELF)
+{
+for(int i = 0; i < l; i++)
+    receive_from_(id);
+}
 }
 
 
@@ -119,16 +114,13 @@ void send()
 {
 send_();
 }
-
-// P0 only has 1 receive round
 void receive()
 {
     receive_();
 }
-
 void communicate()
 {
-/* communicate_(); */
+communicate_();
 }
 
 void finalize(std::string* ips)

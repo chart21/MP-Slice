@@ -4,8 +4,10 @@
 void send_live()
 {
 sb = 0;     
-send_count[0] = 0;
-send_count[1] = 0;
+for(int t = 0; t < (num_players-1); t++)
+{
+send_count[t] = 0;
+}
     // different in PRE
     for(int t = 0; t < (num_players-1); t++)
         if(sending_rounds < sending_args[t].send_rounds - 1) // don't allocate memory for the last+1 round
@@ -18,8 +20,9 @@ send_count[1] = 0;
 }
 
 void receive_live(){
-share_buffer[0] = 0;
-share_buffer[1] = 0;
+for(int t = 0; t < (num_players-1); t++)
+    share_buffer[t] = 0;
+
 rounds+=1;  
         // receive_data
       //wait until all sockets have finished received their last data
@@ -91,6 +94,6 @@ return receiving_args_pre[player_id].received_elements[0][share_buffer_pre[playe
 
 DATATYPE get_input_live()
 {
-    share_buffer[2] +=1;
-    return player_input[share_buffer[2] -1];
+    share_buffer[num_players-1] +=1;
+    return player_input[share_buffer[num_players-1] -1];
 }

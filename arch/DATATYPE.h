@@ -55,6 +55,11 @@
     #endif
 #elif num_players == 4
     #define PSELF 3
+    #define P012 4
+    #define P013 5
+    #define P023 6
+    #define P123 7
+
     #if PARTY == 0
         #define P0 3
         #define P1 0

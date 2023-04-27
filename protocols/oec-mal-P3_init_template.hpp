@@ -11,11 +11,11 @@
 #include "../utils/randomizer.h"
 #include "sharemind_base.hpp"
 #include "init_protocol_base.hpp"
-class OECL3_init
+class OEC_MAL3_init
 {
 bool optimized_sharing;
 public:
-OECL3_init(bool optimized_sharing) {this->optimized_sharing = optimized_sharing;}
+OEC_MAL3_init(bool optimized_sharing) {this->optimized_sharing = optimized_sharing;}
 
 
 XOR_Share public_val(DATATYPE a)
@@ -55,7 +55,7 @@ void prepare_reveal_to_all(DATATYPE a)
 {
     for(int t = 0; t < 3; t++) 
     {
-        #if PRE == 1 && (OPT_SHARE == 0 || SHARE_PREP == 1)
+        #if PRE == 1 
     pre_send_to_(t);
 #else
     send_to_(t);
@@ -115,7 +115,7 @@ void receive()
 
 void communicate()
 {
-/* communicate_(); */
+communicate_();
 }
 
 void finalize(std::string* ips)

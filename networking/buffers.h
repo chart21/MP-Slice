@@ -23,25 +23,30 @@ int input_length[num_players] = {0};
 int reveal_length[num_players] = {0};
 DATATYPE* player_input;
 
+#if num_players == 4
+    #define multiplier 2
+#else
+    #define multiplier 1
+#endif
 #if RANDOM_ALGORITHM == 0
-DATATYPE srng[num_players][64]{0};
+DATATYPE srng[num_players*multiplier][64]{0};
 #elif RANDOM_ALGORITHM == 1
-DATATYPE counter[num_players][128]{0};
-DATATYPE cipher[num_players][128]{0};
-DATATYPE key[num_players][11][128]{0};
+DATATYPE counter[num_players*multiplier][128]{0};
+DATATYPE cipher[num_players*multiplier][128]{0};
+DATATYPE key[num_players*multiplier][11][128]{0};
 #elif RANDOM_ALGORITHM == 2
 #if DATTYPE >= 128
-DATATYPE counter[num_players]{0};
-DATATYPE key[num_players][11]{0};
+DATATYPE counter[num_players*multiplier]{0};
+DATATYPE key[num_players*multiplier][11]{0};
 #else
 #define BUFFER_SIZE 128/DATTYPE 
-DATATYPE counter[num_players][BUFFER_SIZE]{0};
+DATATYPE counter[num_players*multiplier][BUFFER_SIZE]{0};
 #endif
 #endif
 
 //DATATYPE srng[num_players -1] = {0};
 //DATATYPE* input_seed;
-int num_generated[num_players] = {0};
+int num_generated[num_players*multiplier] = {0};
 int pnext;
 int pprev;
 int pmiddle;

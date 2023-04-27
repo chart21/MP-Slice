@@ -237,6 +237,11 @@ std::chrono::high_resolution_clock::time_point p =
 
     rb = 0;
     
+    // Join threads to avoid address rebind
+    for(int t=0;t<(num_players-1);t++) {
+    pthread_join(receiving_threads_pre[t],NULL);
+    pthread_join(sending_Threads_pre[t],NULL);
+    }
 
     double time_pre = std::chrono::duration_cast<std::chrono::microseconds>(
                          std::chrono::high_resolution_clock::now() - p)
@@ -249,11 +254,6 @@ std::chrono::high_resolution_clock::time_point p =
     /* printf("Time measured to read and receive inputs: %fs \n", double((time_data_received - time_application_start)) / CLOCKS_PER_SEC); */
    
 
-    // Join threads to avoid address rebind
-    for(int t=0;t<(num_players-1);t++) {
-    pthread_join(receiving_threads_pre[t],NULL);
-    pthread_join(sending_Threads_pre[t],NULL);
-    }
     printf("Time measured to perform preprocessing clock: %fs \n", double((time_pre_function_finished - time_pre_function_start)) / CLOCKS_PER_SEC);
     printf("Time measured to perform preprocessing getTime: %fs \n", accum_pre);
     printf("Time measured to perform preprocessing chrono: %fs \n", time_pre / 1000000);
@@ -344,6 +344,12 @@ int ret;
     auto result = new RESULTTYPE;
     FUNCTION<PROTOCOL_LIVE,SHARE>(p_live,result);
     
+    for(int t=0;t<(num_players-1);t++) {
+        pthread_join(receiving_threads[t],NULL);
+        pthread_join(sending_Threads[t],NULL);
+        /* sending_args[t].elements_to_send.clear(); */
+
+    }
 
     double time = std::chrono::duration_cast<std::chrono::microseconds>(
                          std::chrono::high_resolution_clock::now() - c1)
@@ -361,12 +367,6 @@ int ret;
     printf("Time measured to perform computation getTime: %fs \n", accum);
     printf("Time measured to perform computation chrono: %fs \n", time / 1000000);
     // Join threads to ensure closing of sockets
-    for(int t=0;t<(num_players-1);t++) {
-        pthread_join(receiving_threads[t],NULL);
-        pthread_join(sending_Threads[t],NULL);
-        /* sending_args[t].elements_to_send.clear(); */
-
-    }
 
 }
 #endif
@@ -394,10 +394,18 @@ init_srng(pnext,player_id + 5000);
 init_srng(num_players-1, player_id+6000); // used for sharing inputs
 #elif num_players == 4
 //new logic
-init_srng(0, (player_id+1) * 1 + 5000); // 
-init_srng(1, (player_id+1) * 2 + 5000); // 1*2
-init_srng(2, (player_id+1) * 3 + 5000); // 1*3
-init_srng(3, (player_id+1) * 4 + 5000); // 1*4
+/* init_srng(P0, (player_id+1) * 1 + 5000); // */ 
+/* init_srng(P1, (player_id+1) * 2 + 5000); // 1*2 */
+/* init_srng(P2, (player_id+1) * 3 + 5000); // 1*3 */
+/* init_srng(P3, (player_id+1) * 4 + 5000); // 1*4 */
+init_srng(0,0);
+init_srng(1,0);
+init_srng(2,0);
+init_srng(3,0);
+init_srng(4,0);
+init_srng(5,0);
+init_srng(6,0);
+init_srng(7,0);
 #endif
 
 /// Connecting to other Players

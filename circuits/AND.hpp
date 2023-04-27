@@ -17,7 +17,7 @@ template<typename Pr, typename S>
 void AND_BENCH_1 (Pr P,/*outputs*/ DATATYPE* result)
 {
 
-BufferHelper buffer_helper = BufferHelper();
+/* BufferHelper buffer_helper = BufferHelper(); */
 
 // allocate memory for shares
 
@@ -44,6 +44,7 @@ for (int i = 0; i < NUM_INPUTS; i++) {
 /* P.communicate(); */
 /* } */
 }
+P.communicate();
 }
 
   

@@ -1,12 +1,12 @@
 #pragma once
-#define PROTOCOL 4
+#define PROTOCOL 2
 #if PROTOCOL < 7
 #define num_players 3
 #else
 #define num_players 4
 #endif
 
-//0: search 1: XORNOTAND, 2: AND 1 comm round 3: AND 1000 comm rounds 
+//0: search 1: XORNOTAND, 2: AND 1 comm round 3: AND 1000 comm rounds  4: debug
 #define FUNCTION_IDENTIFIER 0
 
 
@@ -42,7 +42,7 @@
 #define INPUT 'r'
 
 // Number of inputs (depends on the problem)
-#define NUM_INPUTS 4096
+#define NUM_INPUTS 10000000
 
 // Bitlength of integers
 #define BITLENGTH 64

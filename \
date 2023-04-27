@@ -11,7 +11,7 @@
 
 #include "../utils/randomizer.h"
 //#include "sharemind_base.hpp"
-#include "oecl_base.hpp"
+#include "oec-mal_base.hpp"
 #include "live_protocol_base.hpp"
 #define PRE_SHARE OECL_Share
 class OECL0
@@ -20,80 +20,78 @@ bool optimized_sharing;
 public:
 OECL0(bool optimized_sharing) {this->optimized_sharing = optimized_sharing;}
 
-OECL_Share public_val(DATATYPE a)
+Dealer_Share public_val(DATATYPE a)
 {
-    return OECL_Share(SET_ALL_ZERO(),SET_ALL_ZERO());
+    return Dealer_Share(SET_ALL_ZERO(),SET_ALL_ZERO(),SET_ALL_ZERO());
 }
 
-OECL_Share Not(OECL_Share a)
+Dealer_Share Not(Dealer_Share a)
 {
    return a;
 }
 
 // Receive sharing of ~XOR(a,b) locally
-OECL_Share Xor(OECL_Share a, OECL_Share b)
+Dealer_Share Xor(Dealer_Share a, Dealer_Share b)
 {
-    a.p1 = XOR(a.p1,b.p1);
-    a.p2 = XOR(a.p2,b.p2);
-   return a;
+   return Dealer_Share(XOR(a.r0,b.r0),XOR(a.r1,b.r1),XOR(a.r2,b.r2));
 }
 
 
 
 //prepare AND -> send real value a&b to other P
-void prepare_and(OECL_Share a, OECL_Share b, OECL_Share &c)
+void prepare_and(Dealer_Share a, Dealer_Share b, Dealer_Share &c)
 {
-/* DATATYPE rl = getRandomVal(0); */
-/* DATATYPE rr = getRandomVal(0); */
-
-/* DATATYPE rx = getRandomVal(0); */
-/* DATATYPE ry = getRandomVal(1); */
-/* DATATYPE maskP1 = XOR(a.p1,b.p1); */
-/* DATATYPE maskP2 = XOR(a.p2,b.p2); */
-DATATYPE r124 = SET_ALL_ZERO();
-DATATYPE o1 = XOR( AND(a.p2,b.p2), r124);
+c.r0 = getRandomVal(P0);
+c.r1 = getRandomVal(P1);
+c.r2 = getRandomVal(P2);
+DATATYPE r234 = getRandomVal(P123);
+DATATYPE o4 = XOR( XOR( AND(a.r1,b.r1) ,AND(a.r2,b.r2)),r234);
 
 #if PRE == 1
-pre_send_to_live(P2, o1);
+pre_send_to_live(P0, o4);
 #else
-send_to_live(P2, o1);
-#endif
-c.p1 = XOR( AND(a.p1,b.p2), AND(b.p2,a.p1));
-}
-
-void complete_and(OECL_Share &c)
-{
-#if PRE == 1
-//Only receive from P3
-#else
-c.p1 = XOR(c.p1, XOR( receive_from_live(P3), receive_from_live(P2)));
+send_to_live(P0, o4);
 #endif
 }
 
-
-void prepare_reveal_to_all(OECL_Share a)
+void complete_and(Dealer_Share &c)
 {
+}
+
+
+void prepare_reveal_to_all(Dealer_Share a)
+{
+#if PRE == 1
+    pre_send_to_live(P0, a.r0);
+    pre_send_to_live(P1, a.r1);
+    pre_send_to_live(P2, a.r2);
+#else
+    send_to_live(P0, a.r0);
+    send_to_live(P1, a.r1);
+    send_to_live(P2, a.r2);
+#endif
 }    
 
 
 
-DATATYPE complete_Reveal(OECL_Share a)
+DATATYPE complete_Reveal(Dealer_Share a)
 {
 #if PRE == 1
+return XOR(a.r0, pre_receive_from_live(P0));
 #else
-return XOR(a.p1, receive_from_live(P3));
+return XOR(a.r0, receive_from_live(P0));
 #endif
 }
 
 
-OECL_Share* alloc_Share(int l)
+Dealer_Share* alloc_Share(int l)
 {
-    return new OECL_Share[l];
+    return new Dealer_Share[l];
 }
 
 
 
-void prepare_receive_from(OECL_Share a[], int id, int l)
+void prepare_receive_from(Dealer_Share a[], int id, int l)
 {
 if(id == PSELF)
 {
