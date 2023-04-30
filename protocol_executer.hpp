@@ -20,6 +20,8 @@
 #include "AND_Main.hpp"
 #elif FUNCTION_IDENTIFIER == 3
 #include "AND_Main.hpp"
+#elif FUNCTION_IDENTIFIER == 4
+#include "debug_main_template.hpp"
 #endif
 
 #include "circuits/xorshift.h"

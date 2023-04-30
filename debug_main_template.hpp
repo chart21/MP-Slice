@@ -11,7 +11,7 @@
 #include <memory>
 #include "arch/DATATYPE.h"
 /* #include "circuits/searchBitSlice.c" */
-#include "circuits/searchBitSliceWithComm_template.cpp"
+#include "circuits/debug_template.cpp"
 #include "circuits/xorshift.h"
 
 #include "config.h"
@@ -138,39 +138,18 @@ for (int k = BITLENGTH >> 1; k > 0; k = k >> 1)
 
 void generateElements()
 {
-uint64_t (*origData)[BITS_PER_REG] = NEW(uint64_t[NUM_INPUTS][BITS_PER_REG]);
-uint64_t *origElements = NEW(uint64_t[BITS_PER_REG]);
-
-/* DATATYPE (*dataset)[BITLENGTH] = NEW(DATATYPE[NUM_INPUTS][BITLENGTH]); */
-/* DATATYPE* elements = NEW(DATATYPE[BITLENGTH]); */
-/* for (int i = 0; i < NUM_INPUTS; i++) { */
-/*  orthogonalize(origData[i], dataset[i]); */   
-/* } */
-/* orthogonalize(origElements, elements); */
-
-// generate random input data instead of reading from file
-/* funcTime("generating random inputs",randomizeInputs,dataset,elements); */
-
-/* DATATYPE (*dataset)[BITLENGTH] = ((DATATYPE(*)[BITLENGTH]) origData); */ 
-/* DATATYPE* elements = ((DATATYPE*) origElements); */
-
-
-randomizeInputs( (DATATYPE(*)[BITLENGTH]) origData, (DATATYPE*)  origElements);
-
-//modify certain data to test functionality
-//
-DATATYPE (*dataset)[BITLENGTH] = NEW(DATATYPE[NUM_INPUTS][BITLENGTH]);
-DATATYPE* elements = NEW(DATATYPE[BITLENGTH]);
-
-
-insertManually(dataset, elements, origData, origElements, 1,7 , 200, 200);
-
-if(player_id == 0)
+auto inputs = new DATATYPE[num_players][BITLENGTH];
+for(int i = 0; i < num_players; i++)
 {
-    player_input = (DATATYPE*) dataset;
+for(int j = 0; j < BITLENGTH; j++)
+{
+inputs[i][j] = SET_ALL_ONE();
+if(j == i)
+    inputs[i][j] = SET_ALL_ZERO();
 }
-else if(player_id == 1)
-    player_input = elements;
+}
+
+player_input = (DATATYPE*) inputs[PARTY];
 
 }
 

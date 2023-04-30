@@ -36,7 +36,7 @@
 #define SHARE_PREP 1
 
 // Party ID (starting from 0)
-#define PARTY 2
+#define PARTY 3
 
 // Use random inputs or inputs from a file? TODO: File inputs to be implemented
 #define INPUT 'r'
@@ -75,4 +75,4 @@ int base_port = BASE_PORT; // temporary solution
 #define RECV_BUFFER 0
 
 // Print additional info?
-#define PRINT 0
+#define PRINT 1
