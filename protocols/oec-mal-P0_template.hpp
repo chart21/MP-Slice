@@ -43,6 +43,7 @@ OEC_MAL_Share Xor(OEC_MAL_Share a, OEC_MAL_Share b)
 //prepare AND -> send real value a&b to other P
 void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
 {
+DATATYPE cr = XOR(getRandomVal(P013),getRandomVal(P023));
 DATATYPE r124 = getRandomVal(P013);
 DATATYPE o1 = XOR( AND(a.r,b.r), r124);
 
@@ -52,7 +53,9 @@ pre_send_to_live(P2, o1);
 send_to_live(P2, o1);
 #endif
 c.v = XOR( AND(a.v,b.r), AND(b.v,a.r));
-c.r = getRandomVal(P3);
+c.r = cr;
+/* c.r = getRandomVal(P3); */
+
 }
 
 void complete_and(OEC_MAL_Share &c)
@@ -70,6 +73,7 @@ c.v = XOR(c.v, XOR( m3_prime, o_4));
 
 void prepare_reveal_to_all(OEC_MAL_Share a)
 {
+    send_to_live(P3, a.v);
 }    
 
 

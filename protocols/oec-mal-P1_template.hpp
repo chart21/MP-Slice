@@ -41,11 +41,14 @@ OEC_MAL_Share Xor(OEC_MAL_Share a, OEC_MAL_Share b)
 //prepare AND -> send real value a&b to other P
 void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b , OEC_MAL_Share &c)
 {
+DATATYPE cr = XOR(getRandomVal(P013),getRandomVal(P123));
 DATATYPE r124 = getRandomVal(P013);
-c.r = getRandomVal(P3);
-send_to_live(P2,XOR(   XOR(AND(a.r,b.r), AND(a.v,b.v))  , XOR(c.r,r124))); 
+/* DATATYPE r234 = getRandomVal(P123); //used for veryfying m3' sent by P3 -> probably not needed */
+/* c.r = getRandomVal(P3); */
+send_to_live(P2,XOR(   XOR(AND(a.r,b.r), AND(a.v,b.v))  , XOR(cr,r124))); 
 
-c.v = XOR( XOR(      AND(a.v,b.r) , AND(b.v,a.r) ) , XOR(AND(a.r,b.r),r124));
+c.v = XOR( XOR(      AND(a.v,b.r) , AND(b.v,a.r) ) , r124);
+c.r = cr;
 }
 
 // NAND both real Values to receive sharing of ~ (a&b) 
@@ -111,7 +114,7 @@ else if(id == P3)
 {
 for(int i = 0; i < l; i++)
 {
-        DATATYPE r013 = getRandomVal(P013);
+    DATATYPE r013 = getRandomVal(P013);
     DATATYPE r123 = getRandomVal(P123);
 
     a[i].r = XOR(r013,r123);

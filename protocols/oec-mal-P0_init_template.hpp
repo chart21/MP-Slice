@@ -59,6 +59,7 @@ receive_from_(P2);
 
 void prepare_reveal_to_all(DATATYPE a)
 {
+    send_to_(P3);
 }    
 
 

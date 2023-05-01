@@ -41,11 +41,15 @@ Dealer_Share Xor(Dealer_Share a, Dealer_Share b)
 //prepare AND -> send real value a&b to other P
 void prepare_and(Dealer_Share a, Dealer_Share b, Dealer_Share &c)
 {
-c.r0 = getRandomVal(P0);
-c.r1 = getRandomVal(P1);
-c.r2 = getRandomVal(P2);
+/* c.r0 = getRandomVal(P0); */
+/* c.r1 = getRandomVal(P1); */
+/* c.r2 = getRandomVal(P2); */
+DATATYPE r0 = getRandomVal(P013);
+DATATYPE r1 = getRandomVal(P023);
+DATATYPE r2 = getRandomVal(P123);
+
 DATATYPE r124 = getRandomVal(P013); // used for verification
-DATATYPE r234 = getRandomVal(P123);
+DATATYPE r234 = getRandomVal(P2); // Probably sufficient to only generate with P2(-> P3 in paper)
 DATATYPE o4 = XOR( XOR( AND(a.r1,b.r1) ,AND(a.r2,b.r2)),r234);
 
 #if PRE == 1
@@ -53,6 +57,11 @@ pre_send_to_live(P0, o4);
 #else
 send_to_live(P0, o4);
 #endif
+
+c.r0 = XOR(r0,r1);
+c.r1 = XOR(r0,r2);
+c.r2 = XOR(r1,r2);
+
 }
 
 void complete_and(Dealer_Share &c)
@@ -77,11 +86,7 @@ void prepare_reveal_to_all(Dealer_Share a)
 
 DATATYPE complete_Reveal(Dealer_Share a)
 {
-#if PRE == 1
-return XOR(a.r0, pre_receive_from_live(P0));
-#else
-return XOR(a.r0, receive_from_live(P0));
-#endif
+return XOR(a.r2, receive_from_live(P0));
 }
 
 

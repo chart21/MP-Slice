@@ -68,6 +68,7 @@ void prepare_reveal_to_all(DATATYPE a)
 
 DATATYPE complete_Reveal(DATATYPE a)
 {
+receive_from_(P0);
 return a;
 }
 

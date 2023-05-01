@@ -40,12 +40,15 @@ OEC_MAL_Share Xor(OEC_MAL_Share a, OEC_MAL_Share b)
 
 void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
 {
-DATATYPE r234 = getRandomVal(P123);
-c.r = getRandomVal(P3);
+DATATYPE cr = XOR(getRandomVal(P023),getRandomVal(P123));
+/* DATATYPE r234 = getRandomVal(P123); */
+DATATYPE r234 = getRandomVal(P3); //Probably sufficient to only generate with P3
+/* c.r = getRandomVal(P3); */
 DATATYPE o1 = receive_from_live(P0);
-send_to_live(P1, XOR( XOR( XOR(o1,c.r) , AND(a.r,b.r) ) , AND(a.v,b.v))); 
-send_to_live(P0, XOR( XOR(r234,c.r) , AND( XOR(a.v,a.r) ,XOR(b.v,b.r)))); 
-c.v = XOR ( o1, XOR( AND(a.v,b.r) , XOR( AND(b.v,a.r) , AND(a.r,b.r) )));
+send_to_live(P1, XOR( XOR( XOR(o1,cr) , AND(a.r,b.r) ) , AND(a.v,b.v))); 
+send_to_live(P0, XOR( XOR(r234,cr) , AND( XOR(a.v,a.r) ,XOR(b.v,b.r)))); 
+c.v = XOR ( o1, XOR( AND(a.v,b.r) , AND(b.v,a.r)));
+c.r = cr;
 }
 
 void complete_and(OEC_MAL_Share &c)
@@ -78,7 +81,7 @@ for(int i = 0; i < l; i++)
     DATATYPE x_1 = getRandomVal(P023); // held by P1,P3 (this),P4
     DATATYPE x_2 = getRandomVal(P123); // held by P2,P3 (this),P4
     DATATYPE x_3 = XOR(x_1,x_2);
-    a[i].r = (x_3);
+    a[i].r = x_3;
     a[i].v = get_input_live();
     /* a[i].p1 = getRandomVal(0); *1/ */
     send_to_live(P0, XOR(a[i].v,x_3));

@@ -46,8 +46,8 @@ COUNT_TYPE key[num_players*multiplier][11]{0};
 
 DATATYPE getRandomVal(int link_id)
 {
-if(link_id > 3)
-    return SET_ALL_ZERO();
+/* if(link_id > 3) */
+/*     return SET_ALL_ZERO(); */
 #if RANDOM_ALGORITHM == 0
    if(num_generated[link_id] > 63)
    {

@@ -42,7 +42,7 @@
 #define INPUT 'r'
 
 // Number of inputs (depends on the problem)
-#define NUM_INPUTS 10000000
+#define NUM_INPUTS 1000
 
 // Bitlength of integers
 #define BITLENGTH 64
@@ -75,4 +75,4 @@ int base_port = BASE_PORT; // temporary solution
 #define RECV_BUFFER 0
 
 // Print additional info?
-#define PRINT 1
+#define PRINT 0
