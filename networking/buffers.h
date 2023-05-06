@@ -40,17 +40,12 @@ DATATYPE counter[num_players*multiplier]{0};
 DATATYPE key[num_players*multiplier][11]{0};
 #else
 #define BUFFER_SIZE 128/DATTYPE 
-DATATYPE counter[num_players*multiplier][BUFFER_SIZE]{0};
+DATATYPE counter[num_players*multiplier][BUFFER_SIZE] = {0};
 #endif
 #endif
 #if MAL == 1
 DATATYPE* verify_buffer[num_players-1]; // Verify buffer for each player
 uint64_t verify_buffer_index[num_players-1] = {0};
-    /* /1* initial state *1/ */
-    /* uint32_t state[8] = { */
-    /*     0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, */
-    /*     0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19 */
-    /* }; */
 
 alignas(sizeof(DATATYPE)) uint32_t hash_val[num_players-1][8]; // Hash value for each player
 uint64_t elements_to_compare[num_players-1] = {0};

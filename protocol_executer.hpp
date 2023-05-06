@@ -10,6 +10,7 @@
 #include <new>
 #include <memory>
 #include "arch/DATATYPE.h"
+#include "protocols/init_protocol_base.hpp"
 #include "protocols/live_protocol_base.hpp"
 /* #include "circuits/searchBitSlice.c" */
 
@@ -99,6 +100,23 @@ int incr = (sizeof(COUNT_TYPE) - 1) /64 +1;
 
 #endif
 
+#if MAL == 1
+
+    // Ensure all players have the same initial state
+    /* initial state */
+    uint32_t state[8] = {
+        0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
+        0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19
+    };
+
+    for(int i = 0; i < num_players-1; i++)
+    {
+        for(int j = 0; j < 8; j++)
+            hash_val[i][j] = state[j];
+    }
+
+#endif
+
 }
 
 void init_muetexes()
@@ -142,7 +160,11 @@ for(int t=0;t<(num_players-1);t++) { // ???
     auto p_init = PROTOCOL_INIT(OPT_SHARE);
     auto garbage = new RESULTTYPE;
     FUNCTION<PROTOCOL_INIT,INIT_SHARE>(p_init,garbage);
-    
+    #if MAL==1
+        compare_views_init();
+        p_init.communicate();
+    #endif
+
     #if PRE == 1
     p_init.finalize(ips,receiving_args_pre,sending_args_pre);
     #else
@@ -191,6 +213,7 @@ int ret_pre;
 
 
     // waiting until all threads connected
+    //#endif
 
     pthread_mutex_lock(&mtx_connection_established);
     while (num_successful_connections < 2 * (num_players -1)) {
@@ -348,6 +371,7 @@ int ret;
     FUNCTION<PROTOCOL_LIVE,SHARE>(p_live,result);
     #if MAL==1
         compare_views();
+        p_live.communicate();
     #endif
     
     

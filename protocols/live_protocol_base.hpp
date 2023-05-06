@@ -111,6 +111,7 @@ DATATYPE get_input_live()
 #if MAL == 1
 void store_compare_view(int player_id, DATATYPE elements_to_compare)
 {
+#if VERIFY_BUFFER > 0
 if(verify_buffer_index[player_id] == VERIFY_BUFFER)
 {
     // calculate hash
@@ -122,13 +123,17 @@ if(verify_buffer_index[player_id] == VERIFY_BUFFER)
 
     verify_buffer_index[player_id] = 0;
 }
+#endif
 verify_buffer[player_id][verify_buffer_index[player_id]] = elements_to_compare;
 verify_buffer_index[player_id] +=1;
 }
 
-void compare_view(int player_id)
+void compare_views()
 {
-
+    DATATYPE val_to_send[num_players-1];
+    DATATYPE val_recieved[num_players-1];
+    for(int player_id = 0; player_id < num_players-1; player_id++)
+    {
     if(elements_to_compare[player_id] > 0)
     {
         //exchange 1 sha256 hash. Do to DATATYPE constraints it may need to be split up to multiple chunks
@@ -140,27 +145,44 @@ void compare_view(int player_id)
         #endif
         for(int i = 0; i < hash_chunks_to_send; i++)
         {
-        #if DATTYPE < 64
-        send_to_live(player_id, *((DATATYPE*) ((uint8_t*) hash_val[player_id])+index_slice));
-        index_slice += sizeof(DATATYPE); //hash is stored in 4 byte chunks -> need smaller slices for small DATATYPE
-        #else
-        send_to_live(player_id, *((DATATYPE*) hash_val[player_id]+index_slice)); //check: could this lead to memory problem with AVX512? -> align 
-        index_slice += sizeof(DATATYPE)/4; //hash is stored in 4 byte chunks -> move up index by multiplier
-        #endif
+            #if DATTYPE < 64
+            val_to_send[player_id] = *((DATATYPE*) ((uint8_t*) hash_val[player_id])+index_slice);
+            index_slice += sizeof(DATATYPE); //hash is stored in 4 byte chunks -> need smaller slices for small DATATYPE
+            #else
+            val_to_send[player_id] = *((DATATYPE*) hash_val[player_id]+index_slice); //check: could this lead to memory problem with AVX512? -> align 
+            index_slice += sizeof(DATATYPE)/4; //hash is stored in 4 byte chunks -> move up index by multiplier
+            #endif
+            send_to_live(player_id, val_to_send[player_id]);
+        }           
+        communicate_live();
+    }
+    }
+             for(int player_id = 0; player_id < num_players-1; player_id++)
+    {
 
+    if(elements_to_compare[player_id] > 0)
+    {
 
-        receive_from_live(player_id);
+            val_recieved[player_id] = receive_from_live(player_id);
+
+            for(uint j = 0; j < (uint) sizeof(DATATYPE); j++)
+            {
+                if(*(((uint8_t*) &(val_recieved[player_id])) + j) != *(((uint8_t*) &(val_to_send[player_id])) + j))
+                {
+                    printf("Compareview of Player (relative) %i and Player %i failed! \n", player_id, PARTY);
+                    /* exit(0); */
+                }
+                else
+                    printf("Compareview of Player (relative) %i and Player %i sucessfull! \n", player_id, PARTY);
+                
+            }
         }
     }
 }
+    
 
-void compare_views()
-{
-    for(int i = 0; i < num_players-1; i++)
-        compare_view(i);
-    communicate_();
 
-}
+
 
 #endif
 

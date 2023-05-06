@@ -11,6 +11,7 @@
 
 #include "../utils/randomizer.h"
 //#include "sharemind_base.hpp"
+#include "init_protocol_base.hpp"
 #include "oec-mal_base.hpp"
 #include "live_protocol_base.hpp"
 #define PRE_SHARE OEC_MAL_Share
@@ -46,7 +47,10 @@ void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
 DATATYPE cr = XOR(getRandomVal(P013),getRandomVal(P023));
 DATATYPE r124 = getRandomVal(P013);
 DATATYPE o1 = XOR( AND(a.r,b.r), r124);
-
+#if MAL == 1
+/* store_compare_view(P3, o1); */
+store_compare_view(P0,SET_ALL_ONE());
+#endif
 #if PRE == 1
 pre_send_to_live(P2, o1);
 #else

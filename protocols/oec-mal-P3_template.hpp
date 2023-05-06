@@ -11,6 +11,7 @@
 
 #include "../utils/randomizer.h"
 //#include "sharemind_base.hpp"
+#include "init_protocol_base.hpp"
 #include "oec-mal_base.hpp"
 #include "live_protocol_base.hpp"
 #define PRE_SHARE OECL_Share
@@ -52,6 +53,11 @@ DATATYPE r124 = getRandomVal(P013); // used for verification
 DATATYPE r234 = getRandomVal(P2); // Probably sufficient to only generate with P2(-> P3 in paper)
 DATATYPE o4 = XOR( XOR( AND(a.r1,b.r1) ,AND(a.r2,b.r2)),r234);
 
+DATATYPE o1 = XOR( AND(a.r0,b.r0), r124);
+#if MAL == 1
+/* store_compare_view(P0, o1); */
+store_compare_view(P0,SET_ALL_ONE());
+#endif
 #if PRE == 1
 pre_send_to_live(P0, o4);
 #else
