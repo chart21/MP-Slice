@@ -1,5 +1,15 @@
 #pragma once
 #include "../networking/buffers.h"
+#include <cstdint>
+
+#if MAL == 1
+#ifdef __SHA__
+#include "../arch/SHA_256_x86.h"
+#else 
+#include "../arch/SHA_256.h"
+#endif
+#endif
+
 
 void send_live()
 {
@@ -97,3 +107,60 @@ DATATYPE get_input_live()
     share_buffer[num_players-1] +=1;
     return player_input[share_buffer[num_players-1] -1];
 }
+
+#if MAL == 1
+void store_compare_view(int player_id, DATATYPE elements_to_compare)
+{
+if(verify_buffer_index[player_id] == VERIFY_BUFFER)
+{
+    // calculate hash
+    #ifdef __SHA__
+    sha256_process_x86(hash_val[player_id], (uint8_t*) verify_buffer[player_id],sizeof(DATATYPE)*VERIFY_BUFFER);
+    #else
+    sha256_process(hash_val[player_id], (uint8_t*) verify_buffer[player_id],sizeof(DATATYPE)*VERIFY_BUFFER);
+    #endif
+
+    verify_buffer_index[player_id] = 0;
+}
+verify_buffer[player_id][verify_buffer_index[player_id]] = elements_to_compare;
+verify_buffer_index[player_id] +=1;
+}
+
+void compare_view(int player_id)
+{
+
+    if(elements_to_compare[player_id] > 0)
+    {
+        //exchange 1 sha256 hash. Do to DATATYPE constraints it may need to be split up to multiple chunks
+        int index_slice = 0;
+        #if DATTYPE >= 256
+        int hash_chunks_to_send = 1;
+        #else
+        int hash_chunks_to_send = 32/sizeof(DATATYPE);
+        #endif
+        for(int i = 0; i < hash_chunks_to_send; i++)
+        {
+        #if DATTYPE < 64
+        send_to_live(player_id, *((DATATYPE*) ((uint8_t*) hash_val[player_id])+index_slice));
+        index_slice += sizeof(DATATYPE); //hash is stored in 4 byte chunks -> need smaller slices for small DATATYPE
+        #else
+        send_to_live(player_id, *((DATATYPE*) hash_val[player_id]+index_slice)); //check: could this lead to memory problem with AVX512? -> align 
+        index_slice += sizeof(DATATYPE)/4; //hash is stored in 4 byte chunks -> move up index by multiplier
+        #endif
+
+
+        receive_from_live(player_id);
+        }
+    }
+}
+
+void compare_views()
+{
+    for(int i = 0; i < num_players-1; i++)
+        compare_view(i);
+    communicate_();
+
+}
+
+#endif
+

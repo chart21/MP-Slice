@@ -1,5 +1,6 @@
 #pragma once
 #include "../networking/buffers.h"
+
 void send_()
 {
 for (int t = 0; t < num_players-1; t++)
@@ -70,6 +71,43 @@ void communicate_()
     receive_();
 }
 
+#if MAL == 1
+
+void store_compare_view(int player_id)
+{
+elements_to_compare[player_id]++;
+}
+
+void compare_view(int player_id)
+{
+
+    if(elements_to_compare[player_id] > 0)
+    {
+        //exchange 1 sha256 hash. Do to DATATYPE constraints it may need to be split up to multiple chunks
+        #if DATTYPE >= 256
+        int hash_chunks_to_send = 1;
+        #else
+        int hash_chunks_to_send = 256/DATTYPE;
+        #endif
+        for(int i = 0; i < hash_chunks_to_send; i++)
+        {
+        send_to_(player_id);
+        receive_from_(player_id);
+        }
+    }
+}
+
+void compare_views()
+{
+    for(int i = 0; i < num_players-1; i++)
+        compare_view(i);
+    communicate_();
+
+}
+
+#endif
+
+
 void finalize_(std::string* ips)
 {
 for(int t=0;t<(num_players-1);t++) {
@@ -114,6 +152,9 @@ receiving_args[t].elements_to_rec[0] = 0;
 
 void finalize_(std::string* ips, receiver_args* ra, sender_args* sa)
 {
+#if MAL == 1
+    compare_views();
+#endif
 for(int t=0;t<(num_players-1);t++) {
     int offset = 0;
     if(t >= player_id)

@@ -159,6 +159,7 @@
             #include "ttp_template.hpp"
         #endif
 #elif PROTOCOL == OEC_mal
+    /* #define MAL 1 */
     #if PRE == 1
         #if PARTY == 0
             #define PROTOCOL_PRE OEC_MAL0

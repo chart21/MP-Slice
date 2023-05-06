@@ -1,9 +1,12 @@
 #pragma once
-#define PROTOCOL 2
+#define PROTOCOL 1
 #if PROTOCOL < 7
 #define num_players 3
 #else
 #define num_players 4
+#endif
+#if PROTOCOL > 8
+#define MAL 1
 #endif
 
 //0: search 1: XORNOTAND, 2: AND 1 comm round 3: AND 1000 comm rounds  4: debug
@@ -74,5 +77,6 @@ int base_port = BASE_PORT; // temporary solution
 // How many reciving messages should be buffered until the main thread is signaled that data is ready? 0 means that all data of a communication round needs to be ready before the main thread is signaled.
 #define RECV_BUFFER 0
 
+#define VERIFY_BUFFER 0
 // Print additional info?
 #define PRINT 0

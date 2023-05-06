@@ -10,6 +10,7 @@
 #include <new>
 #include <memory>
 #include "arch/DATATYPE.h"
+#include "protocols/live_protocol_base.hpp"
 /* #include "circuits/searchBitSlice.c" */
 
 #if FUNCTION_IDENTIFIER == 0
@@ -345,6 +346,11 @@ int ret;
     auto p_live = PROTOCOL_LIVE(OPT_SHARE);
     auto result = new RESULTTYPE;
     FUNCTION<PROTOCOL_LIVE,SHARE>(p_live,result);
+    #if MAL==1
+        compare_views();
+    #endif
+    
+    
     
     for(int t=0;t<(num_players-1);t++) {
         pthread_join(receiving_threads[t],NULL);
