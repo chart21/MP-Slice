@@ -162,7 +162,7 @@ for(int t=0;t<(num_players-1);t++) { // ???
     FUNCTION<PROTOCOL_INIT,INIT_SHARE>(p_init,garbage);
     #if MAL==1
         compare_views_init();
-        p_init.communicate();
+        /* p_init.communicate(); */
     #endif
 
     #if PRE == 1
@@ -371,7 +371,7 @@ int ret;
     FUNCTION<PROTOCOL_LIVE,SHARE>(p_live,result);
     #if MAL==1
         compare_views();
-        p_live.communicate();
+        /* p_live.communicate(); */
     #endif
     
     

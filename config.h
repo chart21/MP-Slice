@@ -1,5 +1,5 @@
 #pragma once
-#define PROTOCOL 10
+#define PROTOCOL 1
 #if PROTOCOL < 7
 #define num_players 3
 #else
@@ -45,7 +45,7 @@
 #define INPUT 'r'
 
 // Number of inputs (depends on the problem)
-#define NUM_INPUTS 1000
+#define NUM_INPUTS 100000
 
 // Bitlength of integers
 #define BITLENGTH 64
@@ -79,4 +79,4 @@ int base_port = BASE_PORT; // temporary solution
 
 #define VERIFY_BUFFER 0
 // Print additional info?
-#define PRINT 1
+#define PRINT 0

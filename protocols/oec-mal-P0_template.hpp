@@ -49,7 +49,7 @@ DATATYPE r124 = getRandomVal(P013);
 DATATYPE o1 = XOR( AND(a.r,b.r), r124);
 #if MAL == 1
 /* store_compare_view(P3, o1); */
-store_compare_view(P0,SET_ALL_ONE());
+store_compare_view(P3,SET_ALL_ONE());
 #endif
 #if PRE == 1
 pre_send_to_live(P2, o1);

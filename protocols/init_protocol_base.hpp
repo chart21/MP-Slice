@@ -78,17 +78,12 @@ void store_compare_view_init(int player_id)
 elements_to_compare[player_id]+=1;
 }
 
-void compare_view_init(int player_id)
-{
-
-}
-
 void compare_views_init()
 {
                 #if DATTYPE >= 256
                 int hash_chunks_to_send = 1;
                 #else
-                int hash_chunks_to_send = 32/sizeof(DATATYPE);
+        int hash_chunks_to_send = (sizeof(uint32_t) * 8) / sizeof(DATATYPE);
                 #endif
     for(int player_id = 0; player_id < num_players-1; player_id++)
     {
