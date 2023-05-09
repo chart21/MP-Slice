@@ -40,7 +40,7 @@ DATATYPE Xor(DATATYPE a, DATATYPE b)
 void prepare_and(DATATYPE a, DATATYPE b, DATATYPE &c)
 {
 #if MAL == 1
-store_compare_view_init(P0);
+store_compare_view_init(P2);
 #endif
 #if PRE == 1
     pre_send_to_(P0);

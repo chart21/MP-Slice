@@ -50,13 +50,13 @@ DATATYPE r1 = getRandomVal(P023);
 DATATYPE r2 = getRandomVal(P123);
 
 DATATYPE r124 = getRandomVal(P013); // used for verification
-DATATYPE r234 = getRandomVal(P2); // Probably sufficient to only generate with P2(-> P3 in paper)
-DATATYPE o4 = XOR( XOR( AND(a.r1,b.r1) ,AND(a.r2,b.r2)),r234);
-
+DATATYPE r234 = getRandomVal(P123); // Probably sufficient to only generate with P2(-> P3 in paper) -> no because of verification
 DATATYPE o1 = XOR( AND(a.r0,b.r0), r124);
+DATATYPE o4 = XOR( XOR( AND(a.r1,b.r1) ,AND(a.r2,b.r2)),r234);
+/* o4 = XOR(o4,o1); //computationally easier to let P3 do it here instead of P0 later */
 #if MAL == 1
-/* store_compare_view(P0, o1); */
-store_compare_view(P0,SET_ALL_ONE());
+store_compare_view(P2, o1);
+/* store_compare_view(P0,SET_ALL_ONE()); */
 #endif
 #if PRE == 1
 pre_send_to_live(P0, o4);

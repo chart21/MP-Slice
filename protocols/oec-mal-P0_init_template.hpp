@@ -39,9 +39,6 @@ DATATYPE Xor(DATATYPE a, DATATYPE b)
 //prepare AND -> send real value a&b to other P
 void prepare_and(DATATYPE a, DATATYPE b, DATATYPE &c)
 {
-#if MAL == 1
-store_compare_view_init(P3);
-#endif
 #if PRE == 1
     pre_send_to_(P2);
 #else
@@ -58,6 +55,10 @@ void complete_and(DATATYPE &c)
 receive_from_(P3);
 #endif
 receive_from_(P2);
+
+store_compare_view_init(P1);
+store_compare_view_init(P1);
+store_compare_view_init(P2); //TODO: implement store_compareview P123 for more efficient verification
 }
 
 void prepare_reveal_to_all(DATATYPE a)

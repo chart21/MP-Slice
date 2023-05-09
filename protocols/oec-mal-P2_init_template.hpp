@@ -40,6 +40,7 @@ DATATYPE Xor(DATATYPE a, DATATYPE b)
 //prepare AND -> send real value a&b to other P
 void prepare_and(DATATYPE a, DATATYPE b, DATATYPE &c)
 {
+store_compare_view_init(P3);
 #if PRE == 1
 pre_receive_from_(P0);
 #else
@@ -56,6 +57,7 @@ send_to_(P0);
 void complete_and(DATATYPE &c)
 {
     receive_from_(P1);
+    store_compare_view_init(P0);
 }
 
 void prepare_reveal_to_all(DATATYPE a)

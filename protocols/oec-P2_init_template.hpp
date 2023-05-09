@@ -9,6 +9,7 @@
 // XOR_Share of each player is ~a
 
 #include "../utils/randomizer.h"
+#include "live_protocol_base.hpp"
 #include "sharemind_base.hpp"
 #include "init_protocol_base.hpp"
 class OEC2_init

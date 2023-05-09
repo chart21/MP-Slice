@@ -42,18 +42,27 @@ void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
 {
 DATATYPE cr = XOR(getRandomVal(P023),getRandomVal(P123));
 /* DATATYPE r234 = getRandomVal(P123); */
-DATATYPE r234 = getRandomVal(P3); //Probably sufficient to only generate with P3
+DATATYPE r234 = getRandomVal(P123); //Probably sufficient to only generate with P3 -> Probably not because of verification
 /* c.r = getRandomVal(P3); */
 DATATYPE o1 = receive_from_live(P0);
-send_to_live(P1, XOR( XOR( XOR(o1,cr) , AND(a.r,b.r) ) , AND(a.v,b.v))); 
-send_to_live(P0, XOR( XOR(r234,cr) , AND( XOR(a.v,a.r) ,XOR(b.v,b.r)))); 
+store_compare_view(P3,o1);
+DATATYPE m3 = XOR( XOR( XOR(o1,cr) , AND(a.r,b.r) ) , AND(a.v,b.v));
+send_to_live(P1, m3); 
+DATATYPE m3_prime = XOR( XOR(r234,cr) , AND( XOR(a.v,a.r) ,XOR(b.v,b.r)));
+send_to_live(P0, m3_prime);
 c.v = XOR ( o1, XOR( AND(a.v,b.r) , AND(b.v,a.r)));
 c.r = cr;
+c.m = XOR(m3,r234);
 }
 
 void complete_and(OEC_MAL_Share &c)
 {
-c.v = XOR(c.v, receive_from_live(P1)); 
+DATATYPE m2 = receive_from_live(P1);
+c.v = XOR(c.v, m2);
+
+c.m = XOR(c.m, m2);
+store_compare_view(P0, c.m);
+/* store_compare_view(P0, c.v); */
 }
 
 void prepare_reveal_to_all(OEC_MAL_Share a)

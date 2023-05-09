@@ -8,6 +8,7 @@
 struct OEC_MAL_Share{
     DATATYPE v;
     DATATYPE r;
+    DATATYPE m; // used for saving messages for verification
 OEC_MAL_Share(){}
 OEC_MAL_Share(DATATYPE value, DATATYPE rando)
 {
