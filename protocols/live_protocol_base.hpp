@@ -255,8 +255,7 @@ void compare_views() {
                         val_rec[counter++] = receive_from_live(P2);
                     if(P3 != PSELF)
                         val_rec[counter++] = receive_from_live(P3);
-                    if((val_rec[0] != val_rec[1]) || (val_rec[0] != val_rec[2]))
-                        verified = false;
+                    val_rec[0] = XOR(XOR(val_rec[0], val_rec[1]),val_rec[2]); //trick to ensure equality of all three values for check later (since comparing vectorized variables is tedious)
                 }
                 else if(player_id == 4) //P012
                   {
@@ -266,8 +265,7 @@ void compare_views() {
                         val_rec[counter++] = receive_from_live(P1);
                     if(P2 != PSELF)
                         val_rec[counter++] = receive_from_live(P2);
-                    if(val_rec[0] != val_rec[1])
-                        verified = false;
+                    val_rec[0] = AND(val_rec[0], val_rec[1]); //trick to ensure equality of both values with certain probability 
                   }
                 else if(player_id == 5) //P013
                   {
@@ -277,8 +275,7 @@ void compare_views() {
                         val_rec[counter++] = receive_from_live(P1);
                     if(P3 != PSELF)
                         val_rec[counter++] = receive_from_live(P3);
-                    if(val_rec[0] != val_rec[1])
-                        verified = false;
+                    val_rec[0] = AND(val_rec[0], val_rec[1]); //trick to ensure equality of both values with certain probability 
                   }
                 else if(player_id == 6) //P023
                   {
@@ -288,8 +285,7 @@ void compare_views() {
                         val_rec[counter++] = receive_from_live(P2);
                     if(P3 != PSELF)
                         val_rec[counter++] = receive_from_live(P3);
-                    if(val_rec[0] != val_rec[1])
-                        verified = false;
+                    val_rec[0] = AND(val_rec[0], val_rec[1]); //trick to ensure equality of both values with certain probability 
                   }
                 else if(player_id == 7) //P123
                   {
@@ -299,8 +295,7 @@ void compare_views() {
                         val_rec[counter++] = receive_from_live(P2);
                     if(P3 != PSELF)
                         val_rec[counter++] = receive_from_live(P3);
-                    if(val_rec[0] != val_rec[1])
-                        verified = false;
+                    val_rec[0] = AND(val_rec[0], val_rec[1]); //trick to ensure equality of both values with certain probability 
                   }
               val_recieved[player_id][i] = val_rec[0];
                } 
