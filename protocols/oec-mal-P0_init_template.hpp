@@ -49,6 +49,7 @@ send_to_(P2);
 // NAND both real Values to receive sharing of ~ (a&b) 
 void complete_and(DATATYPE &c)
 {
+#if PROTOCOL == 10
 #if PRE == 1
     pre_receive_from_(P3);
 #else
@@ -58,7 +59,14 @@ receive_from_(P2);
 
 store_compare_view_init(P1);
 /* store_compare_view_init(P1); */
-store_compare_view_init(P012); 
+store_compare_view_init(P012);
+# elif PROTOCOL == 11
+receive_from_(P2);
+receive_from_(P2); // receive ab from P2
+store_compare_view_init(P1);
+store_compare_view_init(P1);
+store_compare_view_init(P3);
+#endif
 }
 
 void prepare_reveal_to_all(DATATYPE a)

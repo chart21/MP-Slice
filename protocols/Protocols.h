@@ -10,6 +10,7 @@
 #define PC4_mal 8
 #define FantasticFour 9
 #define OEC_mal 10
+#define OEC_mal_het 11
 #if PROTOCOL == rep3 
     #define PROTOCOL_LIVE Replicated
     #define PROTOCOL_INIT Replicated_init
@@ -158,7 +159,7 @@
         #if LIVE == 1
             #include "ttp_template.hpp"
         #endif
-#elif PROTOCOL == OEC_mal
+#elif PROTOCOL == OEC_mal || PROTOCOL == OEC_mal_het
     /* #define MAL 1 */
     #if PRE == 1
         #if PARTY == 0

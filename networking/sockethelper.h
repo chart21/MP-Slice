@@ -56,6 +56,10 @@ typedef struct sender_arguments {
   int send_rounds;
   std::vector<int> elements_to_send;
   int total_rounds; //depricated
+    #if PRE == 1
+  uint64_t fetch_counter; // use to fetch sent in pre-processing round
+    #endif
+
   //char *data;
 } sender_args;
 

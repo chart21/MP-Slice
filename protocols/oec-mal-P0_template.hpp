@@ -48,10 +48,10 @@ DATATYPE cr = XOR(getRandomVal(P013),getRandomVal(P023));
 DATATYPE r124 = getRandomVal(P013);
 DATATYPE x1y1 = AND(a.r, b.r);
 DATATYPE o1 = XOR( x1y1, r124);
-#if MAL == 1
+/* #if MAL == 1 */
 /* store_compare_view(P3, o1); */
 /* store_compare_view(P3,SET_ALL_ONE()); */
-#endif
+/* #endif */
 #if PRE == 1
 pre_send_to_live(P2, o1);
 #else
@@ -68,22 +68,28 @@ c.m = XOR(x1y1, XOR( XOR(m3_flat, m2_flat), cr));
 
 void complete_and(OEC_MAL_Share &c)
 {
+#if PROTOCOL == 10
 #if PRE == 1
 DATATYPE o_4 = pre_receive_from_live(P3);
 #else
 DATATYPE o_4 = receive_from_live(P3);
 #endif
+#elif PROTOCOL == 11
+DATATYPE m_2XORm_3 = receive_from_live(P2);
+c.v = XOR(receive_from_live(P2),c.r); // receive ab + r_2 from P2 (P3 in paper), need to convert to ab + r_3
+store_compare_view(P1, c.v); // Verify if P_2 sent correct message of ab
+store_compare_view(P1, m_2XORm_3); // Verify if P_2 sent correct message m_2 XOR m_3
+store_compare_view(P3, XOR(m_2XORm_3,c.m)); // x2y2 + x3y3 + r234 should remain
+#endif
+
+#if PROTOCOL == 10
 DATATYPE m3_prime = receive_from_live(P2);
-/* store_compare_view(P1, m3_prime); */
 c.v = XOR(c.v, XOR( m3_prime, o_4));
 
 c.m = XOR(c.m, o_4);
-store_compare_view(P012, c.m); //TODO: implement store_compare_view(P012)
-/* store_compare_view(P2, c.m); */
-
+store_compare_view(P012, c.m);
 store_compare_view(P1, c.v); // to verify m_3 prime
-/* store_compare_view(P2, XOR(c.v, c.r)); */
-
+#endif
 }
 
 

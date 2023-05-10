@@ -110,6 +110,11 @@ share_buffer_pre[player_id] +=1;
 return receiving_args_pre[player_id].received_elements[0][share_buffer_pre[player_id] - 1];
 /* return receiving_args_pre[player_id].received_elements[receiving_args_pre[player_id].rec_rounds][share_buffer[player_id] -1]; */
 }
+
+DATATYPE fetch_from_pre(int player_id)
+{
+    return sending_args_pre[player_id].sent_elements[0][sending_args_pre[player_id].fetch_counter++];
+}
 #endif
 
 DATATYPE get_input_live()

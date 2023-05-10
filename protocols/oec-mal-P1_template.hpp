@@ -64,8 +64,12 @@ DATATYPE m_3 = receive_from_live(P2);
 c.v = XOR(c.v, m_3);
 
 c.m = XOR(c.m,m_3);
-store_compare_view(P012,c.m);
 
+#if PROTOCOL == 10
+store_compare_view(P012,c.m);
+#elif PROTOCOL == 11
+store_compare_view(P0,c.m);
+#endif
 store_compare_view(P0,c.v);
 }
 

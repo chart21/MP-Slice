@@ -85,7 +85,7 @@ delete[] rec_buffer;
 #endif
     client.Receive_all( ((char*) ((receiver_args*) threadParameters)->received_elements[rounds]), &elements_to_rec);
     #if PRINT == 1
-    printf("received %i bytes from player %i in round %i out of %i \n", elements_to_rec, ((receiver_args*) threadParameters)->connected_to, rounds + 1, ((receiver_args*) threadParameters)->rec_rounds);
+    printf("Player %i: Received %i bytes from player %i in round %i out of %i \n", PARTY, elements_to_rec, ((receiver_args*) threadParameters)->connected_to, rounds + 1, ((receiver_args*) threadParameters)->rec_rounds);
 #endif
 }
 //If all sockets received, signal main_thread

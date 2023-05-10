@@ -48,7 +48,9 @@ receive_from_(P0);
 #endif
 
 send_to_(P1);
+#if PROTOCOL == 10
 send_to_(P0);
+#endif
 
 //return u[player_id] * v[player_id];
 }
@@ -57,7 +59,14 @@ send_to_(P0);
 void complete_and(DATATYPE &c)
 {
     receive_from_(P1);
-    store_compare_view_init(P012);
+#if PROTOCOL == 11
+send_to_(P0); // let P0 obtain ab
+send_to_(P0); // let P0 verify m_2 XOR m_3
+#endif
+
+#if PROTOCOL == 10
+store_compare_view_init(P012);
+#endif
 }
 
 void prepare_reveal_to_all(DATATYPE a)

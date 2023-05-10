@@ -47,7 +47,7 @@ void *sender(void* threadParameters)
     server.Listen(2);
     Socket client = server.Accept();
     #if PRINT == 1
-    printf("Connected to Player %i\n", ((sender_args*) threadParameters)->connected_to);
+    printf("Player %i: Connected to Player %i\n", PARTY, ((sender_args*) threadParameters)->connected_to);
     #endif
     server_signal_connection_established(((sender_args*) threadParameters)->player_count);
     // Send data to the client
@@ -75,7 +75,7 @@ pack(((sender_args*) threadParameters)->sent_elements[rounds],send_buf,((sender_
 
 client.Send_all( ((char*) ((sender_args*) threadParameters)->sent_elements[rounds]), &elements_to_send);
 #if PRINT == 1
-printf("sent %i bytes to player %i in round %i out of %i \n", elements_to_send , ((sender_args*) threadParameters)->connected_to, rounds + 1, ((sender_args*) threadParameters)->send_rounds);
+printf("Player %i :Sent %i bytes to player %i in round %i out of %i \n", PARTY, elements_to_send , ((sender_args*) threadParameters)->connected_to, rounds + 1, ((sender_args*) threadParameters)->send_rounds);
 #endif
             }
                 //Delete sent data
