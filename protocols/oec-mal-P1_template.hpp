@@ -78,8 +78,9 @@ return;
 
 DATATYPE complete_Reveal(OEC_MAL_Share a)
 {
-return XOR(a.v, receive_from_live(P3));
-
+DATATYPE result = XOR(a.v, receive_from_live(P3));
+store_compare_view(P0123, result);
+return result;
 }
 
 
@@ -143,6 +144,12 @@ if(id != PSELF)
     {
         a[i].v = receive_from_live(id);
     }
+        if(id != P0)
+            for(int i = 0; i < l; i++)
+                store_compare_view(P0,a[i].v);
+        if(id != P2)
+            for(int i = 0; i < l; i++)
+                store_compare_view(P2,XOR(a[i].v,a[i].r));
 
 }
 }

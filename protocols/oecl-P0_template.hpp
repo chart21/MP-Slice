@@ -59,6 +59,7 @@ pre_send_to_live(P2, XOR(maskP1,  XOR( XOR( AND(a.p1,b.p2) , AND(a.p2,b.p1) ) , 
 #else
 send_to_live(P2, XOR(maskP1,  XOR( XOR( AND(a.p1,b.p2) , AND(a.p2,b.p1) ) ,  AND(a.p2,b.p2) ) )); 
 #endif
+// for arithmetic circuikts this will be more efficient to reduce mult from 3 to 2: a.p1 b.p1 + (a.p1 + a.p2) (b.p1 + b.p2)
 c.p1 = maskP2;
 c.p2 = maskP1_2;
 }

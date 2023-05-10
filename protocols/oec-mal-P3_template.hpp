@@ -92,7 +92,9 @@ void prepare_reveal_to_all(Dealer_Share a)
 
 DATATYPE complete_Reveal(Dealer_Share a)
 {
-return XOR(a.r2, receive_from_live(P0));
+DATATYPE result XOR(a.r2, receive_from_live(P0));
+store_compare_view(P0123, result);
+return result;
 }
 
 

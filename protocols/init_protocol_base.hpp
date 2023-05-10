@@ -92,7 +92,19 @@ void compare_views_init()
                 //exchange 1 sha256 hash. Do to DATATYPE constraints it may need to be split up to multiple chunks
                 for(int i = 0; i < hash_chunks_to_send; i++)
                 {
-                            if(player_id == 4) //P012
+                            if(player_id == 3) //P0123
+                            {
+                                if(P0 != PSELF)
+                                    send_to_(P0);
+                                if(P1 != PSELF)
+                                    send_to_(P1);
+                                if(P2 != PSELF)
+                                    send_to_(P2);
+                                if(P3 != PSELF)
+                                    send_to_(P3);
+
+                            }
+                            else if(player_id == 4) //P012
                             {
                                 if(P0 != PSELF)
                                     send_to_(P0);
@@ -137,14 +149,26 @@ void compare_views_init()
         
     communicate_(); //TODO: check compatability with Preprocessing
 
-        for(int player_id = 0; player_id < num_players-1; player_id++)
+        for(int player_id = 0; player_id < num_players*multiplier; player_id++)
     {
             if(elements_to_compare[player_id] > 0)
             {
                 //exchange 1 sha256 hash. Do to DATATYPE constraints it may need to be split up to multiple chunks
                 for(int i = 0; i < hash_chunks_to_send; i++)
                 {
-                            if(player_id == 4) //P012
+                            if(player_id == 3) //P0123
+                            {
+                                if(P0 != PSELF)
+                                    receive_from_(P0);
+                                if(P1 != PSELF)
+                                    receive_from_(P1);
+                                if(P2 != PSELF)
+                                    receive_from_(P2);
+                                if(P3 != PSELF)
+                                    receive_from_(P3);
+
+                            }
+                            else if(player_id == 4) //P012
                             {
                                 if(P0 != PSELF)
                                     receive_from_(P0);

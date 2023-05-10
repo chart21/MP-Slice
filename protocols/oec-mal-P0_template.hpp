@@ -98,10 +98,12 @@ void prepare_reveal_to_all(OEC_MAL_Share a)
 DATATYPE complete_Reveal(OEC_MAL_Share a)
 {
 #if PRE == 1
-return XOR(a.v, pre_receive_from_live(P3));
+DATATYPE result = XOR(a.v, pre_receive_from_live(P3));
 #else
-return XOR(a.v, receive_from_live(P3));
+DATATYPE result = XOR(a.v, receive_from_live(P3));
 #endif
+store_compare_view(P0123, result);
+return result;
 }
 
 
@@ -160,6 +162,14 @@ if(id != PSELF)
     {
     a[i].v = receive_from_live(id);
     }
+
+        if(id != P1)
+            for(int i = 0; i < l; i++)
+                store_compare_view(P1,a[i].v);
+        if(id != P2)
+            for(int i = 0; i < l; i++)
+                store_compare_view(P2,XOR(a[i].v,a[i].r));
+
     
 }
 }

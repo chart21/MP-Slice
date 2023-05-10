@@ -151,9 +151,9 @@ void compare_views() {
     #else
         int hash_chunks_to_send = (sizeof(uint32_t) * 8) / sizeof(DATATYPE);
 #endif
-    DATATYPE val_to_send[num_players - 1][hash_chunks_to_send];
-    DATATYPE val_recieved[num_players - 1][hash_chunks_to_send];
-    for (int player_id = 0; player_id < num_players - 1; player_id++) {
+    DATATYPE val_to_send[num_players*multiplier][hash_chunks_to_send];
+    DATATYPE val_recieved[num_players*multiplier][hash_chunks_to_send];
+    for (int player_id = 0; player_id < num_players*multiplier; player_id++) {
         if (elements_to_compare[player_id] > 0) {
             perform_compare_view(player_id);
             // exchange 1 sha256 hash. Do to DATATYPE constraints it may need to be
@@ -178,8 +178,19 @@ void compare_views() {
                                         // up index by multiplier
 #endif
               val_to_send[player_id][i] = *((DATATYPE *)addr_to_send);
-              
-              if(player_id == 4) //P012
+              if (player_id == 3) //P0123
+              {
+                if(P0 != PSELF)
+                    send_to_live(P0, val_to_send[player_id][i]);
+                if(P1 != PSELF)
+                    send_to_live(P1, val_to_send[player_id][i]);
+                if(P2 != PSELF)
+                    send_to_live(P2, val_to_send[player_id][i]);
+                if(P3 != PSELF)
+                    send_to_live(P3, val_to_send[player_id][i]);
+
+              }
+              else if(player_id == 4) //P012
               {
                 if(P0 != PSELF)
                     send_to_live(P0, val_to_send[player_id][i]);
@@ -224,17 +235,30 @@ void compare_views() {
         }
     }
     communicate_live();
-    for (int player_id = 0; player_id < num_players - 1; player_id++) {
+    for (int player_id = 0; player_id < num_players*multiplier; player_id++) {
 
         if (elements_to_compare[player_id] > 0) {
             bool verified = true;
             for (int i = 0; i < hash_chunks_to_send; i++)
             {
-                DATATYPE val_rec[2];
+                DATATYPE val_rec[3];
                 int counter = 0;
-                if(player_id > num_players)
+                if(player_id > num_players - 2)
                 {
-                if(player_id == 4) //P012
+                if (player_id == 3) //P0123
+                {
+                    if(P0 != PSELF)
+                        val_rec[counter++] = receive_from_live(P0);
+                    if(P1 != PSELF)
+                        val_rec[counter++] = receive_from_live(P1);
+                    if(P2 != PSELF)
+                        val_rec[counter++] = receive_from_live(P2);
+                    if(P3 != PSELF)
+                        val_rec[counter++] = receive_from_live(P3);
+                    if((val_rec[0] != val_rec[1]) || (val_rec[0] != val_rec[2]))
+                        verified = false;
+                }
+                else if(player_id == 4) //P012
                   {
                     if(P0 != PSELF)
                         val_rec[counter++] = receive_from_live(P0);
@@ -291,14 +315,15 @@ void compare_views() {
         }
     }
             if (!verified) {
-                            printf("Compareview of Player (relative) %i and Player %i "
+                            printf("Compareviews of Player %i "
                        "failed! \n",
-                       receiving_args[player_id].connected_to, PARTY);
+                       PARTY);
                 /* exit(0); */
-              } else
-                printf("Compareview of Player %i and Player %i (me) sucessfull! \n",
-                       receiving_args[player_id].connected_to, PARTY);
-            }
+              } 
+            /* else */
+                /* printf("Compareviews of Player %i sucessfull! \n", */
+                /*         PARTY); */
+        }
 
     }
 }

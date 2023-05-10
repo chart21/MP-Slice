@@ -58,7 +58,7 @@ receive_from_(P2);
 
 store_compare_view_init(P1);
 /* store_compare_view_init(P1); */
-store_compare_view_init(P012); //TODO: implement store_compareview P123 for more efficient verification
+store_compare_view_init(P012); 
 }
 
 void prepare_reveal_to_all(DATATYPE a)
@@ -75,6 +75,7 @@ DATATYPE complete_Reveal(DATATYPE a)
 #else
 receive_from_(P3);
 #endif
+    store_compare_view_init(P0123);
 return a;
 }
 
@@ -106,6 +107,13 @@ void complete_receive_from(DATATYPE a[], int id, int l)
     {
         for(int i = 0; i < l; i++)
             receive_from_(id);
+        if(id != P1)
+            for(int i = 0; i < l; i++)
+                store_compare_view_init(P1);
+        if(id != P2)
+            for(int i = 0; i < l; i++)
+                store_compare_view_init(P2);
+        
     }
 }
 

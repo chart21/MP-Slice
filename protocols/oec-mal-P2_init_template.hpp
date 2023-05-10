@@ -75,6 +75,7 @@ DATATYPE complete_Reveal(DATATYPE a)
 #else
     receive_from_(P3);
 #endif
+    store_compare_view_init(P0123);
 return a;
 }
 
@@ -101,11 +102,17 @@ if(id == PSELF)
 
 void complete_receive_from(DATATYPE a[], int id, int l)
 {
-if(id != PSELF)
-{
-for(int i = 0; i < l; i++)
-    receive_from_(id);
-}
+    if(id != PSELF)
+    {
+        for(int i = 0; i < l; i++)
+            receive_from_(id);
+        if(id != P0)
+            for(int i = 0; i < l; i++)
+                store_compare_view_init(P0);
+        if(id != P1)
+            for(int i = 0; i < l; i++)
+                store_compare_view_init(P1);
+    }
 }
 
 

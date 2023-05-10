@@ -72,6 +72,7 @@ void prepare_reveal_to_all(DATATYPE a)
 DATATYPE complete_Reveal(DATATYPE a)
 {
 receive_from_(P0);
+store_compare_view_init(P0123);
 return a;
 }
 
