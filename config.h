@@ -79,4 +79,4 @@ int base_port = BASE_PORT; // temporary solution
 
 #define VERIFY_BUFFER 0
 // Print additional info?
-#define PRINT 1
+#define PRINT 0

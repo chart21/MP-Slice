@@ -57,8 +57,8 @@ receive_from_(P3);
 receive_from_(P2);
 
 store_compare_view_init(P1);
-store_compare_view_init(P1);
-store_compare_view_init(P2); //TODO: implement store_compareview P123 for more efficient verification
+/* store_compare_view_init(P1); */
+store_compare_view_init(P012); //TODO: implement store_compareview P123 for more efficient verification
 }
 
 void prepare_reveal_to_all(DATATYPE a)

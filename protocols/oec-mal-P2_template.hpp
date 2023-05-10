@@ -61,7 +61,7 @@ DATATYPE m2 = receive_from_live(P1);
 c.v = XOR(c.v, m2);
 
 c.m = XOR(c.m, m2);
-store_compare_view(P0, c.m);
+store_compare_view(P012, c.m);
 /* store_compare_view(P0, c.v); */
 }
 

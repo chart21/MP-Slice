@@ -73,6 +73,8 @@ sending_args[player_id].sent_elements[sending_rounds][send_count[player_id]] = a
 send_count[player_id]+=1;
 }
 
+
+
 DATATYPE receive_from_live(int player_id)
 {
 #if RECV_BUFFER > 0
@@ -85,6 +87,14 @@ share_buffer[player_id] +=1;
 return receiving_args[player_id].received_elements[rounds-1][share_buffer[player_id] - 1];
 /* return receiving_args[player_id].received_elements[receiving_args[player_id].rec_rounds-1][share_buffer[player_id] -1]; */
 }
+
+void send_to_live(int player_id1, int player_id2, DATATYPE a)
+{
+    send_to_live(player_id1, a);
+    send_to_live(player_id2, a);
+}
+
+
 
 #if PRE == 1
 void pre_send_to_live(int player_id, DATATYPE a)
@@ -168,7 +178,48 @@ void compare_views() {
                                         // up index by multiplier
 #endif
               val_to_send[player_id][i] = *((DATATYPE *)addr_to_send);
-              send_to_live(player_id, val_to_send[player_id][i]);
+              
+              if(player_id == 4) //P012
+              {
+                if(P0 != PSELF)
+                    send_to_live(P0, val_to_send[player_id][i]);
+                if(P1 != PSELF)
+                    send_to_live(P1, val_to_send[player_id][i]);
+                if(P2 != PSELF)
+                    send_to_live(P2, val_to_send[player_id][i]);
+              }
+              else if(player_id == 5) //P013
+              {
+                if(P0 != PSELF)
+                    send_to_live(P0, val_to_send[player_id][i]);
+                if(P1 != PSELF)
+                    send_to_live(P1, val_to_send[player_id][i]);
+                if(P3 != PSELF)
+                    send_to_live(P3, val_to_send[player_id][i]);
+              }
+              else if(player_id == 6) //P023
+              {
+                if(P0 != PSELF)
+                    send_to_live(P0, val_to_send[player_id][i]);
+                if(P2 != PSELF)
+                    send_to_live(P2, val_to_send[player_id][i]);
+                if(P3 != PSELF)
+                    send_to_live(P3, val_to_send[player_id][i]);
+              }
+              else if(player_id == 7) //P123
+              {
+                if(P1 != PSELF)
+                    send_to_live(P1, val_to_send[player_id][i]);
+                if(P2 != PSELF)
+                    send_to_live(P2, val_to_send[player_id][i]);
+                if(P3 != PSELF)
+                    send_to_live(P3, val_to_send[player_id][i]);
+              }
+              else
+                send_to_live(player_id, val_to_send[player_id][i]);
+
+
+                
             }
         }
     }
@@ -178,8 +229,61 @@ void compare_views() {
         if (elements_to_compare[player_id] > 0) {
             bool verified = true;
             for (int i = 0; i < hash_chunks_to_send; i++)
-              val_recieved[player_id][i] = receive_from_live(player_id);
-
+            {
+                DATATYPE val_rec[2];
+                int counter = 0;
+                if(player_id > num_players)
+                {
+                if(player_id == 4) //P012
+                  {
+                    if(P0 != PSELF)
+                        val_rec[counter++] = receive_from_live(P0);
+                    if(P1 != PSELF)
+                        val_rec[counter++] = receive_from_live(P1);
+                    if(P2 != PSELF)
+                        val_rec[counter++] = receive_from_live(P2);
+                    if(val_rec[0] != val_rec[1])
+                        verified = false;
+                  }
+                else if(player_id == 5) //P013
+                  {
+                    if(P0 != PSELF)
+                        val_rec[counter++] = receive_from_live(P0);
+                    if(P1 != PSELF)
+                        val_rec[counter++] = receive_from_live(P1);
+                    if(P3 != PSELF)
+                        val_rec[counter++] = receive_from_live(P3);
+                    if(val_rec[0] != val_rec[1])
+                        verified = false;
+                  }
+                else if(player_id == 6) //P023
+                  {
+                    if(P0 != PSELF)
+                        val_rec[counter++] = receive_from_live(P0);
+                    if(P2 != PSELF)
+                        val_rec[counter++] = receive_from_live(P2);
+                    if(P3 != PSELF)
+                        val_rec[counter++] = receive_from_live(P3);
+                    if(val_rec[0] != val_rec[1])
+                        verified = false;
+                  }
+                else if(player_id == 7) //P123
+                  {
+                    if(P1 != PSELF)
+                        val_rec[counter++] = receive_from_live(P1);
+                    if(P2 != PSELF)
+                        val_rec[counter++] = receive_from_live(P2);
+                    if(P3 != PSELF)
+                        val_rec[counter++] = receive_from_live(P3);
+                    if(val_rec[0] != val_rec[1])
+                        verified = false;
+                  }
+              val_recieved[player_id][i] = val_rec[0];
+               } 
+                else
+                  val_recieved[player_id][i] = receive_from_live(player_id);
+            
+        }
             for (unsigned long j = 0; j < sizeof(DATATYPE); j++) {
               if (*(((uint8_t *)&(val_recieved[player_id])) + j) !=
                   *(((uint8_t *)&(val_to_send[player_id])) + j)) {

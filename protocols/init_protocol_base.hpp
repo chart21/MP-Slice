@@ -85,15 +85,52 @@ void compare_views_init()
                 #else
         int hash_chunks_to_send = (sizeof(uint32_t) * 8) / sizeof(DATATYPE);
                 #endif
-    for(int player_id = 0; player_id < num_players-1; player_id++)
+    for(int player_id = 0; player_id < num_players*multiplier; player_id++)
     {
             if(elements_to_compare[player_id] > 0)
             {
                 //exchange 1 sha256 hash. Do to DATATYPE constraints it may need to be split up to multiple chunks
                 for(int i = 0; i < hash_chunks_to_send; i++)
                 {
-                            send_to_(player_id);
-                }
+                            if(player_id == 4) //P012
+                            {
+                                if(P0 != PSELF)
+                                    send_to_(P0);
+                                if(P1 != PSELF)
+                                    send_to_(P1);
+                                if(P2 != PSELF)
+                                    send_to_(P2);
+                            }
+                            else if(player_id == 5) //P013
+                            {
+                                if(P0 != PSELF)
+                                    send_to_(P0);
+                                if(P1 != PSELF)
+                                    send_to_(P1);
+                                if(P3 != PSELF)
+                                    send_to_(P3);
+                            }
+                            else if(player_id == 6) //P023
+                            {
+                                if(P0 != PSELF)
+                                    send_to_(P0);
+                                if(P2 != PSELF)
+                                    send_to_(P2);
+                                if(P3 != PSELF)
+                                    send_to_(P3);
+                            }
+                            else if(player_id == 7) //P123
+                            {
+                                if(P1 != PSELF)
+                                    send_to_(P1);
+                                if(P2 != PSELF)
+                                    send_to_(P2);
+                                if(P3 != PSELF)
+                                    send_to_(P3);
+                            }
+                            else
+                                send_to_(player_id);
+                                                }
     }
 
         }
@@ -107,7 +144,44 @@ void compare_views_init()
                 //exchange 1 sha256 hash. Do to DATATYPE constraints it may need to be split up to multiple chunks
                 for(int i = 0; i < hash_chunks_to_send; i++)
                 {
-                            receive_from_(player_id);
+                            if(player_id == 4) //P012
+                            {
+                                if(P0 != PSELF)
+                                    receive_from_(P0);
+                                if(P1 != PSELF)
+                                    receive_from_(P1);
+                                if(P2 != PSELF)
+                                    receive_from_(P2);
+                            }
+                            else if(player_id == 5) //P013
+                            {
+                                if(P0 != PSELF)
+                                    receive_from_(P0);
+                                if(P1 != PSELF)
+                                    receive_from_(P1);
+                                if(P3 != PSELF)
+                                    receive_from_(P3);
+                            }
+                            else if(player_id == 6) //P023
+                            {
+                                if(P0 != PSELF)
+                                    receive_from_(P0);
+                                if(P2 != PSELF)
+                                    receive_from_(P2);
+                                if(P3 != PSELF)
+                                    receive_from_(P3);
+                            }
+                            else if(player_id == 7) //P123
+                            {
+                                if(P1 != PSELF)
+                                    receive_from_(P1);
+                                if(P2 != PSELF)
+                                    receive_from_(P2);
+                                if(P3 != PSELF)
+                                    receive_from_(P3);
+                            }
+                            else
+                                receive_from_(player_id);
                 }
     }
 
@@ -150,7 +224,7 @@ for(int t=0;t<(num_players-1);t++) {
 }
 
 #if MAL == 1
-for(int t=0;t<(num_players-1);t++) {
+for(int t=0;t<(num_players*multiplier);t++) {
 #if VERIFY_BUFFER > 0
     verify_buffer[t] = new DATATYPE[VERIFY_BUFFER];
 #else

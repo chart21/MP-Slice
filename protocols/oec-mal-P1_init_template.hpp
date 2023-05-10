@@ -49,7 +49,7 @@ void complete_and(DATATYPE &c)
 {
     receive_from_(P2);
     store_compare_view_init(P0);
-    store_compare_view_init(P0);
+    store_compare_view_init(P012);
 }
 
 void prepare_reveal_to_all(DATATYPE a)

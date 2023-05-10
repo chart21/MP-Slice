@@ -78,8 +78,8 @@ DATATYPE m3_prime = receive_from_live(P2);
 c.v = XOR(c.v, XOR( m3_prime, o_4));
 
 c.m = XOR(c.m, o_4);
-store_compare_view(P1, c.m); //TODO: implement store_compare_view(P123)
-store_compare_view(P2, c.m);
+store_compare_view(P012, c.m); //TODO: implement store_compare_view(P012)
+/* store_compare_view(P2, c.m); */
 
 store_compare_view(P1, c.v); // to verify m_3 prime
 /* store_compare_view(P2, XOR(c.v, c.r)); */
