@@ -10,7 +10,7 @@
 #endif
 
 //0: search 1: XORNOTAND, 2: AND 1 comm round 3: AND 1000 comm rounds  4: debug
-#define FUNCTION_IDENTIFIER 0
+#define FUNCTION_IDENTIFIER 2
 
 
 // Registersize to use for SIMD parallelization (Bitslicing/vectorization)
@@ -33,19 +33,19 @@
 #define LIVE 1
 
 // Use the offline phase?
-#define PRE 1
+#define PRE 0
 
 // Allow sharing of inputs in offline phase
 #define SHARE_PREP 1
 
 // Party ID (starting from 0)
-#define PARTY 3
+#define PARTY 2
 
 // Use random inputs or inputs from a file? TODO: File inputs to be implemented
 #define INPUT 'r'
 
 // Number of inputs (depends on the problem)
-#define NUM_INPUTS 1000
+#define NUM_INPUTS 100000
 
 // Bitlength of integers
 #define BITLENGTH 64
