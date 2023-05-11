@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 #include <iostream>
 #include <string>
 #include <cstring>
@@ -196,10 +197,10 @@ Socket Accept() {
 }
 
 
-void Send_all(char* buffer, int* len) {
-int total = 0;        // how many bytes we've sent
-int bytesleft = *len; // how many we have left to send
-int n_sent;
+void Send_all(char* buffer, int64_t* len) {
+int64_t total = 0;        // how many bytes we've sent
+int64_t bytesleft = *len; // how many we have left to send
+int64_t n_sent;
     while(total < *len) {
         n_sent = Send(buffer+total, bytesleft);
         if (n_sent == -1) { break; }
@@ -210,11 +211,11 @@ int n_sent;
 }  
 
   // Send data to the client
-  int Send(char* buffer, int size) {
+  int64_t Send(char* buffer, int64_t size) {
 #if USE_SSL == 1
-    int num_bytes = SSL_write(ssl_, buffer, size);
+    int64_t num_bytes = SSL_write(ssl_, buffer, size);
 #else
-    int num_bytes = send(sock_, buffer, size, 0);
+    int64_t num_bytes = send(sock_, buffer, size, 0);
 #endif
   if (num_bytes < 0) {
     throw std::runtime_error("Error sending data");
@@ -224,11 +225,11 @@ int n_sent;
   }
 
 
-void Receive_all(char* buffer, int* len) {
+void Receive_all(char* buffer, int64_t* len) {
 
-int total = 0;        // how many bytes we've received
-int bytesleft = *len; // how many we have left to receive
-int n_rec;
+int64_t total = 0;        // how many bytes we've received
+int64_t bytesleft = *len; // how many we have left to receive
+int64_t n_rec;
     while(total < *len) {
         n_rec = Receive(buffer+total, bytesleft);
         if (n_rec == -1) { break; }
@@ -239,11 +240,11 @@ int n_rec;
 }  
 
   // Receive data from the client
-int Receive(char* buffer, int size) {
+int64_t Receive(char* buffer, int64_t size) {
 #if USE_SSL == 1
-  int num_bytes = SSL_read(ssl_, buffer, size);
+  int64_t num_bytes = SSL_read(ssl_, buffer, size);
 #else
-  int num_bytes = recv(sock_, buffer, size, 0);
+  int64_t num_bytes = recv(sock_, buffer, size, 0);
 #endif
   if (num_bytes < 0) {
     throw std::runtime_error("Error receiving data");

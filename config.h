@@ -39,13 +39,13 @@
 #define SHARE_PREP 1
 
 // Party ID (starting from 0)
-#define PARTY 2
+#define PARTY 3
 
 // Use random inputs or inputs from a file? TODO: File inputs to be implemented
 #define INPUT 'r'
 
 // Number of inputs (depends on the problem)
-#define NUM_INPUTS 100000
+#define NUM_INPUTS 1000000
 
 // Bitlength of integers
 #define BITLENGTH 64
@@ -57,10 +57,10 @@
 int base_port = BASE_PORT; // temporary solution
 
 // Use SSL encrypted communication?
-#define USE_SSL 1
+#define USE_SSL 0
 
 // Number of parallel processes to use
-#define PROCESS_NUM 1
+#define PROCESS_NUM 3
 
 // 0 = xorshift, 1 = AES_BS, 2 = AES_NI
 #define RANDOM_ALGORITHM 2 

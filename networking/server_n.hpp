@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 #include <iostream>
 #include <cstring>
 #include <cstdlib>
@@ -65,17 +66,17 @@ void *sender(void* threadParameters)
             if(((sender_args*) threadParameters)->elements_to_send[rounds] > 0)
             {
 #ifndef BOOL_COMPRESS
-            int elements_to_send =  ((sender_args*) threadParameters)->elements_to_send[rounds];
+            int64_t elements_to_send =  ((sender_args*) threadParameters)->elements_to_send[rounds];
             elements_to_send = elements_to_send * sizeof(DATATYPE);
 #else
-            int elements_to_send =  (((sender_args*) threadParameters)->elements_to_send[rounds] + 7)/8;
+            int64_t elements_to_send =  (((sender_args*) threadParameters)->elements_to_send[rounds] + 7)/8;
             uint8_t* send_buf = new (std::align_val_t(sizeof(uint64_t))) uint8_t[elements_to_send];
 pack(((sender_args*) threadParameters)->sent_elements[rounds],send_buf,((sender_args*) threadParameters)->elements_to_send[rounds]);
 #endif
 
 client.Send_all( ((char*) ((sender_args*) threadParameters)->sent_elements[rounds]), &elements_to_send);
 #if PRINT == 1
-printf("Player %i :Sent %i bytes to player %i in round %i out of %i \n", PARTY, elements_to_send , ((sender_args*) threadParameters)->connected_to, rounds + 1, ((sender_args*) threadParameters)->send_rounds);
+printf("Player %i :Sent %li bytes to player %i in round %i out of %i \n", PARTY, elements_to_send , ((sender_args*) threadParameters)->connected_to, rounds + 1, ((sender_args*) threadParameters)->send_rounds);
 #endif
             }
                 //Delete sent data

@@ -74,18 +74,18 @@ void *receiver(void* threadParameters)
 if(((receiver_args*) threadParameters)->elements_to_rec[rounds] > 0) //should data be received in this round?
 {
 #ifndef BOOL_COMPRESS
-    int elements_to_rec =  ((receiver_args*) threadParameters)->elements_to_rec[rounds];
+    int64_t elements_to_rec =  ((receiver_args*) threadParameters)->elements_to_rec[rounds];
     elements_to_rec = elements_to_rec * sizeof(DATATYPE);
 #endif
 #ifdef BOOL_COMPRESS
-    int elements_to_rec =  (((receiver_args*) threadParameters)->elements_to_rec[rounds] + 7) / 8;
+    int64_t elements_to_rec =  (((receiver_args*) threadParameters)->elements_to_rec[rounds] + 7) / 8;
     uint8_t* rec_buffer = new (std::align_val_t(sizeof(uint64_t))) uint8_t[elements_to_rec];
 unpack(rec_buffer,((receiver_args*) threadParameters)->received_elements[rounds],((receiver_args*) threadParameters)->elements_to_rec[rounds]);
 delete[] rec_buffer;
 #endif
     client.Receive_all( ((char*) ((receiver_args*) threadParameters)->received_elements[rounds]), &elements_to_rec);
     #if PRINT == 1
-    printf("Player %i: Received %i bytes from player %i in round %i out of %i \n", PARTY, elements_to_rec, ((receiver_args*) threadParameters)->connected_to, rounds + 1, ((receiver_args*) threadParameters)->rec_rounds);
+    printf("Player %i: Received %li bytes from player %i in round %i out of %i \n", PARTY, elements_to_rec, ((receiver_args*) threadParameters)->connected_to, rounds + 1, ((receiver_args*) threadParameters)->rec_rounds);
 #endif
 }
 //If all sockets received, signal main_thread

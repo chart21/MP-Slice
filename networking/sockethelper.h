@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 #include <pthread.h>
 #include <string>
 #include <vector>
@@ -40,7 +41,7 @@ typedef struct receiver_arguments {
   int port;
   char *hostname;
   int rec_rounds;
-  std::vector<int> elements_to_rec;
+  std::vector<int64_t> elements_to_rec;
   int total_rounds; //depricated
   //char *data;
   //char *length
@@ -54,7 +55,7 @@ typedef struct sender_arguments {
   int player_count;
   int connected_to;
   int send_rounds;
-  std::vector<int> elements_to_send;
+  std::vector<int64_t> elements_to_send;
   int total_rounds; //depricated
     #if PRE == 1
   uint64_t fetch_counter; // use to fetch sent in pre-processing round
