@@ -14,7 +14,7 @@
 #include "init_protocol_base.hpp"
 #include "oec-mal_base.hpp"
 #include "live_protocol_base.hpp"
-#define PRE_SHARE OECL_Share
+#define PRE_SHARE Dealer_Share
 class OEC_MAL3
 {
 bool optimized_sharing;
@@ -54,10 +54,18 @@ DATATYPE r234 = getRandomVal(P123); // Probably sufficient to only generate with
 DATATYPE o1 = XOR( AND(a.r0,b.r0), r124);
 DATATYPE o4 = XOR( XOR( AND(a.r1,b.r1) ,AND(a.r2,b.r2)),r234);
 /* o4 = XOR(o4,o1); //computationally easier to let P3 do it here instead of P0 later */
-
+#if PROTOCOL == 12
+#if PRE == 1
+pre_send_to_live(P2, o1);
+#else
+send_to_live(P2, o1);
+#endif
+#else
 store_compare_view(P2, o1);
+#endif
 
-#if PROTOCOL == 10
+
+#if PROTOCOL == 10 || PROTOCOL == 12
 #if PRE == 1
 pre_send_to_live(P0, o4);
 #else
@@ -95,9 +103,13 @@ void prepare_reveal_to_all(Dealer_Share a)
 
 DATATYPE complete_Reveal(Dealer_Share a)
 {
+#if PRE == 0
 DATATYPE result = XOR(a.r2, receive_from_live(P0));
 store_compare_view(P0123, result);
 return result;
+#else
+return a.r0;
+#endif
 }
 
 

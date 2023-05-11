@@ -49,7 +49,7 @@ void complete_and(DATATYPE &c)
 {
     receive_from_(P2);
     store_compare_view_init(P0);
-#if PROTOCOL == 10
+#if PROTOCOL == 10 || PROTOCOL == 12
 store_compare_view_init(P012);
 #elif PROTOCOL == 11
 store_compare_view_init(P0);

@@ -52,10 +52,14 @@ DATATYPE o1 = XOR( x1y1, r124);
 /* store_compare_view(P3, o1); */
 /* store_compare_view(P3,SET_ALL_ONE()); */
 /* #endif */
-#if PRE == 1
-pre_send_to_live(P2, o1);
+#if PROTOCOL == 12
+store_compare_view(P2,o1);
 #else
-send_to_live(P2, o1);
+    #if PRE == 1
+        pre_send_to_live(P2, o1);
+    #else
+        send_to_live(P2, o1);
+    #endif
 #endif
 c.v = XOR( AND(a.v,b.r), AND(b.v,a.r));
 c.r = cr;
@@ -68,7 +72,7 @@ c.m = XOR(x1y1, XOR( XOR(m3_flat, m2_flat), cr));
 
 void complete_and(OEC_MAL_Share &c)
 {
-#if PROTOCOL == 10
+#if PROTOCOL == 10 || PROTOCOL == 12
 #if PRE == 1
 DATATYPE o_4 = pre_receive_from_live(P3);
 #else
@@ -77,12 +81,12 @@ DATATYPE o_4 = receive_from_live(P3);
 #elif PROTOCOL == 11
 DATATYPE m_2XORm_3 = receive_from_live(P2);
 c.v = XOR(receive_from_live(P2),c.r); // receive ab + r_2 from P2 (P3 in paper), need to convert to ab + r_3
-store_compare_view(P1, c.v); // Verify if P_2 sent correct message of ab
 store_compare_view(P1, m_2XORm_3); // Verify if P_2 sent correct message m_2 XOR m_3
+store_compare_view(P1, c.v); // Verify if P_2 sent correct message of ab
 store_compare_view(P3, XOR(m_2XORm_3,c.m)); // x2y2 + x3y3 + r234 should remain
 #endif
 
-#if PROTOCOL == 10
+#if PROTOCOL == 10 || PROTOCOL == 12
 DATATYPE m3_prime = receive_from_live(P2);
 c.v = XOR(c.v, XOR( m3_prime, o_4));
 
@@ -96,7 +100,9 @@ store_compare_view(P1, c.v); // to verify m_3 prime
 
 void prepare_reveal_to_all(OEC_MAL_Share a)
 {
+#if PRE == 0
     send_to_live(P3, a.v);
+#endif
 }    
 
 
@@ -105,6 +111,7 @@ DATATYPE complete_Reveal(OEC_MAL_Share a)
 {
 #if PRE == 1
 DATATYPE result = XOR(a.v, pre_receive_from_live(P3));
+send_to_live(P3, result);
 #else
 DATATYPE result = XOR(a.v, receive_from_live(P3));
 #endif
@@ -195,9 +202,9 @@ void receive()
 
 void communicate()
 {
-#if PRE == 0
+/* #if PRE == 0 */
     communicate_live();
-#endif
+/* #endif */
 }
 
 };

@@ -65,7 +65,7 @@ c.v = XOR(c.v, m_3);
 
 c.m = XOR(c.m,m_3);
 
-#if PROTOCOL == 10
+#if PROTOCOL == 10 || PROTOCOL == 12
 store_compare_view(P012,c.m);
 #elif PROTOCOL == 11
 store_compare_view(P0,c.m);
@@ -82,7 +82,11 @@ return;
 
 DATATYPE complete_Reveal(OEC_MAL_Share a)
 {
+#if PRE == 1
+DATATYPE result = XOR(a.v, pre_receive_from_live(P3));
+#else
 DATATYPE result = XOR(a.v, receive_from_live(P3));
+#endif
 store_compare_view(P0123, result);
 return result;
 }

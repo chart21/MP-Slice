@@ -146,7 +146,7 @@ std::chrono::high_resolution_clock::time_point p =
 P.prepare_reveal_to_all(sfound);
 P.communicate();
 *found = P.complete_Reveal(sfound);
-/* P.communicate(); */
+P.communicate();
 
 }
 // Reveal

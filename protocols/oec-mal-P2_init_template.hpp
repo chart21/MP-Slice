@@ -40,15 +40,23 @@ DATATYPE Xor(DATATYPE a, DATATYPE b)
 //prepare AND -> send real value a&b to other P
 void prepare_and(DATATYPE a, DATATYPE b, DATATYPE &c)
 {
+#if PROTOCOL == 12
+store_compare_view_init(P0);
+#if PRE == 1
+pre_receive_from_(P3);
+#else
+receive_from_(P3);
+#endif
+#else
 store_compare_view_init(P3);
 #if PRE == 1
 pre_receive_from_(P0);
 #else
 receive_from_(P0);
 #endif
-
+#endif
 send_to_(P1);
-#if PROTOCOL == 10
+#if PROTOCOL == 10 || PROTOCOL == 12
 send_to_(P0);
 #endif
 
@@ -64,7 +72,7 @@ send_to_(P0); // let P0 obtain ab
 send_to_(P0); // let P0 verify m_2 XOR m_3
 #endif
 
-#if PROTOCOL == 10
+#if PROTOCOL == 10 || PROTOCOL == 12
 store_compare_view_init(P012);
 #endif
 }

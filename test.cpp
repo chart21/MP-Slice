@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <iostream>
 #include <chrono>
 /* #define DATTYPE 128 */
@@ -5,6 +6,7 @@
 #include "arch/AES.h"
 #include "arch/AES_BS_SHORT.h"
 /* #include "arch/AES_BS.h" */
+/* #include "arch/STD.h" */
 #include "circuits/xorshift.h"
 #include "arch/SHA_256.h"
 #include "config.h"
@@ -83,6 +85,8 @@ std::chrono::system_clock::time_point finish4;
 std::chrono::system_clock::time_point finish5;
 std::chrono::system_clock::time_point finish6;
 std::chrono::system_clock::time_point finish7;
+std::chrono::system_clock::time_point finish8;
+std::chrono::system_clock::time_point finish9;
 // Warmup
     for (int i = 0; i < 1000; i++) {
     for (int j = 0; j < 128; j++) {
@@ -131,29 +135,47 @@ for (int i = 0; i < 1000000; i++) {
     }
 
  finish3 = std::chrono::high_resolution_clock::now();
+
+std::cout << "here" << std::endl;
     
-for (int i = 0; i < 1000; i++) {
+for (int i = 0; i < 10; i++) {
     sha256_process(state, message, sizeof(message));
 }
  finish4 = std::chrono::high_resolution_clock::now();
  
 #ifdef __SHA__
-for (int i = 0; i < 1000; i++) {
+for (int i = 0; i < 10; i++) {
     sha256_process_x86(state, message, sizeof(message));
 }
  finish5 = std::chrono::high_resolution_clock::now();
 std::cout << "SHA256 (Intrinsics): " << std::chrono::duration_cast<std::chrono::milliseconds>(finish5 - finish4).count() << std::endl;
 std::cout << "SHA256 (Intrinsics) Throughput: " << 1.024 / std::chrono::duration_cast<std::chrono::milliseconds>(finish5 - finish4).count() * 1000 << "GB/s"<< std::endl;
 #endif
+std::cout << "here" << std::endl;
 
-auto a = new uint64_t[1000000000];
-auto b = new uint64_t[1000000000];
-auto c= new uint64_t[1000000000];
+auto a = new uint64_t[1000000];
+auto b = new uint64_t[1000000];
+auto c= new uint64_t[1000000];
 finish6 = std::chrono::high_resolution_clock::now();
-for (int i = 0; i < 1000000000; i++) {
+for (int i = 0; i < 1000000; i++) {
 c[i] = a[i] * b[i];
 }
 finish7 = std::chrono::high_resolution_clock::now();
+delete[] a;
+delete[] b;
+delete[] c;
+
+auto d = new DATATYPE[1000000];
+auto e = new DATATYPE[1000000];
+auto f= new DATATYPE[1000000];
+finish8 = std::chrono::high_resolution_clock::now();
+for (int i = 0; i < 1000000; i++) {
+f[i] = AND(d[i],e[i]);
+}
+finish9 = std::chrono::high_resolution_clock::now();
+delete[] d;
+delete[] e;
+delete[] f;
 
 std::cout << "AES_NI: " << std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count() << std::endl;
 std::cout << "AES_NI Throughput: " << 16.384*DATTYPE/128 / std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count() * 1000 << "GB/s"<< std::endl;
@@ -166,7 +188,7 @@ std::cout << "SHA256 Throughput: " << 1.024 / std::chrono::duration_cast<std::ch
 std::cout << "Tested with 16384MB for AES, 1024MB for SHA256" << std::endl;
 
 std::cout << "64-bit Mult: " << std::chrono::duration_cast<std::chrono::milliseconds>(finish7 - finish6).count() << std::endl;
-
+std::cout << "AND" << std::chrono::duration_cast<std::chrono::milliseconds>(finish9 - finish8).count() << std::endl;
 std::cout << m[0] << std::endl;
 std::cout << plain__[0][0] << std::endl;
 std::cout << seed << std::endl;

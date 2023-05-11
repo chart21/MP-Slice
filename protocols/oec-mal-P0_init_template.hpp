@@ -39,17 +39,21 @@ DATATYPE Xor(DATATYPE a, DATATYPE b)
 //prepare AND -> send real value a&b to other P
 void prepare_and(DATATYPE a, DATATYPE b, DATATYPE &c)
 {
+#if PROTOCOL == 12
+    store_compare_view_init(P2);
+#else
 #if PRE == 1
     pre_send_to_(P2);
 #else
-send_to_(P2);
+    send_to_(P2);
+#endif
 #endif
 }
 
 // NAND both real Values to receive sharing of ~ (a&b) 
 void complete_and(DATATYPE &c)
 {
-#if PROTOCOL == 10
+#if PROTOCOL == 10 || PROTOCOL == 12
 #if PRE == 1
     pre_receive_from_(P3);
 #else
@@ -71,7 +75,9 @@ store_compare_view_init(P3);
 
 void prepare_reveal_to_all(DATATYPE a)
 {
+#if PRE == 0
     send_to_(P3);
+#endif
 }    
 
 
@@ -80,6 +86,7 @@ DATATYPE complete_Reveal(DATATYPE a)
 {
 #if PRE == 1
     pre_receive_from_(P3);
+    send_to_(P3);
 #else
 receive_from_(P3);
 #endif

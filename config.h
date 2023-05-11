@@ -1,5 +1,5 @@
 #pragma once
-#define PROTOCOL 1
+#define PROTOCOL 2
 #if PROTOCOL < 7
 #define num_players 3
 #else
@@ -33,7 +33,7 @@
 #define LIVE 1
 
 // Use the offline phase?
-#define PRE 0
+#define PRE 1
 
 // Allow sharing of inputs in offline phase
 #define SHARE_PREP 1

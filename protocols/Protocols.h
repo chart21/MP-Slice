@@ -11,6 +11,7 @@
 #define FantasticFour 9
 #define OEC_mal 10
 #define OEC_mal_het 11
+#define OEC_mal_OffOn 12
 #if PROTOCOL == rep3 
     #define PROTOCOL_LIVE Replicated
     #define PROTOCOL_INIT Replicated_init
@@ -159,12 +160,13 @@
         #if LIVE == 1
             #include "ttp_template.hpp"
         #endif
-#elif PROTOCOL == OEC_mal || PROTOCOL == OEC_mal_het
+#elif PROTOCOL == OEC_mal || PROTOCOL == OEC_mal_het || PROTOCOL == OEC_mal_OffOn
     /* #define MAL 1 */
     #if PRE == 1
         #if PARTY == 0
-            #define PROTOCOL_PRE OEC_MAL0
-            #include "oec_mal-P0_template.hpp"
+            #define PROTOCOL_PRE -1
+            /* #define PROTOCOL_PRE OEC_MAL0 */
+            /* #include "oec_mal-P0_template.hpp" */
         #endif
         #if PARTY == 1
             #define PROTOCOL_PRE -1
@@ -174,7 +176,7 @@
         #endif
         #if PARTY == 3
             #define PROTOCOL_PRE OEC_MAL3
-            #include "oec_mal-P3_template.hpp"
+            #include "oec-mal-P3_template.hpp"
         #endif
 #endif
     #if INIT == 1
@@ -197,13 +199,13 @@
     #endif
     #if LIVE == 1 
         #if PARTY == 0
-            #if PRE == 1
-                #define PROTOCOL_LIVE OEC_MAL0_POST
-                #include "oec-mal-P0-post_template.hpp"
-            #else
+            /* #if PRE == 1 */
+            /*     #define PROTOCOL_LIVE OEC_MAL0_POST */
+            /*     #include "oec-mal-P0-post_template.hpp" */
+            /* #else */
                 #define PROTOCOL_LIVE OEC_MAL0
                 #include "oec-mal-P0_template.hpp"
-            #endif
+            /* #endif */
         #endif
         #if PARTY == 1
             #define PROTOCOL_LIVE OEC_MAL1

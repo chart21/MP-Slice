@@ -40,23 +40,34 @@ OEC_MAL_Share Xor(OEC_MAL_Share a, OEC_MAL_Share b)
 
 void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
 {
-DATATYPE cr = XOR(getRandomVal(P023),getRandomVal(P123));
-/* DATATYPE r234 = getRandomVal(P123); */
-DATATYPE r234 = getRandomVal(P123); //Probably sufficient to only generate with P3 -> Probably not because of verification
+   DATATYPE cr = XOR(getRandomVal(P023), getRandomVal(P123));
+   /* DATATYPE r234 = getRandomVal(P123); */
+   DATATYPE r234 =
+       getRandomVal(P123); // Probably sufficient to only generate with P3 ->
+                           // Probably not because of verification
 /* c.r = getRandomVal(P3); */
-DATATYPE o1 = receive_from_live(P0);
-store_compare_view(P3,o1);
-DATATYPE m3 = XOR( XOR( XOR(o1,cr) , AND(a.r,b.r) ) , AND(a.v,b.v));
-send_to_live(P1, m3); 
+#if PROTOCOL == 12
+#if PRE == 1
+   DATATYPE o1 = pre_receive_from_live(P3);
+#else
+   DATATYPE o1 = receive_from_live(P3);
+#endif
+   store_compare_view(P0, o1);
+#else
+   DATATYPE o1 = receive_from_live(P0);
+   store_compare_view(P3, o1);
+#endif
+   DATATYPE m3 = XOR(XOR(XOR(o1, cr), AND(a.r, b.r)), AND(a.v, b.v));
+   send_to_live(P1, m3);
 
-#if PROTOCOL == 10
-DATATYPE m3_prime = XOR( XOR(r234,cr) , AND( XOR(a.v,a.r) ,XOR(b.v,b.r)));
-send_to_live(P0, m3_prime);
+#if PROTOCOL == 10 || PROTOCOL == 12
+   DATATYPE m3_prime = XOR(XOR(r234, cr), AND(XOR(a.v, a.r), XOR(b.v, b.r)));
+   send_to_live(P0, m3_prime);
 #endif
 
-c.v = XOR ( o1, XOR( AND(a.v,b.r) , AND(b.v,a.r)));
-c.r = cr;
-c.m = XOR(m3,r234);
+   c.v = XOR(o1, XOR(AND(a.v, b.r), AND(b.v, a.r)));
+   c.r = cr;
+   c.m = XOR(m3, r234);
 }
 
 void complete_and(OEC_MAL_Share &c)
@@ -71,7 +82,7 @@ send_to_live(P0, c.m); // let P0 verify m_2 XOR m_3
 send_to_live(P0, c.v); // let P0 obtain ab
 #endif
 
-#if PROTOCOL == 10
+#if PROTOCOL == 10 || PROTOCOL == 12
 store_compare_view(P012, c.m);
 #endif
 /* store_compare_view(P0, c.v); */
@@ -84,7 +95,11 @@ void prepare_reveal_to_all(OEC_MAL_Share a)
 
 DATATYPE complete_Reveal(OEC_MAL_Share a)
 {
+#if PRE == 1
+DATATYPE result = XOR(a.v, pre_receive_from_live(P3));
+#else
 DATATYPE result = XOR(a.v, receive_from_live(P3));
+#endif
 store_compare_view(P0123, result);
 return result;
 }
