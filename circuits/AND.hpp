@@ -45,6 +45,15 @@ for (int i = 0; i < NUM_INPUTS; i++) {
 /* } */
 }
 P.communicate();
+
+P.prepare_reveal_to_all(gates_c[0]);
+
+P.communicate();
+
+P.complete_Reveal(gates_c[0]);
+
+P.communicate();
+
 }
 
   
