@@ -60,7 +60,7 @@ int base_port = BASE_PORT; // temporary solution
 #define USE_SSL 0
 
 // Number of parallel processes to use
-#define PROCESS_NUM 3
+#define PROCESS_NUM 1
 
 // 0 = xorshift, 1 = AES_BS, 2 = AES_NI
 #define RANDOM_ALGORITHM 2 
