@@ -7,7 +7,7 @@
 #define orep 5
 #define ttp3 6
 #define ttp4 7
-#define PC4_mal 8
+#define Tetrad 8
 #define FantasticFour 9
 #define OEC_mal 10
 #define OEC_mal_het 11
@@ -151,7 +151,7 @@
             #include "oecl-P2_template.hpp"
         #endif
     #endif
-#elif PROTOCOL == ttp3 || PROTOCOL == ttp4 || PROTOCOL == PC4_mal || PROTOCOL == FantasticFour
+#elif PROTOCOL == ttp3 || PROTOCOL == ttp4 || PROTOCOL == FantasticFour
         #define PROTOCOL_LIVE TTP
         #define PROTOCOL_INIT TTP_init
         #if INIT == 1 
@@ -223,6 +223,48 @@
                 #define PROTOCOL_LIVE OEC_MAL3
                 #include "oec-mal-P3_template.hpp"
             #endif
+        #endif
+    #endif
+    #elif PROTOCOL == TETRAD
+    #if INIT == 1
+        #if PARTY == 0
+            #define PROTOCOL_INIT OEC_MAL0_init
+            #include "oec-mal-P0_init_template.hpp"
+        #endif
+        #if PARTY == 1
+            #define PROTOCOL_INIT OEC_MAL1_init
+            #include "oec-mal-P1_init_template.hpp"
+        #endif
+        #if PARTY == 2
+            #define PROTOCOL_INIT OEC_MAL2_init
+            #include "oec-mal-P2_init_template.hpp"
+        #endif
+        #if PARTY == 3
+            #define PROTOCOL_INIT OEC_MAL3_init
+            #include "oec-mal-P3_init_template.hpp"
+        #endif
+    #endif
+    #if LIVE == 1 
+        #if PARTY == 0
+            /* #if PRE == 1 */
+            /*     #define PROTOCOL_LIVE OEC_MAL0_POST */
+            /*     #include "oec-mal-P0-post_template.hpp" */
+            /* #else */
+                #define PROTOCOL_LIVE Tetrad0
+                #include "Tetrad-P0_template.hpp"
+            /* #endif */
+        #endif
+        #if PARTY == 1
+            #define PROTOCOL_LIVE Tetrad1
+            #include "Tetrad-P1_template.hpp"
+        #endif
+        #if PARTY == 2
+            #define PROTOCOL_LIVE Tetrad2
+            #include "Tetrad-P2_template.hpp"
+        #endif
+        #if PARTY == 3
+                #define PROTOCOL_LIVE Tetrad3
+                #include "Tetrad-P3_template.hpp"
         #endif
     #endif
 #endif

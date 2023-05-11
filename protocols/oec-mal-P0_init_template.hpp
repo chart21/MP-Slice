@@ -39,7 +39,7 @@ DATATYPE Xor(DATATYPE a, DATATYPE b)
 //prepare AND -> send real value a&b to other P
 void prepare_and(DATATYPE a, DATATYPE b, DATATYPE &c)
 {
-#if PROTOCOL == 12
+#if PROTOCOL == 12 || PROTOCOL == 8
     store_compare_view_init(P2);
 #else
 #if PRE == 1
@@ -53,7 +53,7 @@ void prepare_and(DATATYPE a, DATATYPE b, DATATYPE &c)
 // NAND both real Values to receive sharing of ~ (a&b) 
 void complete_and(DATATYPE &c)
 {
-#if PROTOCOL == 10 || PROTOCOL == 12
+#if PROTOCOL == 10 || PROTOCOL == 12 || PROTOOCL == 8
 #if PRE == 1
     pre_receive_from_(P3);
 #else

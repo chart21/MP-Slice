@@ -5,7 +5,7 @@
 #else
 #define num_players 4
 #endif
-#if PROTOCOL > 8
+#if PROTOCOL > 7
 #define MAL 1
 #endif
 
