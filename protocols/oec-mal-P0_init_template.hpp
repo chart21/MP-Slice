@@ -53,12 +53,13 @@ void prepare_and(DATATYPE a, DATATYPE b, DATATYPE &c)
 // NAND both real Values to receive sharing of ~ (a&b) 
 void complete_and(DATATYPE &c)
 {
-#if PROTOCOL == 10 || PROTOCOL == 12 || PROTOOCL == 8
+#if PROTOCOL == 10 || PROTOCOL == 12 || PROTOCOL == 8
 #if PRE == 1
     pre_receive_from_(P3);
 #else
 receive_from_(P3);
 #endif
+
 receive_from_(P2);
 
 store_compare_view_init(P1);
@@ -90,7 +91,13 @@ DATATYPE complete_Reveal(DATATYPE a)
 #else
 receive_from_(P3);
 #endif
+#if PROTOCOL == 8
+    store_compare_view_init(P1);
+    store_compare_view_init(P1);
+    store_compare_view_init(P2);
+#else
     store_compare_view_init(P0123);
+#endif
 return a;
 }
 

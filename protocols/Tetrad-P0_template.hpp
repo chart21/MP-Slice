@@ -67,7 +67,6 @@ void complete_and(Tetrad_Share &c)
 {
     DATATYPE w = receive_from_live(P3);
     c.mv = XOR(c.mv,w);
-    store_compare_view(P012,c.mv);
     c.mv = SET_ALL_ZERO(); //restore actual value of c.mv
 
     Tetrad_Share p; 
@@ -75,6 +74,8 @@ void complete_and(Tetrad_Share &c)
     p.l1 = SET_ALL_ZERO(); //lambda2
     p.mv = receive_from_live(P2);
     store_compare_view(P1,p.mv);
+    
+    store_compare_view(P012,c.mv);
 
     //o = p + q
     c.mv = XOR(c.mv,p.mv);
@@ -103,8 +104,8 @@ result = XOR(result, a.l0);
 result = XOR(result, a.l1);
 store_compare_view(P1, l3); //verify own value
 
-store_compare_view(P1, a.l0);  // verify others
-store_compare_view(P1, a.l1); 
+store_compare_view(P1, a.l1);  // verify others
+store_compare_view(P2, a.l0); 
 return result;
 }
 

@@ -73,7 +73,7 @@ c.mv = z_r;
 
 void complete_and(Tetrad_Share &c)
 {
-    DATATYPE y2 = receive_from_live(P2);
+    DATATYPE y2 = receive_from_live(P1);
     DATATYPE v = XOR(XOR(c.l0,c.l1),y2); // y1 + y2 + s for verification
     store_compare_view(P012, v);
     c.mv = XOR(c.mv, y2);

@@ -225,7 +225,7 @@
             #endif
         #endif
     #endif
-    #elif PROTOCOL == TETRAD
+    #elif PROTOCOL == Tetrad
     #if INIT == 1
         #if PARTY == 0
             #define PROTOCOL_INIT OEC_MAL0_init

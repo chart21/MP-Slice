@@ -39,7 +39,7 @@ DATATYPE Xor(DATATYPE a, DATATYPE b)
 //prepare AND -> send real value a&b to other P
 void prepare_and(DATATYPE a, DATATYPE b, DATATYPE &c)
 {
-#if PROTOCOL == 12
+#if PROTOCOL == 12 || PROTOCOL == 8
 #if PRE == 1
     pre_send_to_(P2);
 #else
@@ -48,7 +48,7 @@ void prepare_and(DATATYPE a, DATATYPE b, DATATYPE &c)
 #else
 store_compare_view_init(P2);
 #endif
-#if PROTOCOL == 10 || PROTOCOL == 12
+#if PROTOCOL == 10 || PROTOCOL == 12 || PROTOCOL == 8
 #if PRE == 1
     pre_send_to_(P0);
 #else
@@ -82,7 +82,11 @@ void prepare_reveal_to_all(DATATYPE a)
 DATATYPE complete_Reveal(DATATYPE a)
 {
 receive_from_(P0);
+#if PROTOCOL == 8
+store_compare_view_init(P1);
+#else
 store_compare_view_init(P0123);
+#endif
 return a;
 }
 

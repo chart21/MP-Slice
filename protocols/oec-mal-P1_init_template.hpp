@@ -49,9 +49,10 @@ void complete_and(DATATYPE &c)
 {
     receive_from_(P2);
     store_compare_view_init(P0);
-#if PROTOCOL == 10 || PROTOCOL == 12
+#if PROTOCOL == 10 || PROTOCOL == 12 || PROTOCOL == 8
 store_compare_view_init(P012);
-#elif PROTOCOL == 11
+#endif
+#if PROTOCOL == 11 || PROTOCOL == 8
 store_compare_view_init(P0);
 #endif
 }
@@ -72,8 +73,15 @@ DATATYPE complete_Reveal(DATATYPE a)
 #else
     receive_from_(P3);
 #endif
+#if PROTOCOL == 8
+store_compare_view_init(P0);
+store_compare_view_init(P3);
+
+store_compare_view_init(P0);
+#else
     store_compare_view_init(P0123);
-return a;
+#endif
+    return a;
 }
 
 
