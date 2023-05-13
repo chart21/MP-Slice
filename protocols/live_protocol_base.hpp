@@ -172,10 +172,10 @@ void compare_views() {
                   sizeof(DATATYPE); // hash is stored in 4 byte chunks -> need
                                     // smaller slices for small DATATYPE
 #elif DATTYPE >= 256
-              uint32_t values_to_send[sizeof(DATATYPE) / (sizeof(uint32_t) * 8)]{0};
+              uint32_t values_to_send[8 * sizeof(DATATYPE) / (sizeof(uint32_t) * 8)]{0};
               for (int j = 0; j < 8; j++)
                 values_to_send[j] = hash_val[player_id][j];
-              uint32_t *addr_to_send = &values_to_send;
+              uint32_t *addr_to_send = values_to_send;
 #else
               uint32_t *addr_to_send = hash_val[player_id] + index_slice;
               index_slice +=
