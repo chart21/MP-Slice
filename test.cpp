@@ -6,8 +6,6 @@
 #include "arch/AES.h"
 #include "arch/AES_BS_SHORT.h"
 /* #include "arch/AES_BS.h" */
-/* #include "arch/STD.h" */
-#include "arch/STD.h"
 #include "circuits/xorshift.h"
 #include "arch/SHA_256.h"
 #include "config.h"
@@ -90,6 +88,7 @@ std::chrono::system_clock::time_point finish8;
 std::chrono::system_clock::time_point finish9;
 std::chrono::system_clock::time_point finish10;
 std::chrono::system_clock::time_point finish11;
+std::chrono::system_clock::time_point finish12;
 // Warmup
     for (int i = 0; i < 1000; i++) {
     for (int j = 0; j < 128; j++) {
