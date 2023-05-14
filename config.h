@@ -1,5 +1,5 @@
 #pragma once
-#define PROTOCOL 11
+#define PROTOCOL 2
 #if PROTOCOL < 7
 #define num_players 3
 #else
@@ -77,6 +77,7 @@ int base_port = BASE_PORT; // temporary solution
 // How many reciving messages should be buffered until the main thread is signaled that data is ready? 0 means that all data of a communication round needs to be ready before the main thread is signaled.
 #define RECV_BUFFER 0
 
+// How many messages should be buffered until a combined hash is performed? 0 means all hashes are calculated at the very end of the protocol.
 #define VERIFY_BUFFER 0
 // Print additional info?
 #define PRINT 0

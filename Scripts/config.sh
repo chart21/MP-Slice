@@ -22,6 +22,7 @@ helpFunction()
    echo -e "\t-j Number of parallel processes to use"
    echo -e "\t-v Random Number Generator (0: XOR_Shift/1 AES Bitsliced/2: AES_NI)"
    echo -e "\t-t Total Timeout in seconds for attempting to connect to a player"
+   echo -e "\t-m VERIFY_BUFFER: How many gates should be buffered until verifying them? 0 means the data of an entire communication round is buffered "
    echo -e "\t-k Timeout in millisecond before attempting to connect again to a socket "
    echo -e "\t-y SEND_BUFFER: How many gates should be buffered until sending them to the receiving party? 0 means the data of an entire communication round is buffered
 "
@@ -30,7 +31,7 @@ helpFunction()
    exit 1 # Exit script after printing help
 }
 
-while getopts "b:a:d:c:f:n:s:i:l:p:o:u:g:x:e:h:j:v:t:k:y:z:" opt
+while getopts "b:a:d:c:f:n:s:i:l:p:o:u:g:x:e:h:j:v:t:m:k:y:z:" opt
 do
    case "$opt" in
       b ) BASE_PORT="$OPTARG" ;;
@@ -52,6 +53,7 @@ do
       j ) PROCESS_NUM="$OPTARG" ;;
       v ) RANDOM_ALGORITHM="$OPTARG" ;;
       t ) CONNECTION_TIMEOUT="$OPTARG" ;;
+      m ) VERIFY_BUFFER="$OPTARG" ;;
       k ) CONNECTION_RETRY="$OPTARG" ;;
       y ) SEND_BUFFER="$OPTARG" ;;
       z ) RECV_BUFFER="$OPTARG" ;;
@@ -177,6 +179,11 @@ fi
 if [ ! -z "$RECV_BUFFER" ]
 then
     sed -i -e "s/\(define RECV_BUFFER \).*/\1$RECV_BUFFER/" config.h
+fi
+
+if [ ! -z "$VERIFY_BUFFER" ]
+then
+    sed -i -e "s/\(define VERIFY_BUFFER \).*/\1$VERIFY_BUFFER/" config.h
 fi
 
 for i in {0..2}
