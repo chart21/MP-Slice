@@ -46,6 +46,10 @@
 
 #define ADD(a,b,c) _mm_add_epi##c(a,b)
 
+#define MUL_SIGNED(a,b,c) _mm_mullo_epi##c(a,b)
+#define ADD_SIGNED(a,b,c) _mm_add_epi##c(a,b)
+#define SUB_SIGNED(a,b,c) _mm_sub_epi##c(a,b)
+
 #define L_SHIFT(a,b,c)  _mm_slli_epi##c(a,b)
 #define R_SHIFT(a,b,c)  _mm_srli_epi##c(a,b)
 #define RA_SHIFT(a,b,c) _mm_sra_epi##c(a,_mm_set1_epi##c(b))

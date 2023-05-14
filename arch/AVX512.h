@@ -44,6 +44,12 @@
 
 #define ADD(a,b,c) _mm512_add_epi##c(a,b)
 
+#define ADD_SIGNED(a,b,c) _mm512_add_epi##c(a,b)
+#define SUB_SIGNED(a,b,c) _mm512_sub_epi##c(a,b)
+#define MUL_SIGNED(a,b,c) _mm512_mullo_epi##c(a,b)
+#define MUL_SINGED_64(a,b) _mm512_mullox_epi64(a,b)
+
+
 #define L_SHIFT(a,b,c)  _mm512_slli_epi##c(a,b)
 #define R_SHIFT(a,b,c)  _mm512_srli_epi##c(a,b)
 #define RA_SHIFT(a,b,c) _mm512_sra_epi##c(a,_mm_set1_epi##c(b))

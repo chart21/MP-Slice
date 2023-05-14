@@ -42,6 +42,10 @@
 #define ANDN(a,b) _mm256_andnot_si256(a,b)
 #define NOT(a)    _mm256_xor_si256(ONES,a)
 
+#define MUL_SIGNED(a,b,c) _mm256_mullo_epi##c(a,b)
+#define ADD_SIGNED(a,b,c) _mm256_add_epi##c(a,b)
+#define SUB_SIGNED(a,b,c) _mm256_sub_epi##c(a,b)
+
 #define ADD(a,b,c) _mm256_add_epi##c(a,b)
 
 #define L_SHIFT(a,b,c)  _mm256_slli_epi##c(a,b)

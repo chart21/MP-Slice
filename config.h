@@ -14,7 +14,7 @@
 
 
 // Registersize to use for SIMD parallelization (Bitslicing/vectorization)
-#define DATTYPE 64
+#define DATTYPE 128
 
 // Compress binary data into chars before sending them over the netowrk? Only relevant for DATTYPE = 1
 #define COMPRESS 0
