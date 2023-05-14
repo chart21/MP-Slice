@@ -75,9 +75,9 @@ send_to_live(P0, o4);
 store_compare_view(P0,o4);
 #endif
 
-/* c.r0 = XOR(r0,r1); */
-/* c.r1 = XOR(r0,r2); */
-/* c.r2 = XOR(r1,r2); */
+c.r0 = XOR(r0,r1);
+c.r1 = XOR(r0,r2);
+c.r2 = XOR(r1,r2);
 
 }
 

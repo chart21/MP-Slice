@@ -158,7 +158,7 @@ for (int i = 0; i < 1000; i++) {
 }
  finish5 = std::chrono::high_resolution_clock::now();
 std::cout << "SHA256 (Intrinsics): " << std::chrono::duration_cast<std::chrono::milliseconds>(finish5 - finish4).count() << std::endl;
-std::cout << "SHA256 (Intrinsics) Throughput: " << 1.024 / std::chrono::duration_cast<std::chrono::milliseconds>(finish5 - finish4).count() * 1000 << "GB/s"<< std::endl;
+std::cout << "SHA256 (Intrinsics) Throughput: " << 128000000 / (std::chrono::duration_cast<std::chrono::milliseconds>(finish5 - finish4).count() * 1000) << "GB/s"<< std::endl;
 #endif
 
 auto a = new uint64_t[1000000000];
@@ -257,28 +257,29 @@ delete[] j;
 
 
 std::cout << "AES_NI: " << std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count() << std::endl;
-std::cout << "AES_NI Throughput: " << 16.384*DATTYPE/128 / std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count() * 1000 << "GB/s"<< std::endl;
+std::cout << "AES_NI Throughput: " << (128000*DATTYPE/1000000000) / (std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count())<< "GBit/s"<< std::endl;
 std::cout << "AES_BS: " << std::chrono::duration_cast<std::chrono::milliseconds>(finish2 - finish).count() << std::endl;
-std::cout << "AES_BS Throughput: " << 16.384*DATTYPE/128 / std::chrono::duration_cast<std::chrono::milliseconds>(finish2 - finish).count()* 1000 << "GB/s"<< std::endl;
+std::cout << "AES_BS Throughput: " << (128000*DATTYPE/1000000000) / (std::chrono::duration_cast<std::chrono::milliseconds>(finish2 - finish).count()) << "GBit/s"<< std::endl;
 std::cout << "XOR_Shift: " << std::chrono::duration_cast<std::chrono::milliseconds>(finish3 - finish2).count() << std::endl;
-std::cout << "XOR_Shift Throughput: " << 16.384*DATTYPE/128 / std::chrono::duration_cast<std::chrono::milliseconds>(finish3 - finish2).count() * 1000 << "GB/s"<< std::endl;
+std::cout << "XOR_Shift Throughput: " << (128000*DATTYPE/1000000000) / (std::chrono::duration_cast<std::chrono::milliseconds>(finish3 - finish2).count()) << "GBit/s"<< std::endl;
 std::cout << "SHA256: " << std::chrono::duration_cast<std::chrono::milliseconds>(finish4 - finish3).count() * 1000 << std::endl;
-std::cout << "SHA256 Throughput: " << 1.024 / std::chrono::duration_cast<std::chrono::milliseconds>(finish4 - finish3).count() * 1000 << "GB/s"<< std::endl;
+std::cout << "SHA256 Throughput: " << (128000000 / 1000000000) / (std::chrono::duration_cast<std::chrono::milliseconds>(finish4 - finish3).count()) << "GB/s"<< std::endl;
 std::cout << "Tested with 16384MB for AES, 1024MB for SHA256" << std::endl;
 
-std::cout << "32-bit Mult Throughput in Gbps: " << 1 / (std::chrono::duration_cast<std::chrono::milliseconds>(finish11 - finish10).count() * 1000 / 32) << std::endl;
-std::cout << "64-bit Mult Throughput in Gbps: " << 1 / (std::chrono::duration_cast<std::chrono::nanoseconds>(finish7 - finish6).count() * 1000 / 64) << std::endl;
-std::cout << "32-bit Add Throughput in Gbps: " << 1 / (std::chrono::duration_cast<std::chrono::nanoseconds>(finish12 - finish11).count()  * 1000/ 32) << std::endl;
-std::cout << "64-bit Add Throughput in Gbps: " << 1 / (std::chrono::duration_cast<std::chrono::nanoseconds>(finish14 - finish13).count()  * 1000/ 64) << std::endl;
+std::cout << "32-bit Mult Throughput in Gbps: " << 32 / (std::chrono::duration_cast<std::chrono::milliseconds>(finish11 - finish10).count() * 1000) << std::endl;
+std::cout << "64-bit Mult Throughput in Gbps: " << 64 / (std::chrono::duration_cast<std::chrono::nanoseconds>(finish7 - finish6).count() * 1000) << std::endl;
+std::cout << "32-bit Add Throughput in Gbps: " << 32 / (std::chrono::duration_cast<std::chrono::nanoseconds>(finish12 - finish11).count()  * 1000) << std::endl;
+std::cout << "64-bit Add Throughput in Gbps: " << 64 / (std::chrono::duration_cast<std::chrono::nanoseconds>(finish14 - finish13).count()  * 1000) << std::endl;
 
 #if defined(__AVX512F__) & defined(__AVX512DQ__)
-std::cout << "Signed 32-bit Add Throughput in Gbps:" << 1000000000 / std::chrono::duration_cast<std::chrono::nanoseconds>(finish17 - finish16).count() / (sizeof(DATATYPE)*8) << std::endl;
-std::cout << "Signed 32-bit Mult Throughput in Gbps:" << 1000000000 / std::chrono::duration_cast<std::chrono::nanoseconds>(finish18 - finish17).count() / (sizeof(DATATYPE)*8) << std::endl;
-std::cout << "Signed 64-bit Add Throughput in Gbps:" << std::chrono::duration_cast<std::chrono::nanoseconds>(finish19 - finish18).count() / (sizeof(DATATYPE)*8) << std::endl;
-std::cout << "Signed 64-bit Mult Throughput in Gbps:" << std::chrono::duration_cast<std::chrono::nanoseconds>(finish20 - finish19).count() / (sizeof(DATATYPE)*8) << std::endl;
+std::cout << "Signed 32-bit Add Throughput in Gbps:" << ((0.1 * DATTYPE) / (std::chrono::duration_cast<std::chrono::milliseconds>(finish17 - finish16).count()*1000) << std::endl;
+std::cout << "Signed 32-bit Mult Throughput in Gbps:" << ((0.1 * DATTYPE) / (std::chrono::duration_cast<std::chrono::milliseconds>(finish18 - finish17).count()*1000) << std::endl;
+std::cout << "Signed 64-bit Add Throughput in Gbps:" << ((0.1 * DATTYPE) / (std::chrono::duration_cast<std::chrono::milliseconds>(finish19 - finish18).count()*1000) << std::endl;
+std::cout << "Signed 64-bit Mult Throughput in Gbps:" << ((0.1 * DATTYPE) / (std::chrono::duration_cast<std::chrono::milliseconds>(finish20 - finish19).count()*1000) << std::endl;
 #endif
-std::cout << "AND Throughput in Gbps:" << std::chrono::duration_cast<std::chrono::nanoseconds>(finish9 - finish8).count() / (sizeof(DATATYPE)*8) << std::endl;
-std::cout << "XOR Throughput in Gbps:" << std::chrono::duration_cast<std::chrono::nanoseconds>(finish16 - finish15).count() / (sizeof(DATATYPE)*8) << std::endl;
+
+std::cout << "AND Throughput in Gbps:" << (0.1 * DATTYPE) / (std::chrono::duration_cast<std::chrono::milliseconds>(finish9 - finish8).count() * 1000) << std::endl;
+std::cout << "XOR Throughput in Gbps:" << (0.1 * DATTYPE) / (std::chrono::duration_cast<std::chrono::milliseconds>(finish16 - finish15).count() * 1000) << std::endl;
 
 std::cout << m[0] << std::endl;
 std::cout << plain__[0][0] << std::endl;
