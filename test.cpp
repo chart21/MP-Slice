@@ -161,38 +161,42 @@ std::cout << "SHA256 (Intrinsics): " << std::chrono::duration_cast<std::chrono::
 std::cout << "SHA256 (Intrinsics) Throughput: " << 1.024 / std::chrono::duration_cast<std::chrono::milliseconds>(finish5 - finish4).count() * 1000 << "GB/s"<< std::endl;
 #endif
 
-auto a = new uint64_t[1000000];
-auto b = new uint64_t[1000000];
-auto c= new uint64_t[1000000];
+auto a = new uint64_t[1000000000];
+auto b = new uint64_t[1000000000];
+auto c= new uint64_t[1000000000];
 finish6 = std::chrono::high_resolution_clock::now();
 
 
-for (int i = 1; i < 1000000; i++) {
+for (int i = 1; i < 1000000000; i++) {
 c[i] = c[i-1] * b[i];
 }
 finish7 = std::chrono::high_resolution_clock::now();
 
 finish13 = std::chrono::high_resolution_clock::now();
-for (int i = 1; i < 1000000; i++) {
+for (int i = 1; i < 1000000000; i++) {
 c[i] = c[i-1] + b[i];
 }
 finish14 = std::chrono::high_resolution_clock::now();
 
+for (int i = 1; i < 1000000000; i++) {
+c[i] = c[i-1] || b[i];
+}
+finish20 = std::chrono::high_resolution_clock::now();
 delete[] a;
 delete[] b;
 delete[] c;
 
-auto d = new DATATYPE[1000000];
-auto e = new DATATYPE[1000000];
-auto f= new DATATYPE[1000000];
+auto d = new DATATYPE[100000000];
+auto e = new DATATYPE[100000000];
+auto f= new DATATYPE[100000000];
 finish8 = std::chrono::high_resolution_clock::now();
-for (int i = 1; i < 1000000; i++) {
+for (int i = 1; i < 100000000; i++) {
 f[i] = AND(f[i-1],e[i]);
 }
 finish9 = std::chrono::high_resolution_clock::now();
 
 finish15 = std::chrono::high_resolution_clock::now();
-for (int i = 1; i < 1000000; i++) {
+for (int i = 1; i < 100000000; i++) {
 f[i] = XOR(d[i-1],e[i]);
 }
 
@@ -201,25 +205,25 @@ f[i] = XOR(d[i-1],e[i]);
 
 finish16 = std::chrono::high_resolution_clock::now();
 
-for (int i = 0; i < 1000000; i++) {
+for (int i = 0; i < 100000000; i++) {
 f[i] = ADD_SIGNED(d[i],e[i],32);
 }
 
 finish17 = std::chrono::high_resolution_clock::now();
 
-for (int i = 0; i < 1000000; i++) {
+for (int i = 0; i < 100000000; i++) {
 f[i] = MUL_SIGNED(d[i],e[i],32);
 }
 
 finish18 = std::chrono::high_resolution_clock::now();
 
-for (int i = 0; i < 1000000; i++) {
+for (int i = 0; i < 100000000; i++) {
 f[i] = ADD_SIGNED(d[i],e[i],64);
 }
 
 finish19 = std::chrono::high_resolution_clock::now();
 
-for (int i = 0; i < 1000000; i++) {
+for (int i = 0; i < 100000000; i++) {
 f[i] = MUL_SIGNED(d[i],e[i],64);
 }
 
@@ -231,16 +235,16 @@ delete[] d;
 delete[] e;
 delete[] f;
 
-auto g = new uint32_t[1000000];
-auto h = new uint32_t[1000000];
-auto j= new uint32_t[1000000];
+auto g = new uint32_t[1000000000];
+auto h = new uint32_t[1000000000];
+auto j= new uint32_t[1000000000];
 finish10 = std::chrono::high_resolution_clock::now();
-for (int i = 1; i < 1000000; i++) 
+for (int i = 1; i < 1000000000; i++) 
     j[i] = j[i-1] * h[i];
 finish11 = std::chrono::high_resolution_clock::now();
 
 
-for (int i = 0; i < 1000000; i++) 
+for (int i = 0; i < 1000000000; i++) 
     j[i] = j[i-1] + h[i];
 finish12 = std::chrono::high_resolution_clock::now();
 
@@ -262,10 +266,10 @@ std::cout << "SHA256: " << std::chrono::duration_cast<std::chrono::milliseconds>
 std::cout << "SHA256 Throughput: " << 1.024 / std::chrono::duration_cast<std::chrono::milliseconds>(finish4 - finish3).count() * 1000 << "GB/s"<< std::endl;
 std::cout << "Tested with 16384MB for AES, 1024MB for SHA256" << std::endl;
 
-std::cout << "32-bit Mult Throughput in Gbps: " << std::chrono::duration_cast<std::chrono::nanoseconds>(finish11 - finish10).count() / 32 << std::endl;
-std::cout << "64-bit Mult Throughput in Gbps: " << std::chrono::duration_cast<std::chrono::nanoseconds>(finish7 - finish6).count() / 64 << std::endl;
-std::cout << "32-bit Add Throughput in Gbps: " << std::chrono::duration_cast<std::chrono::nanoseconds>(finish12 - finish11).count() / 32 << std::endl;
-std::cout << "64-bit Add Throughput in Gbps: " << std::chrono::duration_cast<std::chrono::nanoseconds>(finish14 - finish13).count() / 64 << std::endl;
+std::cout << "32-bit Mult Throughput in Gbps: " << 1 / (std::chrono::duration_cast<std::chrono::milliseconds>(finish11 - finish10).count() * 1000 / 32) << std::endl;
+std::cout << "64-bit Mult Throughput in Gbps: " << 1 / (std::chrono::duration_cast<std::chrono::nanoseconds>(finish7 - finish6).count() * 1000 / 64) << std::endl;
+std::cout << "32-bit Add Throughput in Gbps: " << 1 / (std::chrono::duration_cast<std::chrono::nanoseconds>(finish12 - finish11).count()  * 1000/ 32) << std::endl;
+std::cout << "64-bit Add Throughput in Gbps: " << 1 / (std::chrono::duration_cast<std::chrono::nanoseconds>(finish14 - finish13).count()  * 1000/ 64) << std::endl;
 
 #if defined(__AVX512F__) & defined(__AVX512DQ__)
 std::cout << "Signed 32-bit Add Throughput in Gbps:" << 1000000000 / std::chrono::duration_cast<std::chrono::nanoseconds>(finish17 - finish16).count() / (sizeof(DATATYPE)*8) << std::endl;

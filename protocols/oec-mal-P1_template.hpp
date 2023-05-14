@@ -52,18 +52,18 @@ send_to_live(P2,m_2);
 
 /* store_compare_view(P0,m3_prime); */
 
-c.v = XOR( XOR(      AND(a.v,b.r) , AND(b.v,a.r) ) , r124);
-c.r = cr;
-c.m = XOR(m_2,r234);
+/* c.v = XOR( XOR(      AND(a.v,b.r) , AND(b.v,a.r) ) , r124); */
+/* c.r = cr; */
+/* c.m = XOR(m_2,r234); */
 }
 
 // NAND both real Values to receive sharing of ~ (a&b) 
 void complete_and(OEC_MAL_Share &c)
 {
 DATATYPE m_3 = receive_from_live(P2);
-c.v = XOR(c.v, m_3);
+/* c.v = XOR(c.v, m_3); */
 
-c.m = XOR(c.m,m_3);
+/* c.m = XOR(c.m,m_3); */
 
 #if PROTOCOL == 10 || PROTOCOL == 12
 store_compare_view(P012,c.m);

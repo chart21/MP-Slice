@@ -65,18 +65,18 @@ void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
    send_to_live(P0, m3_prime);
 #endif
 
-   c.v = XOR(o1, XOR(AND(a.v, b.r), AND(b.v, a.r)));
-   c.r = cr;
-   c.m = XOR(m3, r234);
+   /* c.v = XOR(o1, XOR(AND(a.v, b.r), AND(b.v, a.r))); */
+   /* c.r = cr; */
+   /* c.m = XOR(m3, r234); */
 }
 
 void complete_and(OEC_MAL_Share &c)
 {
 
 DATATYPE m2 = receive_from_live(P1);
-c.v = XOR(c.v, m2);
+/* c.v = XOR(c.v, m2); */
 
-c.m = XOR(c.m, m2);
+/* c.m = XOR(c.m, m2); */
 #if PROTOCOL == 11
 send_to_live(P0, c.m); // let P0 verify m_2 XOR m_3
 send_to_live(P0, c.v); // let P0 obtain ab
