@@ -272,10 +272,10 @@ std::cout << "32-bit Add Throughput in Gbps: " << 32 / (std::chrono::duration_ca
 std::cout << "64-bit Add Throughput in Gbps: " << 64 / (std::chrono::duration_cast<std::chrono::nanoseconds>(finish14 - finish13).count()  * 1000) << std::endl;
 
 #if defined(__AVX512F__) & defined(__AVX512DQ__)
-std::cout << "Signed 32-bit Add Throughput in Gbps:" << ((0.1 * DATTYPE) / (std::chrono::duration_cast<std::chrono::milliseconds>(finish17 - finish16).count()*1000) << std::endl;
-std::cout << "Signed 32-bit Mult Throughput in Gbps:" << ((0.1 * DATTYPE) / (std::chrono::duration_cast<std::chrono::milliseconds>(finish18 - finish17).count()*1000) << std::endl;
-std::cout << "Signed 64-bit Add Throughput in Gbps:" << ((0.1 * DATTYPE) / (std::chrono::duration_cast<std::chrono::milliseconds>(finish19 - finish18).count()*1000) << std::endl;
-std::cout << "Signed 64-bit Mult Throughput in Gbps:" << ((0.1 * DATTYPE) / (std::chrono::duration_cast<std::chrono::milliseconds>(finish20 - finish19).count()*1000) << std::endl;
+std::cout << "Signed 32-bit Add Throughput in Gbps:" << (0.1 * DATTYPE) / (std::chrono::duration_cast<std::chrono::milliseconds>(finish17 - finish16).count()*1000) << std::endl;
+std::cout << "Signed 32-bit Mult Throughput in Gbps:" << (0.1 * DATTYPE) / (std::chrono::duration_cast<std::chrono::milliseconds>(finish18 - finish17).count()*1000) << std::endl;
+std::cout << "Signed 64-bit Add Throughput in Gbps:" << (0.1 * DATTYPE) / (std::chrono::duration_cast<std::chrono::milliseconds>(finish19 - finish18).count()*1000) << std::endl;
+std::cout << "Signed 64-bit Mult Throughput in Gbps:" << (0.1 * DATTYPE) / (std::chrono::duration_cast<std::chrono::milliseconds>(finish20 - finish19).count()*1000) << std::endl;
 #endif
 
 std::cout << "AND Throughput in Gbps:" << (0.1 * DATTYPE) / (std::chrono::duration_cast<std::chrono::milliseconds>(finish9 - finish8).count() * 1000) << std::endl;
