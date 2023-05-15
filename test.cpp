@@ -278,6 +278,8 @@ finish17 = std::chrono::high_resolution_clock::now();
 for (int i = 1; i < array_size; i++) {
 f[i] = MUL_SIGNED(f[i-1],e[i],32);
 }
+
+finish18 = std::chrono::high_resolution_clock::now();
 std::cout << "Signed 32-bit Add DATTYPE Throughput in Gbps:" << DATTYPE / (((double) std::chrono::duration_cast<std::chrono::milliseconds>(finish17 - finish16).count() * factor)  / 1000) << std::endl;
 std::cout << "Signed 32-bit Mult DATTYPE Throughput in Gbps:" << DATTYPE / (((double) std::chrono::duration_cast<std::chrono::milliseconds>(finish18 - finish17).count() * factor)  / 1000) << std::endl;
 
