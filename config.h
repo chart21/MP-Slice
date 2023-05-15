@@ -80,4 +80,4 @@ int base_port = BASE_PORT; // temporary solution
 // How many messages should be buffered until a combined hash is performed? 0 means all hashes are calculated at the very end of the protocol.
 #define VERIFY_BUFFER 0
 // Print additional info?
-#define PRINT 1
+#define PRINT 0
