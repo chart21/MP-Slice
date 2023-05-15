@@ -6,7 +6,6 @@
 #include "arch/AES.h"
 #include "arch/AES_BS_SHORT.h"
 /* #include "arch/AES_BS.h" */
-#include "arch/SSE.h"
 #include "circuits/xorshift.h"
 #include "arch/SHA_256.h"
 #include "config.h"
