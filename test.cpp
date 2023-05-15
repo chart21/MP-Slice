@@ -6,6 +6,7 @@
 #include "arch/AES.h"
 #include "arch/AES_BS_SHORT.h"
 /* #include "arch/AES_BS.h" */
+#include "arch/SSE.h"
 #include "circuits/xorshift.h"
 #include "arch/SHA_256.h"
 #include "config.h"
@@ -250,7 +251,14 @@ double factor = (double) 1000000000 / array_size;
 
 auto e = new DATATYPE[array_size];
 auto f= new DATATYPE[array_size];
-finish8 = std::chrono::high_resolution_clock::now();
+
+//Warmup
+for (int i = 1; i < array_size/1000; i++) {
+f[i] = AND(f[i-1],e[i]);
+f[i] = XOR(f[i-1],e[i]);
+}
+
+    finish8 = std::chrono::high_resolution_clock::now();
 for (int i = 1; i < array_size; i++) {
 f[i] = AND(f[i-1],e[i]);
 }
@@ -266,6 +274,11 @@ finish16 = std::chrono::high_resolution_clock::now();
 std::cout << "DATTYPE AND Throughput in Gbps: " << DATTYPE / (((double) std::chrono::duration_cast<std::chrono::milliseconds>(finish9 - finish8).count() * factor)  / 1000) << std::endl;
 std::cout << "DATTYPE XOR Throughput in Gbps: " << DATTYPE / (((double) std::chrono::duration_cast<std::chrono::milliseconds>(finish16 - finish15).count() * factor)  / 1000) << std::endl;
 
+//Warmup
+for (int i = 1; i < array_size/1000; i++) {
+f[i] = ADD_SIGNED(f[i-1],e[i],32);
+f[i] = MUL_SIGNED(f[i-1],e[i],32);
+}
 
 
 
