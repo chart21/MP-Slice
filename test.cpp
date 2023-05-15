@@ -243,59 +243,63 @@ std::cout << "32-bit Mult Throughput in Gbps: " << 32 / ((double) std::chrono::d
 std::cout << "32-bit XOR Throughput in Gbps: " << 32 / ((double) std::chrono::duration_cast<std::chrono::milliseconds>(finish22 - finish12).count()  / 1000) << std::endl;
 std::cout << "32-bit AND Throughput in Gbps: " << 32 / ( (double) std::chrono::duration_cast<std::chrono::milliseconds>(finish23 - finish22).count()  / 1000) << std::endl;
 
-/* auto d = new DATATYPE[100000000]; */
-auto e = new DATATYPE[100000000];
-auto f= new DATATYPE[100000000];
+/* auto d = new DATATYPE[1000000000]; */
+
+int array_size = 1000000000;
+double factor = (double) 1000000000 / array_size;
+
+auto e = new DATATYPE[array_size];
+auto f= new DATATYPE[array_size];
 finish8 = std::chrono::high_resolution_clock::now();
-for (int i = 1; i < 100000000; i++) {
+for (int i = 1; i < array_size; i++) {
 f[i] = AND(f[i-1],e[i]);
 }
 finish9 = std::chrono::high_resolution_clock::now();
 
 finish15 = std::chrono::high_resolution_clock::now();
-for (int i = 1; i < 100000000; i++) {
+for (int i = 1; i < array_size; i++) {
 f[i] = XOR(f[i-1],e[i]);
 }
 
 finish16 = std::chrono::high_resolution_clock::now();
 
-std::cout << "DATTYPE AND Throughput in Gbps: " << DATTYPE / ((double) std::chrono::duration_cast<std::chrono::milliseconds>(finish9 - finish8).count()  / 1000) << std::endl;
-std::cout << "DATTYPE XOR Throughput in Gbps: " << DATTYPE / ((double) std::chrono::duration_cast<std::chrono::milliseconds>(finish16 - finish15).count()  / 1000) << std::endl;
+std::cout << "DATTYPE AND Throughput in Gbps: " << DATTYPE / (((double) std::chrono::duration_cast<std::chrono::milliseconds>(finish9 - finish8).count() * factor)  / 1000) << std::endl;
+std::cout << "DATTYPE XOR Throughput in Gbps: " << DATTYPE / (((double) std::chrono::duration_cast<std::chrono::milliseconds>(finish16 - finish15).count() * factor)  / 1000) << std::endl;
 
 
 
 
-for (int i = 1; i < 100000000; i++) {
+for (int i = 1; i < array_size; i++) {
 f[i] = ADD_SIGNED(f[i-1],e[i],32);
 }
 
 finish17 = std::chrono::high_resolution_clock::now();
 
-for (int i = 1; i < 100000000; i++) {
+for (int i = 1; i < array_size; i++) {
 f[i] = MUL_SIGNED(f[i-1],e[i],32);
 }
-std::cout << "Signed 32-bit Add DATTYPE Throughput in Gbps:" << DATTYPE / ((double) std::chrono::duration_cast<std::chrono::milliseconds>(finish17 - finish16).count()  / 1000) << std::endl;
-std::cout << "Signed 32-bit Mult DATTYPE Throughput in Gbps:" << DATTYPE / ((double) std::chrono::duration_cast<std::chrono::milliseconds>(finish18 - finish17).count()  / 1000) << std::endl;
+std::cout << "Signed 32-bit Add DATTYPE Throughput in Gbps:" << DATTYPE / (((double) std::chrono::duration_cast<std::chrono::milliseconds>(finish17 - finish16).count() * factor)  / 1000) << std::endl;
+std::cout << "Signed 32-bit Mult DATTYPE Throughput in Gbps:" << DATTYPE / (((double) std::chrono::duration_cast<std::chrono::milliseconds>(finish18 - finish17).count() * factor)  / 1000) << std::endl;
 
 #if defined(__AVX512F__) & defined(__AVX512DQ__)
 
 finish18 = std::chrono::high_resolution_clock::now();
 
-for (int i = 1; i < 100000000; i++) {
+for (int i = 1; i < array_size; i++) {
 f[i] = ADD_SIGNED(f[i-1],e[i],64);
 }
 
 finish19 = std::chrono::high_resolution_clock::now();
 
-for (int i = 1; i < 100000000; i++) {
+for (int i = 1; i < array_size; i++) {
 f[i] = MUL_SIGNED(f[i-1],e[i],64);
 }
 
 
 finish20 = std::chrono::high_resolution_clock::now();
 
-std::cout << "Signed 64-bit Add DATTYPE Throughput in Gbps:" << DATTYPE / ((double) std::chrono::duration_cast<std::chrono::milliseconds>(finish19 - finish18).count()  / 1000) << std::endl;
-std::cout << "Signed 64-bit Mult DATTYPE Throughput in Gbps:" << DATTYPE / ((double) std::chrono::duration_cast<std::chrono::milliseconds>(finish20 - finish19).count()  / 1000) << std::endl;
+std::cout << "Signed 64-bit Add DATTYPE Throughput in Gbps:" << DATTYPE / (((double) std::chrono::duration_cast<std::chrono::milliseconds>(finish19 - finish18).count() * factor)  / 1000) << std::endl;
+std::cout << "Signed 64-bit Mult DATTYPE Throughput in Gbps:" << DATTYPE / (((double) std::chrono::duration_cast<std::chrono::milliseconds>(finish20 - finish19).count() * factor)  / 1000) << std::endl;
 #endif
 
 /* delete[] d; */
