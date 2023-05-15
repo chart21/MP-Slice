@@ -267,4 +267,14 @@
                 #include "Tetrad-P3_template.hpp"
         #endif
     #endif
+    #elif PROTOCOL == FantasticFour
+    #if INIT == 1
+            #define PROTOCOL_INIT FantasticFour_init
+            #include "FantasticFour_init_template.hpp"
+    #endif
+    #if LIVE == 1
+            #define PROTOCOL_LIVE FantasticFour
+            #include "FantasticFour_template.hpp"
+    #endif
+
 #endif

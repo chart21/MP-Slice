@@ -1,5 +1,5 @@
 #pragma once
-#define PROTOCOL 10
+#define PROTOCOL 9
 #if PROTOCOL < 7
 #define num_players 3
 #else
@@ -80,4 +80,4 @@ int base_port = BASE_PORT; // temporary solution
 // How many messages should be buffered until a combined hash is performed? 0 means all hashes are calculated at the very end of the protocol.
 #define VERIFY_BUFFER 0
 // Print additional info?
-#define PRINT 0
+#define PRINT 1

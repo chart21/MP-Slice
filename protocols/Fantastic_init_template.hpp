@@ -11,11 +11,11 @@
 #include "../utils/randomizer.h"
 #include "sharemind_base.hpp"
 #include "init_protocol_base.hpp"
-class OECL0_init
+class Fantastic_Four_init
 {
 bool optimized_sharing;
 public:
-OECL0_init(bool optimized_sharing) {this->optimized_sharing = optimized_sharing;}
+Fantastic_Four_init(bool optimized_sharing) {this->optimized_sharing = optimized_sharing;}
 
 
 XOR_Share public_val(DATATYPE a)
@@ -34,101 +34,236 @@ DATATYPE Xor(DATATYPE a, DATATYPE b)
    return a;
 }
 
-
-
 //prepare AND -> send real value a&b to other P
 void prepare_and(DATATYPE a, DATATYPE b, DATATYPE &c)
 {
-    send_to_(PNEXT);
-    #if PARTY < 2 == 0
-    send_to_(PMIDDLE);
-    #endif
+
+#if PARTY == 0
+
+send_to_(P2);
+send_to_(P1);
+/* store_compare_view_init(P3); */
+
+#elif PARTY == 1
+
+send_to_(P3);
+send_to_(P0);
+/* store_compare_view_init(P0); */
+
+#elif PARTY == 2
+
+// c0 = a0 b0 + (a0 b1 + a1 b0 - r023) + r123 + r123_2
+send_to_(P0);
+/* store_compare_view_init(P1); */
+/* store_compare_view_init(P1); */
+
+
+#elif PARTY == 3
+
+//c0 = a0 b0 + (a0 b1 + a1 b0 - r023) + r123 + r123_2
+send_to_(P1);
+/* store_compare_view_init(P2); */
+/* store_compare_view_init(P0); */
+
+#endif
 }
 
-// NAND both real Values to receive sharing of ~ (a&b) 
+
+
 void complete_and(DATATYPE &c)
 {
-    send_to_(PNEXT);
-    #if PARTY > 2 
-    receive_from_(PMIDDLE);
-    #endif
+#if PARTY == 0
+
+//c2 = a2 b2 + a2 b1 + (a2 b3 + a3 b2 - r012) + r013
+receive_from_(P1);
+store_compare_view_init(P3);
+store_compare_view_init(P3);
+
+
+
+//c3 = a3 b3 + a3 b2 + (a3 b0 + a0 b3 - r123) + (a1b3 + a3b1 - r023) + r012
+receive_from_(P2);
+store_compare_view_init(P1);
+
+
+#elif PARTY == 1
+
+// c0 = a0 b0 + (a0 b1 + a1 b0 - r023) + r123 + r123_2
+receive_from_(P3);
+store_compare_view_init(P0);
+store_compare_view_init(P2);
+
+//c3 = a3 b3 + a3 b2 + (a3 b0 + a0 b3 - r123) + (a1b3 + a3b1 - r023) + r012
+receive_from_(P0);
+store_compare_view_init(P2);
+
+// receive second term from P0
+
+
+#elif PARTY == 2
+
+
+//c1 = a1 b1 + a1 b2 + (a1 b2 + a2 b1 - r013) + r023 + r023_2
+receive_from_(P0);
+store_compare_view_init(P1);
+store_compare_view_init(P1);
+store_compare_view_init(P3);
+//receive rest from P0, verify with P3
+
+
+
+#elif PARTY == 3
+
+
+//c2 = a2 b2 + a2 b1 + (a2 b3 + a3 b2 - r012) + (a0 b2 + a2 b0 - r123) + r013
+receive_from_(P1);
+store_compare_view_init(P0);
+store_compare_view_init(P0);
+store_compare_view_init(P2);
+#endif
 }
+
+
 
 void prepare_reveal_to_all(DATATYPE a)
 {
-    for(int t = 0; t < 2; t++) 
-    {
-        #if PRE == 1 && (OPT_SHARE == 0 || SHARE_PREP == 1)
-    pre_send_to_(t);
-#else
-    send_to_(t);
-#endif
-
-    }//add to send buffer
+    send_to_(PNEXT);
 }    
 
 
 
 DATATYPE complete_Reveal(DATATYPE a)
 {
-/* for(int t = 0; t < num_players-1; t++) */ 
-/*     receiving_args[t].elements_to_rec[rounds-1]+=1; */
-receive_from_(P2);
+receive_from_(PPREV);
+store_compare_view_init(P0123);
 return a;
 }
 
 
-XOR_Share* alloc_Share(int l)
+DATATYPE* alloc_Share(int l)
 {
     return new DATATYPE[l];
 }
 
 
+
 void prepare_receive_from(DATATYPE a[], int id, int l)
 {
-/* return; */
-/* old: */
-
-if(id == P0)
+if(id == PSELF)
 {
-#if OPT_SHARE == 1
-{
+#if PARTY == 0
     for(int i = 0; i < l; i++)
     {
-        #if PRE == 1 && SHARE_PREP == 1
-            pre_send_to_(P2);
-        #else
-            send_to_(P2);
-        #endif
-    }
-
-}
-#else
-{
-    for(int i = 0; i < l; i++)
-    {
-        #if PRE == 1
-        pre_send_to_(P1);
-        pre_send_to_(P2);
-#else
         send_to_(P1);
         send_to_(P2);
-#endif
     }
-
-}
+#elif PARTY == 1
+    for(int i = 0; i < l; i++)
+    {
+        send_to_(P0);
+        send_to_(P2);
+    }
+#elif PARTY == 2
+    for(int i = 0; i < l; i++)
+    {
+        send_to_(P0);
+        send_to_(P1);
+    }
+#else // PARTY == 3
+    for(int i = 0; i < l; i++)
+    {
+        send_to_(P0);
+        send_to_(P1);
+    }
 #endif
 }
 }
-
 void complete_receive_from(DATATYPE a[], int id, int l)
 {
-    return;
+if(id != PSELF)
+{
+#if PARTY == 0
+    if(id == P1)
+    {
+    for(int i = 0; i < l; i++)
+    {
+    receive_from_(P1);
+    store_compare_view_init(P2);
+    }
+    }
+    else if(id == P2)
+    {
+    for(int i = 0; i < l; i++)
+    {
+    receive_from_(P2);
+    store_compare_view_init(P1);
+    a[i].v2 = receive_from_live(P2);
+    store_compare_view(a[i].v2, P1);
+    }
+    }
+    else // id == P3
+    {
+    for(int i = 0; i < l; i++)
+    {
+    receive_from_(P3);
+    store_compare_view_init(P1);
+    a[i].v1 = receive_from_live(P3);
+    store_compare_view(a[i].v1, P1);
+    }
+    }
+#elif PARTY == 1
+    if(id == P0)
+    {
+    for(int i = 0; i < l; i++)
+    {
+    receive_from_(P0);
+    store_compare_view_init(P2);
+    a[i].v2 = receive_from_live(P0);
+    store_compare_view(a[i].v2, P2);
+    }
+    }
+    else if(id == P2)
+    {
+    for(int i = 0; i < l; i++)
+    {
+    receive_from_(P2);
+    store_compare_view_init(P0);
+    a[i].v2 = receive_from_live(P2);
+    store_compare_view(a[i].v2, P0);
+    }
+    }
+    else // id == P3
+    {
+    for(int i = 0; i < l; i++)
+    {
+    receive_from_(P3);
+    store_compare_view_init(P0);
+    a[i].v1 = receive_from_live(P3);
+    store_compare_view(a[i].v1, P0);
+    }
+    }
+#elif PARTY == 2
+    if(id == P0)
+    {
+    for(int i = 0; i < l; i++)
+    {
+    receive_from_(P0);
+    store_compare_view_init(P1);
+    a[i].v2 = receive_from_live(P0);
+    store_compare_view(a[i].v2, P1);
+    }
+    }
+    else if(id == P1)
+    {
+    for(int i = 0; i < l; i++)
+    {
+    receive_from_(P1);
+    store_compare_view_init(P0);
+    }
+    } 
+#endif
 }
-
-
-
-
+}
 
 void send()
 {
