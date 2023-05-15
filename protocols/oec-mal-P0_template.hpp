@@ -58,7 +58,7 @@ store_compare_view(P2,o1);
     #if PRE == 1
         pre_send_to_live(P2, o1);
     #else
-        send_to_live(P2, o1);
+        /* send_to_live(P2, o1); */
     #endif
 #endif
 

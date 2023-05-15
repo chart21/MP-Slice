@@ -54,7 +54,8 @@ void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
 #endif
    store_compare_view(P0, o1);
 #else
-   DATATYPE o1 = receive_from_live(P0);
+   DATATYPE o1 =  SET_ALL_ZERO();
+   /* DATATYPE o1 = receive_from_live(P0); */
    store_compare_view(P3, o1);
 #endif
    DATATYPE m3 = XOR(XOR(XOR(o1, c.r), AND(a.r, b.r)), AND(a.v, b.v));

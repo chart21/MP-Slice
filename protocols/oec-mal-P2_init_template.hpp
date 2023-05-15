@@ -52,7 +52,7 @@ store_compare_view_init(P3);
 #if PRE == 1
 pre_receive_from_(P0);
 #else
-receive_from_(P0);
+/* receive_from_(P0); */
 #endif
 #endif
 send_to_(P1);
