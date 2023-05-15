@@ -49,10 +49,10 @@ DATATYPE r0 = getRandomVal(P013);
 DATATYPE r1 = getRandomVal(P023);
 DATATYPE r2 = getRandomVal(P123);
 
-DATATYPE r124 = getRandomVal(P013); // used for verification
-DATATYPE r234 = getRandomVal(P123); // Probably sufficient to only generate with P2(-> P3 in paper) -> no because of verification
-DATATYPE o1 = XOR( AND(a.r0,b.r0), r124);
-DATATYPE o4 = XOR( XOR( AND(a.r1,b.r1) ,AND(a.r2,b.r2)),r234);
+/* DATATYPE r124 = getRandomVal(P013); // used for verification */
+/* DATATYPE r234 = getRandomVal(P123); // Probably sufficient to only generate with P2(-> P3 in paper) -> no because of verification */
+DATATYPE o1 = XOR( AND(a.r0,b.r0), getRandomVal(P013));
+DATATYPE o4 = XOR( XOR( AND(a.r1,b.r1) ,AND(a.r2,b.r2)),getRandomVal(P123));
 /* o4 = XOR(o4,o1); //computationally easier to let P3 do it here instead of P0 later */
 #if PROTOCOL == 12
 #if PRE == 1

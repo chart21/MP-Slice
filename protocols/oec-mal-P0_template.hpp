@@ -44,14 +44,14 @@ OEC_MAL_Share Xor(OEC_MAL_Share a, OEC_MAL_Share b)
 //prepare AND -> send real value a&b to other P
 void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
 {
-DATATYPE cr = XOR(getRandomVal(P013),getRandomVal(P023));
-DATATYPE r124 = getRandomVal(P013);
+c.r = XOR(getRandomVal(P013),getRandomVal(P023));
+/* DATATYPE r124 = getRandomVal(P013); */
 DATATYPE x1y1 = AND(a.r, b.r);
-DATATYPE o1 = XOR( x1y1, r124);
-/* #if MAL == 1 */
-/* store_compare_view(P3, o1); */
-/* store_compare_view(P3,SET_ALL_ONE()); */
-/* #endif */
+/* DATATYPE o1 = XOR( x1y1, r124); */
+DATATYPE o1 = XOR( x1y1, getRandomVal(P013));
+c.v = XOR( AND(a.v,b.r), AND(b.v,a.r));
+/* DATATYPE m3_flat = AND(a.v,b.v); */
+c.m = XOR(x1y1, XOR( XOR(AND(a.v,b.v), AND( XOR(a.v, a.r), XOR(b.v, b.r))), c.r));
 #if PROTOCOL == 12
 store_compare_view(P2,o1);
 #else
@@ -61,12 +61,6 @@ store_compare_view(P2,o1);
         send_to_live(P2, o1);
     #endif
 #endif
-c.v = XOR( AND(a.v,b.r), AND(b.v,a.r));
-c.r = cr;
-DATATYPE m3_flat = AND(a.v,b.v);
-DATATYPE m2_flat = AND( XOR(a.v, a.r), XOR(b.v, b.r));
-c.m = XOR(x1y1, XOR( XOR(m3_flat, m2_flat), cr));
-/* c.r = getRandomVal(P3); */
 
 }
 
@@ -87,11 +81,11 @@ store_compare_view(P3, XOR(m_2XORm_3,c.m)); // x2y2 + x3y3 + r234 should remain
 #endif
 
 #if PROTOCOL == 10 || PROTOCOL == 12
-DATATYPE m3_prime = receive_from_live(P2);
-c.v = XOR(c.v, XOR( m3_prime, o_4));
+/* DATATYPE m3_prime = receive_from_live(P2); */
+c.v = XOR(c.v, XOR( receive_from_live(P2), o_4));
 
-c.m = XOR(c.m, o_4);
-store_compare_view(P012, c.m);
+/* c.m = XOR(c.m, o_4); */
+store_compare_view(P012,XOR(c.m, o_4));
 store_compare_view(P1, c.v); // to verify m_3 prime
 #endif
 }

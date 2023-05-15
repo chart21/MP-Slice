@@ -1,5 +1,5 @@
 #pragma once
-#define PROTOCOL 2
+#define PROTOCOL 10
 #if PROTOCOL < 7
 #define num_players 3
 #else
@@ -10,7 +10,7 @@
 #endif
 
 //0: search 1: XORNOTAND, 2: AND 1 comm round 3: AND 1000 comm rounds  4: debug
-#define FUNCTION_IDENTIFIER 2
+#define FUNCTION_IDENTIFIER 0
 
 
 // Registersize to use for SIMD parallelization (Bitslicing/vectorization)
