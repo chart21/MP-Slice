@@ -45,7 +45,7 @@ void prepare_and(DATATYPE a, DATATYPE b, DATATYPE &c)
 #if PRE == 1
     pre_send_to_(P2);
 #else
-    /* send_to_(P2); */
+    send_to_(P2);
 #endif
 #endif
 }
