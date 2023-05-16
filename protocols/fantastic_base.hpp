@@ -10,7 +10,12 @@ struct Fantastic_Share{
     DATATYPE verify_store1;// used for saving messages for verification
     #endif
 
-Fantastic_Share(){}
+    Fantastic_Share(){
+    /* this->v0 = SET_ALL_ZERO(); */
+    /* this->v1 = SET_ALL_ZERO(); */
+    /* this->v2 = SET_ALL_ZERO(); */
+
+    }
 Fantastic_Share(DATATYPE v0, DATATYPE v1, DATATYPE v2){
     this->v0 = v0;
     this->v1 = v1;

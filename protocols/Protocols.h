@@ -151,7 +151,7 @@
             #include "oecl-P2_template.hpp"
         #endif
     #endif
-#elif PROTOCOL == ttp3 || PROTOCOL == ttp4 || PROTOCOL == FantasticFour
+#elif PROTOCOL == ttp3 || PROTOCOL == ttp4
         #define PROTOCOL_LIVE TTP
         #define PROTOCOL_INIT TTP_init
         #if INIT == 1 
@@ -269,12 +269,12 @@
     #endif
     #elif PROTOCOL == FantasticFour
     #if INIT == 1
-            #define PROTOCOL_INIT FantasticFour_init
-            #include "FantasticFour_init_template.hpp"
+            #define PROTOCOL_INIT Fantastic_Four_init
+            #include "Fantastic_init_template.hpp"
     #endif
     #if LIVE == 1
-            #define PROTOCOL_LIVE FantasticFour
-            #include "FantasticFour_template.hpp"
+            #define PROTOCOL_LIVE Fantastic_Four
+            #include "Fantastic_Four_template.hpp"
     #endif
 
 #endif

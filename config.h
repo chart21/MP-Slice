@@ -1,5 +1,5 @@
 #pragma once
-#define PROTOCOL 9
+#define PROTOCOL 8
 #if PROTOCOL < 7
 #define num_players 3
 #else
@@ -14,7 +14,7 @@
 
 
 // Registersize to use for SIMD parallelization (Bitslicing/vectorization)
-#define DATTYPE 128
+#define DATTYPE 64
 
 // Compress binary data into chars before sending them over the netowrk? Only relevant for DATTYPE = 1
 #define COMPRESS 0

@@ -142,18 +142,18 @@ else if(id == P2)
 {
     for(int i = 0; i < l; i++)
     {
-    a[i].l2 = getRandomVal(P023);
     a[i].l1 = SET_ALL_ZERO();
+    a[i].l2 = getRandomVal(P023);
     a[i].l3 = getRandomVal(P123);
     }
 }
-else if(id == P3)
+else if(id == P0)
 {
     for(int i = 0; i < l; i++)
     {
+    a[i].l1 = getRandomVal(P013);
     a[i].l2 = getRandomVal(P023); 
     a[i].l3 = SET_ALL_ZERO();
-    a[i].l1 = getRandomVal(P013);
     }
 }
 }

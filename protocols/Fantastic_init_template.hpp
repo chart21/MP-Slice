@@ -197,8 +197,6 @@ if(id != PSELF)
     {
     receive_from_(P2);
     store_compare_view_init(P1);
-    a[i].v2 = receive_from_live(P2);
-    store_compare_view(a[i].v2, P1);
     }
     }
     else // id == P3
@@ -207,8 +205,6 @@ if(id != PSELF)
     {
     receive_from_(P3);
     store_compare_view_init(P1);
-    a[i].v1 = receive_from_live(P3);
-    store_compare_view(a[i].v1, P1);
     }
     }
 #elif PARTY == 1
@@ -218,8 +214,6 @@ if(id != PSELF)
     {
     receive_from_(P0);
     store_compare_view_init(P2);
-    a[i].v2 = receive_from_live(P0);
-    store_compare_view(a[i].v2, P2);
     }
     }
     else if(id == P2)
@@ -228,8 +222,6 @@ if(id != PSELF)
     {
     receive_from_(P2);
     store_compare_view_init(P0);
-    a[i].v2 = receive_from_live(P2);
-    store_compare_view(a[i].v2, P0);
     }
     }
     else // id == P3
@@ -238,8 +230,6 @@ if(id != PSELF)
     {
     receive_from_(P3);
     store_compare_view_init(P0);
-    a[i].v1 = receive_from_live(P3);
-    store_compare_view(a[i].v1, P0);
     }
     }
 #elif PARTY == 2
@@ -249,8 +239,6 @@ if(id != PSELF)
     {
     receive_from_(P0);
     store_compare_view_init(P1);
-    a[i].v2 = receive_from_live(P0);
-    store_compare_view(a[i].v2, P1);
     }
     }
     else if(id == P1)
