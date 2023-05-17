@@ -42,7 +42,7 @@
 #include "protocols/CircuitInfo.hpp"
 #endif
 
-struct timespec t1, t2, p1, p2;
+struct timespec i1, p1, p2, l1, l2;
 
 int modulo(int x,int N){
     return (x % N + N) %N;
@@ -133,8 +133,8 @@ pthread_cond_init(&cond_send_next, NULL);
 void init_circuit(std::string ips[])
 {
 
-//TODO replace with chrono
-clock_t time_init_start = clock ();
+/* clock_t time_init_start = clock (); */
+/* std::chrono::high_resolution_clock::time_point t_init = std::chrono::high_resolution_clock::now(); */
 #if PRINT == 1
 std::cout << "Initialzing circuit ..." << "\n";
 #endif
@@ -179,9 +179,10 @@ for(int t=0;t<(num_players-1);t++) { // ???
     finalize(ips);
 #endif
 
-clock_t time_init_finished = clock ();
+/* clock_t time_init_finished = clock (); */
+/* std::chrono::high_resolution_clock::time_point t_init_end = std::chrono::high_resolution_clock::now(); */
 /* printf("creating receiving servers\n"); */
-printf("Time measured to initialize program: %fs \n", double((time_init_finished - time_init_start)) / CLOCKS_PER_SEC);
+/* printf("Time measured to initialize program: %fs \n", double((time_init_finished - time_init_start)) / CLOCKS_PER_SEC); */
 
 }
 
@@ -221,8 +222,8 @@ int ret_pre;
     }
     num_successful_connections = -1; 
     pthread_cond_broadcast(&cond_start_signal); //signal all threads to start receiving
-    printf("All parties connected sucessfully, starting protocol and timer! \n");
     pthread_mutex_unlock(&mtx_connection_established);
+    printf("All parties connected sucessfully, starting protocol and timer! \n");
 
 
 #if PRINT == 1
@@ -312,7 +313,7 @@ receiving_rounds = 0;
 #if LIVE == 1
 void live_circuit()
 {
-    pthread_t sending_Threads[num_players-1];
+pthread_t sending_Threads[num_players-1];
 pthread_t receiving_threads[num_players-1];
 int ret;
 
@@ -352,9 +353,11 @@ int ret;
     /* printf("m: done waiting, modifying conn \n"); */
     num_successful_connections = -1; 
     pthread_cond_broadcast(&cond_start_signal); //signal all threads to start receiving
-    printf("All parties connected sucessfully, starting protocol and timer! \n");
     pthread_mutex_unlock(&mtx_connection_established);
     /* printf("m: unlocked conn \n"); */
+    printf("All parties connected sucessfully, starting protocol and timer! \n");
+    clock_gettime(CLOCK_REALTIME, &l1);
+    /* clock_gettime(CLOCK_REALTIME, &i3); */
 
 
 
@@ -362,7 +365,6 @@ int ret;
     /// Processing Inputs ///
     /* Sharemind protocol = Sharemind(); */
     clock_t time_function_start = clock ();
-    clock_gettime(CLOCK_REALTIME, &t1);
     std::chrono::high_resolution_clock::time_point c1 =
             std::chrono::high_resolution_clock::now();
     
@@ -387,13 +389,22 @@ int ret;
                          std::chrono::high_resolution_clock::now() - c1)
                          .count();
     /* searchComm__<Sharemind,DATATYPE>(protocol,*found); */
-    clock_gettime(CLOCK_REALTIME, &t2);
-    double accum = ( t2.tv_sec - t1.tv_sec )
-    + (double)( t2.tv_nsec - t1.tv_nsec ) / (double) 1000000000L;
+    clock_gettime(CLOCK_REALTIME, &l2);
+    double accum = ( l2.tv_sec - l1.tv_sec )
+    + (double)( l2.tv_nsec - l1.tv_nsec ) / (double) 1000000000L;
     #if PRINT == 1
     print_result(result); //different for other functions
     #endif
     clock_t time_function_finished = clock ();
+
+    double init_time = ( l1.tv_sec - i1.tv_sec )
+    + (double)( l1.tv_nsec - i1.tv_nsec ) / (double) 1000000000L;
+    #if PRE == 1
+    double accum_pre = ( p2.tv_sec - p1.tv_sec )
+    + (double)( p2.tv_nsec - p1.tv_nsec ) / (double) 1000000000L;
+    init_time = init_time - accum_pre;
+    #endif
+    printf("Time measured to initialize program: %fs \n", init_time);
     /* printf("Time measured to read and receive inputs: %fs \n", double((time_data_received - time_application_start)) / CLOCKS_PER_SEC); */
     printf("Time measured to perform computation clock: %fs \n", double((time_function_finished - time_function_start)) / CLOCKS_PER_SEC);
     printf("Time measured to perform computation getTime: %fs \n", accum);
@@ -405,6 +416,8 @@ int ret;
 
 void executeProgram(int argc, char *argv[], int process_id, int process_num)
 {
+clock_gettime(CLOCK_REALTIME, &i1);
+
 player_id = PARTY;
 
 //TODO: Replace with macros

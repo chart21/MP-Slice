@@ -1,5 +1,5 @@
 #pragma once
-#define PROTOCOL 8
+#define PROTOCOL 12
 #if PROTOCOL < 7
 #define num_players 3
 #else
@@ -9,8 +9,17 @@
 #define MAL 1
 #endif
 
-//0: search 1: XORNOTAND, 2: AND 1 comm round 3: AND 1000 comm rounds  4: debug
-#define FUNCTION_IDENTIFIER 0
+//0: search 1: XORNOTAND, 2: AND 1 comm round 3: AND 1000 comm rounds  4: debug 5: MULT_32 6: MULT64
+#define FUNCTION_IDENTIFIER 2
+#if FUNCTION_IDENTIFIER == 5
+    #define MULT(a,b) MUL_SIGNED(a,b,32) 
+    #define ADD(a,b) ADD_SIGNED(a,b,32)
+    #define SUB(a,b) SUB_SIGNED(a,b,32)
+#elif FUNCTION_IDENTIFIER == 6
+    #define MULT(a,b) MUL_SIGNED(a,b,64)
+    #define ADD(a,b) ADD_SIGNED(a,b,64)
+    #define SUB(a,b) SUB_SIGNED(a,b,64)
+#endif
 
 
 // Registersize to use for SIMD parallelization (Bitslicing/vectorization)
@@ -45,7 +54,7 @@
 #define INPUT 'r'
 
 // Number of inputs (depends on the problem)
-#define NUM_INPUTS 1000
+#define NUM_INPUTS 1000000
 
 // Bitlength of integers
 #define BITLENGTH 64

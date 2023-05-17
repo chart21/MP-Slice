@@ -1,4 +1,5 @@
 #pragma once
+#include <chrono>
 #include "sockethelper.h"
 int player_id;
 sender_args sending_args[num_players];
@@ -60,4 +61,9 @@ int pmiddle;
 int use_srng_for_inputs = 1;
 
 //int seeds[] = {10000,20000,12000}; // seeds shared between 1-0,2-0,1-2
-
+/* std::chrono::high_resolution_clock::time_point init_start; */
+/* std::chrono::high_resolution_clock::time_point init_end; */
+/* std::chrono::high_resolution_clock::time_point pre_start; */
+/* std::chrono::high_resolution_clock::time_point pre_end; */
+/* std::chrono::high_resolution_clock::time_point live_start; */
+/* std::chrono::high_resolution_clock::time_point live_end; */
