@@ -38,6 +38,63 @@ OEC_MAL_Share Xor(OEC_MAL_Share a, OEC_MAL_Share b)
 
 
 
+#if NEW_WAY == 1
+void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
+{
+   c.r = XOR(getRandomVal(P023), getRandomVal(P123));
+   /* DATATYPE r234 = getRandomVal(P123); */
+   DATATYPE r234 =
+       getRandomVal(P123); // Probably sufficient to only generate with P3 ->
+                           // Probably not because of verification
+/* c.r = getRandomVal(P3); */
+#if PROTOCOL == 12
+#if PRE == 1
+   DATATYPE o1 = pre_receive_from_live(P3);
+#else
+   DATATYPE o1 = receive_from_live(P3);
+#endif
+   store_compare_view(P0, o1);
+#else
+   DATATYPE o1 = receive_from_live(P0);
+   store_compare_view(P3, o1);
+#endif
+   DATATYPE m3_ex_cr = XOR(XOR(o1, AND(a.r, b.r)), AND(a.v, b.v));
+   DATATYPE m3 = XOR(m3_ex_cr, c.r);
+   send_to_live(P1, m3);
+
+
+   c.v = AND(XOR(a.v, a.r), XOR(b.v, b.r));
+
+#if PROTOCOL == 10 || PROTOCOL == 12
+   DATATYPE m3_prime = XOR(XOR(r234, c.r), c.v);
+   /* DATATYPE m3_prime = XOR(XOR(r234, c.r), AND(XOR(a.v, a.r), XOR(b.v, b.r))); */
+   send_to_live(P0, m3_prime);
+#endif
+   c.v = XOR(c.v, m3_ex_cr);
+   c.m = XOR(m3, r234);
+}
+
+void complete_and(OEC_MAL_Share &c)
+{
+
+DATATYPE m2 = receive_from_live(P1);
+c.v = XOR(c.v, m2);
+/* c.m = XOR(c.m, m2); */
+/* DATATYPE cm = XOR(c.m, m2); */
+#if PROTOCOL == 11
+send_to_live(P0, XOR(c.m, m2)); // let P0 verify m_2 XOR m_3
+send_to_live(P0, c.v); // let P0 obtain ab
+#endif
+
+#if PROTOCOL == 10 || PROTOCOL == 12
+store_compare_view(P012, XOR(c.m, m2));
+#endif
+/* store_compare_view(P0, c.v); */
+}
+
+
+#else
+
 void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
 {
    c.r = XOR(getRandomVal(P023), getRandomVal(P123));
@@ -87,6 +144,8 @@ store_compare_view(P012, XOR(c.m, m2));
 #endif
 /* store_compare_view(P0, c.v); */
 }
+
+#endif
 
 void prepare_reveal_to_all(OEC_MAL_Share a)
 {
