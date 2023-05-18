@@ -40,8 +40,6 @@ void prepare_and(DATATYPE a, DATATYPE b, DATATYPE &c)
 
 #if PARTY == 0
 
-send_to_(P2);
-send_to_(P1);
 /* store_compare_view_init(P3); */
 
 #elif PARTY == 1
@@ -94,7 +92,6 @@ store_compare_view_init(P0);
 store_compare_view_init(P2);
 
 //c3 = a3 b3 + a3 b2 + (a3 b0 + a0 b3 - r123) + (a1b3 + a3b1 - r023) + r012
-receive_from_(P0);
 store_compare_view_init(P2);
 
 // receive second term from P0
@@ -104,7 +101,6 @@ store_compare_view_init(P2);
 
 
 //c1 = a1 b1 + a1 b2 + (a1 b2 + a2 b1 - r013) + r023 + r023_2
-receive_from_(P0);
 store_compare_view_init(P1);
 store_compare_view_init(P1);
 store_compare_view_init(P3);

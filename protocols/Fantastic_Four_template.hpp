@@ -58,8 +58,6 @@ DATATYPE send_valu = SET_ALL_ZERO();
 
 #if PARTY == 0
 
-send_to_live(P2, send_valu);
-send_to_live(P1, send_valu);
 #elif PARTY == 1
 
 send_to_live(P3, send_valu);
@@ -84,6 +82,8 @@ send_to_live(P1, send_valu);
 
 void complete_and(Fantastic_Share &c)
 {
+
+DATATYPE receive_term0 = SET_ALL_ZERO();
 #if PARTY == 0
 
 store_compare_view(P3,c.verify_store0);
@@ -109,7 +109,6 @@ store_compare_view(P2,receive_term3);
 c.v0 = XOR(c.v0, receive_term3);
 
 //c3 = a3 b3 + a3 b2 + (a3 b0 + a0 b3 - r123) + (a1b3 + a3b1 - r023) + r012
-DATATYPE receive_term0 = receive_from_live(P0);
 store_compare_view(P2,receive_term0);
 c.v2 = XOR(c.v2, receive_term0);
 
@@ -121,7 +120,6 @@ c.v2 = XOR(c.v2, receive_term0);
 store_compare_view(P1,c.verify_store0);
 store_compare_view(P1,c.verify_store1);
 //c1 = a1 b1 + a1 b2 + (a1 b2 + a2 b1 - r013) + r023 + r023_2
-DATATYPE receive_term0 = receive_from_live(P0);
 store_compare_view(P3,receive_term0);
 c.v1 = XOR(c.v1, receive_term0);
 //receive rest from P0, verify with P3
@@ -145,8 +143,8 @@ void prepare_mult(Fantastic_Share a, Fantastic_Share b, Fantastic_Share &c)
 {
 #if PARTY == 0
 DATATYPE send_valu = SET_ALL_ZERO();
-send_to_live(P2, send_valu);
-send_to_live(P1, send_valu);
+/* send_to_live(P2, send_valu); */
+/* send_to_live(P1, send_valu); */
 #elif PARTY == 1
 
 send_to_live(P3, send_valu);
