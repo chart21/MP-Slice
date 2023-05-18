@@ -56,6 +56,17 @@ store_compare_view_init(P012);
 store_compare_view_init(P0);
 #endif
 }
+#if FUNCTION_IDENTIFIER > 4
+void prepare_mult(DATATYPE a, DATATYPE b, DATATYPE &c)
+{
+    prepare_and(a,b,c);
+}
+
+void complete_mult(DATATYPE &c)
+{
+    complete_and(c);
+}
+#endif
 
 void prepare_reveal_to_all(DATATYPE a)
 {

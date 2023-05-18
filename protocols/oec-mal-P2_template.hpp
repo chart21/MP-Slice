@@ -38,7 +38,6 @@ OEC_MAL_Share Xor(OEC_MAL_Share a, OEC_MAL_Share b)
 
 
 
-#if NEW_WAY == 1
 void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
 {
    c.r = XOR(getRandomVal(P023), getRandomVal(P123));
@@ -93,11 +92,10 @@ store_compare_view(P012, XOR(c.m, m2));
 }
 
 
-#else
-
-void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
+#if FUNCTION_IDENTIFIER > 4
+void prepare_mult(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
 {
-   c.r = XOR(getRandomVal(P023), getRandomVal(P123));
+   c.r = SUB(getRandomVal(P023), getRandomVal(P123));
    /* DATATYPE r234 = getRandomVal(P123); */
    DATATYPE r234 =
        getRandomVal(P123); // Probably sufficient to only generate with P3 ->
@@ -114,40 +112,39 @@ void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
    DATATYPE o1 = receive_from_live(P0);
    store_compare_view(P3, o1);
 #endif
-   DATATYPE m3_ex_cr = XOR(XOR(o1, AND(a.r, b.r)), AND(a.v, b.v));
-   DATATYPE m3 = XOR(m3_ex_cr, c.r);
-   send_to_live(P1, m3);
+   c.m = SUB( ADD(SUB(MULT(a.v, b.r),o1), MULT(b.v, a.r)),c.r);
+   send_to_live(P1, c.m);
 
 
-   c.v = AND(XOR(a.v, a.r), XOR(b.v, b.r));
+   /* c.v = AND(XOR(a.v, a.r), XOR(b.v, b.r)); */
+   c.v = MULT(a.v, b.v);
 
 #if PROTOCOL == 10 || PROTOCOL == 12
-   DATATYPE m3_prime = XOR(XOR(r234, c.r), c.v);
+   /* DATATYPE m3_prime = XOR(XOR(r234, c.r), c.v); */
    /* DATATYPE m3_prime = XOR(XOR(r234, c.r), AND(XOR(a.v, a.r), XOR(b.v, b.r))); */
-   send_to_live(P0, m3_prime);
+   send_to_live(P0, ADD(r234 ,ADD(c.v,c.r)));
 #endif
-   c.v = XOR(c.v, m3_ex_cr);
-   c.m = XOR(m3, r234);
+   c.v = SUB(c.v, c.m);
+   c.m = ADD(c.m, r234);
 }
 
-void complete_and(OEC_MAL_Share &c)
+void complete_mult(OEC_MAL_Share &c)
 {
 
 DATATYPE m2 = receive_from_live(P1);
-c.v = XOR(c.v, m2);
+c.v = SUB(c.v, m2);
 /* c.m = XOR(c.m, m2); */
 /* DATATYPE cm = XOR(c.m, m2); */
 #if PROTOCOL == 11
-send_to_live(P0, XOR(c.m, m2)); // let P0 verify m_2 XOR m_3
-send_to_live(P0, c.v); // let P0 obtain ab
+send_to_live(P0, ADD(c.m, m2)); // let P0 verify m_2 XOR m_3
+send_to_live(P0, ADD(c.v,c.r)); // let P0 obtain ab, Problem for arithmetic circuits: P0 wants ab+c3, P2 has ab+c1 -> P2 needs to add c_3, P1 needs to substract c_1 on receiving
 #endif
 
 #if PROTOCOL == 10 || PROTOCOL == 12
-store_compare_view(P012, XOR(c.m, m2));
+store_compare_view(P012, ADD(c.m, m2));
 #endif
 /* store_compare_view(P0, c.v); */
 }
-
 
 #endif
 

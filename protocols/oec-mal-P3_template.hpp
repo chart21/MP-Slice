@@ -52,11 +52,7 @@ DATATYPE r2 = getRandomVal(P123);
 /* DATATYPE r124 = getRandomVal(P013); // used for verification */
 /* DATATYPE r234 = getRandomVal(P123); // Probably sufficient to only generate with P2(-> P3 in paper) -> no because of verification */
 DATATYPE o1 = XOR( AND(a.r0,b.r0), getRandomVal(P013));
-#if NEW_WAY == 1
 DATATYPE o4 = XOR( XOR( AND(a.r0,b.r1) ,AND(a.r2,b.r0)),getRandomVal(P123));
-#else
-DATATYPE o4 = XOR( XOR( AND(a.r1,b.r1) ,AND(a.r2,b.r2)),getRandomVal(P123));
-#endif
 /* o4 = XOR(o4,o1); //computationally easier to let P3 do it here instead of P0 later */
 #if PROTOCOL == 12
 #if PRE == 1
@@ -89,6 +85,53 @@ void complete_and(Dealer_Share &c)
 {
 }
 
+#if FUNCTION_IDENTIFIER > 4
+void prepare_mult(Dealer_Share a, Dealer_Share b, Dealer_Share &c)
+{
+/* c.r0 = getRandomVal(P0); */
+/* c.r1 = getRandomVal(P1); */
+/* c.r2 = getRandomVal(P2); */
+DATATYPE r0 = getRandomVal(P013);
+DATATYPE r1 = getRandomVal(P023);
+DATATYPE r2 = getRandomVal(P123);
+
+/* DATATYPE r124 = getRandomVal(P013); // used for verification */
+/* DATATYPE r234 = getRandomVal(P123); // Probably sufficient to only generate with P2(-> P3 in paper) -> no because of verification */
+DATATYPE o1 = ADD( MULT(a.r0,b.r0), getRandomVal(P013));
+DATATYPE o4 = ADD( SUB( MULT(a.r0,b.r1) ,MULT(a.r2,b.r0)),getRandomVal(P123));
+/* o4 = XOR(o4,o1); //computationally easier to let P3 do it here instead of P0 later */
+#if PROTOCOL == 12
+#if PRE == 1
+pre_send_to_live(P2, o1);
+#else
+send_to_live(P2, o1);
+#endif
+#else
+store_compare_view(P2, o1);
+#endif
+
+
+#if PROTOCOL == 10 || PROTOCOL == 12
+#if PRE == 1
+pre_send_to_live(P0, o4);
+#else
+send_to_live(P0, o4);
+#endif
+#elif PROTOCOL == 11
+store_compare_view(P0,o4);
+#endif
+
+c.r0 = ADD(r0,r1);
+c.r1 = SUB(r0,r2);
+c.r2 = SUB(r1,r2);
+
+}
+
+void complete_mult(Dealer_Share &c)
+{
+}
+
+#endif
 
 void prepare_reveal_to_all(Dealer_Share a)
 {

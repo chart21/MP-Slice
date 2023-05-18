@@ -38,7 +38,6 @@ OEC_MAL_Share Xor(OEC_MAL_Share a, OEC_MAL_Share b)
     a.r = XOR(a.r,b.r);
    return a;
 }
-#if NEW_WAY == 1
 void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
 {
 c.r = XOR(getRandomVal(P013),getRandomVal(P023));
@@ -95,20 +94,18 @@ store_compare_view(P1, c.v); // P_2 has ab+c1, P1 has ab+c3 -> P1 needs to conve
 #endif
 }
 
-
-#else
-void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
+#if FUNCTION_IDENTIFIER > 4
+void prepare_mult(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
 {
-c.r = XOR(getRandomVal(P013),getRandomVal(P023));
+c.r = ADD(getRandomVal(P013),getRandomVal(P023));
 /* DATATYPE r124 = getRandomVal(P013); */
-DATATYPE x1y1 = AND(a.r, b.r);
 /* DATATYPE o1 = XOR( x1y1, r124); */
-DATATYPE o1 = XOR( x1y1, getRandomVal(P013));
+DATATYPE o1 = ADD(MULT(a.r, b.r), getRandomVal(P013));
 
 #if PROTOCOL == 11
-c.v = XOR(c.r, XOR( AND(a.v,b.r), AND(b.v,a.r)));
+c.v = SUB(ADD( MULT(a.v,b.r), MULT(b.v,a.r)),c.r);
 #else
-c.v = XOR( AND(a.v,b.r), AND(b.v,a.r));
+c.v = ADD( MULT(a.v,b.r), MULT(b.v,a.r));
 #endif
 
 /* DATATYPE m3_flat = AND(a.v,b.v); */
@@ -127,7 +124,7 @@ store_compare_view(P2,o1);
 
 }
 
-void complete_and(OEC_MAL_Share &c)
+void complete_mult(OEC_MAL_Share &c)
 {
 #if PROTOCOL == 10 || PROTOCOL == 12
 #if PRE == 1
@@ -138,19 +135,19 @@ DATATYPE o_4 = receive_from_live(P3);
 #elif PROTOCOL == 11
 DATATYPE m_2XORm_3 = receive_from_live(P2);
 store_compare_view(P1, m_2XORm_3); // Verify if P_2 sent correct message m_2 XOR m_3
-store_compare_view(P3, XOR(m_2XORm_3,c.v)); // x2y2 + x3y3 + r234 should remain
-c.v = XOR(c.r,receive_from_live(P2)); // receive ab + r_2 from P2 (P3 in paper), need to convert to ab + r_3
+store_compare_view(P3, SUB(m_2XORm_3,c.v)); // x1 y1 - x1 y3 - x 3 y1 - r234 should remain
+c.v = SUB(receive_from_live(P2),c.r); // receive ab + c_1 + c_3 from P2 (P3 in paper), need to convert to ab + c_3, maybe conversion not needed in boolean domain?
 store_compare_view(P1, c.v); // Verify if P_2 sent correct message of ab
 #endif
 
 #if PROTOCOL == 10 || PROTOCOL == 12
 /* DATATYPE m3_prime = receive_from_live(P2); */
-c.v = XOR(c.v, o_4);
+c.v = ADD(c.v, o_4);
 
 /* c.m = XOR(c.m, o_4); */
-store_compare_view(P012,XOR(c.v, c.r));
-c.v = XOR(c.v, receive_from_live(P2));
-store_compare_view(P1, c.v); // to verify m_3 prime
+store_compare_view(P012,SUB(c.v, c.r));
+c.v = SUB(receive_from_live(P2),c.v);
+store_compare_view(P1, c.v); // P_2 has ab+c1, P1 has ab+c3 -> P1 needs to convert
 #endif
 }
 
