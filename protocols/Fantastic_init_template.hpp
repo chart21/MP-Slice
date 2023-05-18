@@ -44,8 +44,6 @@ void prepare_and(DATATYPE a, DATATYPE b, DATATYPE &c)
 
 #elif PARTY == 1
 
-send_to_(P3);
-send_to_(P0);
 /* store_compare_view_init(P0); */
 
 #elif PARTY == 2
@@ -73,7 +71,6 @@ void complete_and(DATATYPE &c)
 #if PARTY == 0
 
 //c2 = a2 b2 + a2 b1 + (a2 b3 + a3 b2 - r012) + r013
-receive_from_(P1);
 store_compare_view_init(P3);
 store_compare_view_init(P3);
 
@@ -112,7 +109,6 @@ store_compare_view_init(P3);
 
 
 //c2 = a2 b2 + a2 b1 + (a2 b3 + a3 b2 - r012) + (a0 b2 + a2 b0 - r123) + r013
-receive_from_(P1);
 store_compare_view_init(P0);
 store_compare_view_init(P0);
 store_compare_view_init(P2);

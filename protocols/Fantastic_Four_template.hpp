@@ -60,8 +60,6 @@ DATATYPE send_valu = SET_ALL_ZERO();
 
 #elif PARTY == 1
 
-send_to_live(P3, send_valu);
-send_to_live(P0, send_valu);
 
 
 #elif PARTY == 2
@@ -84,11 +82,11 @@ void complete_and(Fantastic_Share &c)
 {
 
 DATATYPE receive_term0 = SET_ALL_ZERO();
+DATATYPE receive_term1 = SET_ALL_ZERO();
 #if PARTY == 0
 
 store_compare_view(P3,c.verify_store0);
 //c2 = a2 b2 + a2 b1 + (a2 b3 + a3 b2 - r012) + r013
-DATATYPE receive_term1 = receive_from_live(P1);
 store_compare_view(P3,receive_term1);
 c.v1 = XOR(c.v1, receive_term1);
 
@@ -130,7 +128,6 @@ c.v1 = XOR(c.v1, receive_term0);
 
 
 //c2 = a2 b2 + a2 b1 + (a2 b3 + a3 b2 - r012) + (a0 b2 + a2 b0 - r123) + r013
-DATATYPE receive_term1 = receive_from_live(P1);
 store_compare_view(P0,receive_term1);
 c.v2 = XOR(c.v2, receive_term1);
 store_compare_view(P0,c.verify_store1);
