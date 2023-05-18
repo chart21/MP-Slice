@@ -51,121 +51,31 @@ Fantastic_Share Xor(Fantastic_Share a, Fantastic_Share b)
 //prepare MULT -> send real value a&b to other P
 void prepare_and(Fantastic_Share a, Fantastic_Share b, Fantastic_Share &c)
 {
-DATATYPE cross_term1 = XOR( AND(a.v0,b.v1), AND(a.v1,b.v0));
-DATATYPE cross_term2 = XOR( AND(a.v0,b.v2), AND(a.v2,b.v0));
-DATATYPE cross_term3 = XOR( AND(a.v1,b.v2), AND(a.v2,b.v1));
-
+DATATYPE send_valu = SET_ALL_ZERO();
 
 /* c.v1 = XOR (XOR(cross_term1,cross_term3), AND(a.v1, b.v1)); */
 /* c.v2 = XOR (XOR(cross_term2,cross_term3), AND(a.v2, b.v2)); */
 
 #if PARTY == 0
 
-DATATYPE r012 = getRandomVal(P012);
-DATATYPE r013 = getRandomVal(P013);
-DATATYPE r023 = getRandomVal(P023);
-DATATYPE r023_2 = getRandomVal(P023);
-
-
-//c1 = a1 b1 + a1 b2 + (a1 b2 + a2 b1 - r013) + r023 + r023_2
-
-DATATYPE send_Term2 = XOR(cross_term1, r013); // sent by P0 to P2, verified by P3
-send_to_live(P2, send_Term2);
-c.v0 = XOR( XOR(r023, r023_2) ,XOR( AND(a.v0, b.v0), send_Term2)); 
-
-//c2 = a2 b2 + a2 b1 + (a2 b3 + a3 b2 - r012) + r013
-DATATYPE verifyTerm3 = XOR(cross_term3, r012); // sent by P1 to P3, verified by P0
-c.verify_store0 = verifyTerm3;
-/* store_compare_view(P3,verifyTerm3); */
-c.v1 = XOR( r013 ,XOR( AND(a.v1, b.v1), verifyTerm3));
-//receive next of c.v1 from P1
-
-//c3 = a3 b3 + a3 b2 + (a3 b0 + a0 b3 - r123) + (a1b3 + a3b1 - r023_2) + r012
-DATATYPE send_Term1 = XOR(cross_term2, r023_2); // sent by P0 to P1, verified by P2
-send_to_live(P1, send_Term1);
-c.v2 = XOR(send_Term1 ,XOR( AND(a.v2, b.v2), r012));
-//receive next of c.v2 from P2
+send_to_live(P2, send_valu);
+send_to_live(P1, send_valu);
 #elif PARTY == 1
 
-DATATYPE r012 = getRandomVal(P012);
-DATATYPE r013 = getRandomVal(P013);
-DATATYPE r123 = getRandomVal(P123);
-DATATYPE r123_2 = getRandomVal(P123);
+send_to_live(P3, send_valu);
+send_to_live(P0, send_valu);
 
-
-// c0 = a0 b0 + (a0 b1 + a1 b0 - r023) + r123 + r123_2
-c.v0 = XOR (AND(a.v0, b.v0), XOR(r123, r123_2));
-//receive next term by P3
-
-//c2 = a2 b2 + a2 b1 + (a2 b3 + a3 b2 - r012) + (a0 b2 + a2 b0 + r123_2  ) + r013
-DATATYPE send_Term3 = XOR(cross_term3, r012); // sent by P1 to P3, verified by P0
-DATATYPE send_Term0 = XOR(cross_term1, r123_2); // sent by P1 to P0, verified by P3
-send_to_live(P3, send_Term3);
-send_to_live(P0, send_Term0);
-
-c.v1 = XOR(r013 ,XOR( AND(a.v1, b.v1), XOR(send_Term3, send_Term0)));
-
-
-//c3 = a3 b3 + a3 b2 + (a3 b0 + a0 b3 - r123) + (a1b3 + a3b1 - r023) + r012
-DATATYPE verifyTerm0 = XOR(cross_term2, r123); // sent by P2 to P0, verified by P1
-c.verify_store0 = verifyTerm0;
-/* store_compare_view(P0,verifyTerm0); */
-c.v2 = XOR(verifyTerm0,  XOR (AND(a.v2, b.v2), r012));
-// receive second term from P0
 
 #elif PARTY == 2
 
-DATATYPE r012 = getRandomVal(P012);
-DATATYPE r023 = getRandomVal(P023);
-DATATYPE r023_2 = getRandomVal(P023);
-DATATYPE r123 = getRandomVal(P123);
-DATATYPE r123_2 = getRandomVal(P123);
-
-
-// c0 = a0 b0 + (a0 b1 + a1 b0 - r023) + r123 + r123_2
-DATATYPE verifyTerm1 = XOR(cross_term1, r023); // sent by P3 to P1, verified by P2
-c.verify_store0 = verifyTerm1;
-/* store_compare_view(P1,verifyTerm1); */
-c.v0 = XOR( XOR(r123, r123_2) ,XOR( AND(a.v0, b.v0), verifyTerm1));
-
-//c1 = a1 b1 + a1 b2 + (a1 b2 + a2 b1 - r013) + r023 + r023_2
-c.v1 = XOR (XOR(r023,r023_2), AND(a.v1, b.v1));
-//receive rest from P0, verify with P3
-
-//c3 = a3 b3 + a3 b2 + (a3 b0 + a0 b3 - r123) + (a1b3 + a3b1 - r023_2) + r012
-DATATYPE send_Term0 = XOR(cross_term2, r123); // sent by P2 to P0, verified by P1
-send_to_live(P0, send_Term0);
-DATATYPE verifyTerm1_2 = XOR(cross_term3, r023_2); // sent by P0 to P1, verified by P2
-c.verify_store1 = verifyTerm1_2;
-/* store_compare_view(P1,verifyTerm1_2); */
-c.v2 = XOR(r012, XOR( AND(a.v2, b.v2), XOR(send_Term0, verifyTerm1_2)));
+send_to_live(P0, send_valu);
 
 
 #elif PARTY == 3
 
-DATATYPE r013 = getRandomVal(P013);
-DATATYPE r023 = getRandomVal(P023);
-DATATYPE r023_2 = getRandomVal(P023);
-DATATYPE r123 = getRandomVal(P123);
-DATATYPE r123_2 = getRandomVal(P123);
 
 //c0 = a0 b0 + (a0 b1 + a1 b0 - r023) + r123 + r123_2
-DATATYPE send_Term1 = XOR(cross_term1, r023); // sent by P3 to P1, verified by P2
-send_to_live(P1, send_Term1);
-c.v0 = XOR( XOR(r123, r123_2) ,XOR( AND(a.v0, b.v0), send_Term1));
-
-//c1 = a1 b1 + a1 b2 + (a1 b2 + a2 b1 - r013) + r023 + r023_2
-DATATYPE verifyTerm2 = XOR(cross_term3, r013); // sent by P0 to P2, verified by P3
-c.verify_store0 = verifyTerm2;
-/* store_compare_view(P2,verifyTerm2); */
-c.v1 = XOR (XOR(r023, r023_2), XOR( AND(a.v1, b.v1), verifyTerm2));
-
-//c2 = a2 b2 + a2 b1 + (a2 b3 + a3 b2 - r012) + (a0 b2 + a2 b0 - r123_2) + r013
-DATATYPE verifyTerm0 = XOR(cross_term2, r123_2); // sent by P1 to P0, verified by P3
-c.verify_store1 = verifyTerm0;
-/* store_compare_view(P0,verifyTerm0); */
-c.v2 = XOR(r013 ,XOR( AND(a.v2, b.v2), verifyTerm0));
-//receive rest from P1
+send_to_live(P1, send_valu);
 
 #endif
 }
@@ -233,6 +143,7 @@ store_compare_view(P2,c.verify_store0);
 #if FUNCTION_IDENTIFIER > 4
 void prepare_mult(Fantastic_Share a, Fantastic_Share b, Fantastic_Share &c)
 {
+#if PARTY == 0
 DATATYPE send_valu = SET_ALL_ZERO();
 send_to_live(P2, send_valu);
 send_to_live(P1, send_valu);
