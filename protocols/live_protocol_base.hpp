@@ -129,11 +129,11 @@ void perform_compare_view(int player_id)
 {
     if (verify_buffer_index[player_id] == 0)
         return;
-    #ifdef __SHA__
-    sha256_process_x86(hash_val[player_id], (uint8_t*) verify_buffer[player_id],sizeof(DATATYPE)*verify_buffer_index[player_id]);
-    #else
-    sha256_process(hash_val[player_id], (uint8_t*) verify_buffer[player_id],sizeof(DATATYPE)*verify_buffer_index[player_id]);
-    #endif
+    /* #ifdef __SHA__ */
+    /* sha256_process_x86(hash_val[player_id], (uint8_t*) verify_buffer[player_id],sizeof(DATATYPE)*verify_buffer_index[player_id]); */
+    /* #else */
+    /* sha256_process(hash_val[player_id], (uint8_t*) verify_buffer[player_id],sizeof(DATATYPE)*verify_buffer_index[player_id]); */
+    /* #endif */
     verify_buffer_index[player_id] = 0;
 }
 

@@ -46,49 +46,50 @@ COUNT_TYPE key[num_players*multiplier][11]{0};
 
 DATATYPE getRandomVal(int link_id)
 {
+    return SET_ALL_ZERO();
 /* if(link_id > 3) */
 /*     return SET_ALL_ZERO(); */
-#if RANDOM_ALGORITHM == 0
-   if(num_generated[link_id] > 63)
-   {
-       num_generated[link_id] = 0;
-       xor_shift(srng[link_id]);
-   }
-   num_generated[link_id] += 1;
-   return srng[link_id][num_generated[link_id] -1];
-#elif RANDOM_ALGORITHM == 1
-    if(num_generated[link_id] > 127)
-    {
-        num_generated[link_id] = 0;
-        AES__(counter[link_id], key[link_id], cipher[link_id]);
-        for (int i = 0; i < 128; i++) {
-           counter[link_id][i] += 1;
-        }
-    }
-    num_generated[link_id] += 1;
-    return cipher[link_id][num_generated[link_id] -1];
-#elif RANDOM_ALGORITHM == 2
-    #if DATTYPE >= 128
-    DO_ENC_BLOCK(counter[link_id], key[link_id]);
-    counter[link_id] += 1;
-    return counter[link_id];
-    #else
-        int bufferlimit = BUFFER_SIZE - 1;
+/* #if RANDOM_ALGORITHM == 0 */
+/*    if(num_generated[link_id] > 63) */
+/*    { */
+/*        num_generated[link_id] = 0; */
+/*        xor_shift(srng[link_id]); */
+/*    } */
+/*    num_generated[link_id] += 1; */
+/*    return srng[link_id][num_generated[link_id] -1]; */
+/* #elif RANDOM_ALGORITHM == 1 */
+/*     if(num_generated[link_id] > 127) */
+/*     { */
+/*         num_generated[link_id] = 0; */
+/*         AES__(counter[link_id], key[link_id], cipher[link_id]); */
+/*         for (int i = 0; i < 128; i++) { */
+/*            counter[link_id][i] += 1; */
+/*         } */
+/*     } */
+/*     num_generated[link_id] += 1; */
+/*     return cipher[link_id][num_generated[link_id] -1]; */
+/* #elif RANDOM_ALGORITHM == 2 */
+/*     #if DATTYPE >= 128 */
+/*     DO_ENC_BLOCK(counter[link_id], key[link_id]); */
+/*     counter[link_id] += 1; */
+/*     return counter[link_id]; */
+/*     #else */
+/*         int bufferlimit = BUFFER_SIZE - 1; */
     
-    if(num_generated[link_id] > bufferlimit - 1)
-    {
-        num_generated[link_id] = 0;
-        COUNT_TYPE vectorized_counter{0};
-        for (int i = 0; i < BUFFER_SIZE; i++) {
-            counter[link_id][i] += 1+BUFFER_SIZE;
-        }
-        memcpy(&vectorized_counter, counter[link_id], sizeof(COUNT_TYPE));
-        DO_ENC_BLOCK(vectorized_counter, key[link_id]);
-    }
-    num_generated[link_id] += 1;
-    return counter[link_id][num_generated[link_id] -1];
-    #endif
-#endif
+/*     if(num_generated[link_id] > bufferlimit - 1) */
+/*     { */
+/*         num_generated[link_id] = 0; */
+/*         COUNT_TYPE vectorized_counter{0}; */
+/*         for (int i = 0; i < BUFFER_SIZE; i++) { */
+/*             counter[link_id][i] += 1+BUFFER_SIZE; */
+/*         } */
+/*         memcpy(&vectorized_counter, counter[link_id], sizeof(COUNT_TYPE)); */
+/*         DO_ENC_BLOCK(vectorized_counter, key[link_id]); */
+/*     } */
+/*     num_generated[link_id] += 1; */
+/*     return counter[link_id][num_generated[link_id] -1]; */
+/*     #endif */
+/* #endif */
 }
 
 /* DATATYPE getRandomVal(int link_id) */
