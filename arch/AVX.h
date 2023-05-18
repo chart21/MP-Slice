@@ -46,7 +46,7 @@
 #define ADD_SIGNED(a,b,c) _mm256_add_epi##c(a,b)
 #define SUB_SIGNED(a,b,c) _mm256_sub_epi##c(a,b)
 
-#define ADD(a,b,c) _mm256_add_epi##c(a,b)
+/* #define ADD(a,b,c) _mm256_add_epi##c(a,b) */
 
 #define L_SHIFT(a,b,c)  _mm256_slli_epi##c(a,b)
 #define R_SHIFT(a,b,c)  _mm256_srli_epi##c(a,b)

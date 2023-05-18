@@ -28,7 +28,11 @@ auto gates_c = P.alloc_Share(NUM_INPUTS);
 P.communicate(); // dummy communication round to simulate secret sharing
 
 for (int i = 0; i < NUM_INPUTS; i++) {
+#if FUNCTION_IDENTIFIER > 4
+    P.prepare_mult(gates_a[i],gates_b[i], gates_c[i]);
+#else
 P.prepare_and(gates_a[i],gates_b[i], gates_c[i]);
+#endif
 /* buffer_helper.update_Buffers(P); */
 /* if (i % 1000 == 0) { */
 /* P.communicate(); */
@@ -38,7 +42,11 @@ P.prepare_and(gates_a[i],gates_b[i], gates_c[i]);
 P.communicate();
 
 for (int i = 0; i < NUM_INPUTS; i++) {
+    #if FUNCTION_IDENTIFIER > 4
+    P.complete_mult(gates_c[i]);
+    #else
     P.complete_and(gates_c[i]);
+    #endif
 /* buffer_helper.update_Buffers(P); */
 /* if (i % 1000 == 0) { */
 /* P.communicate(); */
@@ -46,13 +54,13 @@ for (int i = 0; i < NUM_INPUTS; i++) {
 }
 P.communicate();
 
-P.prepare_reveal_to_all(gates_c[0]);
+/* P.prepare_reveal_to_all(gates_c[0]); */
 
-P.communicate();
+/* P.communicate(); */
 
-P.complete_Reveal(gates_c[0]);
+/* P.complete_Reveal(gates_c[0]); */
 
-P.communicate();
+/* P.communicate(); */
 
 }
 

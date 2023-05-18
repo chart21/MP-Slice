@@ -40,7 +40,7 @@ P.complete_and(gates_c[i+j*COMMUNICATION_ROUNDS]);
 
 }
 
-
+}
 
 
   

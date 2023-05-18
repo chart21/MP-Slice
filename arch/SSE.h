@@ -44,7 +44,7 @@
 #define ANDN(a,b) _mm_andnot_si128(a,b)
 #define NOT(a)    _mm_xor_si128(ONES,a)
 
-#define ADD(a,b,c) _mm_add_epi##c(a,b)
+/* #define ADD(a,b,c) _mm_add_epi##c(a,b) */
 
 #define MUL_SIGNED(a,b,c) _mm_mullo_epi##c(a,b)
 #define ADD_SIGNED(a,b,c) _mm_add_epi##c(a,b)

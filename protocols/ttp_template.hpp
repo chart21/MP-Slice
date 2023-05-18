@@ -60,11 +60,24 @@ DATATYPE Xor(DATATYPE a, DATATYPE b)
 void prepare_and(XOR_Share a, XOR_Share b, XOR_Share &c)
 {
 c = AND(a,b);
-}
+#if VERIFY_BUFFER > 0
+for (int i = 0; i < VERIFY_BUFFER; i++)
+{
+    send_to_live(PNEXT, c);
 
+}
+#endif
+}
 // NAND both real Values to receive sharing of ~ (a&b) 
 void complete_and(XOR_Share &c)
 {
+#if VERIFY_BUFFER > 0
+for (int i = 0; i < VERIFY_BUFFER; i++)
+{
+    receive_from_live(PPREV, c);
+
+}
+#endif
 }
 
 void prepare_reveal_to_all(DATATYPE a)

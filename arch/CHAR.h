@@ -38,9 +38,12 @@
 #define ANDN(a,b) (~(a) & (b))
 #define NOT(a)    (~(a))
 
-#define ADD(a,b,c) ((a) + (b))
-#define SUB(a,b,c) ((a) - (b))
+/* #define ADD(a,b,c) ((a) + (b)) */
+/* #define SUB(a,b,c) ((a) - (b)) */
 
+#define MUL_SIGNED(a,b,c) a * b
+#define ADD_SIGNED(a,b,c) a + b
+#define SUB_SIGNED(a,b,c) a - b
 
 
 

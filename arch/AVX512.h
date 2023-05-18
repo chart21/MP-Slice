@@ -42,7 +42,7 @@
 #define ANDN(a,b) _mm512_andnot_si512(a,b)
 #define NOT(a)    _mm512_xor_si512(ONES,a)
 
-#define ADD(a,b,c) _mm512_add_epi##c(a,b)
+/* #define ADD(a,b,c) _mm512_add_epi##c(a,b) */
 
 #define ADD_SIGNED(a,b,c) _mm512_add_epi##c(a,b)
 #define SUB_SIGNED(a,b,c) _mm512_sub_epi##c(a,b)

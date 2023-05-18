@@ -55,11 +55,21 @@ for(int i = 0; i < num_players; i++)
 int num_erros = 0;
 for(int j = 0; j < BITLENGTH; j++)
 {
+
+#if FUNCTION_IDENTIFIER == 7
+inputs[i][j] = 3;
+if(3 != var[i][j] && 9 != var[i][j])
+{
+    num_erros++;
+    std::cout << var[i][j] << " " << i << " " << j << std::endl;
+}
+#else
 inputs[i][j] = SET_ALL_ONE();
 if(j == i)
     inputs[i][j] = SET_ALL_ZERO();
 if(inputs[i][j] != var[i][j])
     num_erros++;
+#endif
 }
     std::cout << num_erros << " Errors in compare, input from player " << i << std::endl;
 
@@ -140,8 +150,12 @@ for(int j = 0; j < num_players; j++)
 {
 
 for (int i = 0; i < BITLENGTH; i++) {
-
+#if FUNCTION_IDENTIFIER == 7
+   inputs[j][i] = P.Add(inputs[j][i],inputs[j][i]);
+    P.prepare_mult(inputs[j][i],inputs[j][i],inputs[j][i]);
+#else
     P.prepare_and(inputs[j][i],inputs[j][i],inputs[j][i]);
+#endif
 }
 }
 P.communicate();
@@ -149,8 +163,11 @@ for(int j = 0; j < num_players; j++)
 {
 
 for (int i = 0; i < BITLENGTH; i++) {
-
+#if FUNCTION_IDENTIFIER == 7
+P.complete_mult(inputs[j][i]);
+#else
     P.complete_and(inputs[j][i]);
+#endif
 }
 }
 
@@ -176,9 +193,10 @@ for (int i = 0; i < BITLENGTH; i++) {
 std::cout << "Testing and gates: " << std::endl;
 compare(result);
 
+#if FUNCTION_IDENTIFIER != 7
+
 for(int j = 0; j < num_players; j++)
 {
-
 for (int i = 0; i < BITLENGTH; i++) {
 
     inputs[j][i] = P.Xor(inputs[j][i],inputs[j][i]);
@@ -208,7 +226,7 @@ for (int i = 0; i < BITLENGTH; i++) {
 
 std::cout << "Testing NOT, XOR gates: " << std::endl;
 compare(result);
-
+#endif
 
 }
 // Reveal

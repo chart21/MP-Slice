@@ -135,7 +135,31 @@ for (int k = BITLENGTH >> 1; k > 0; k = k >> 1)
 
 
 }
+#if FUNCTION_IDENTIFIER == 7
+void generateElements()
+{
+auto inputs = new DATATYPE[num_players][BITLENGTH];
+for(int i = 0; i < num_players; i++)
+{
+for(int j = 0; j < BITLENGTH; j++)
+{
 
+#if PARTY == 0
+inputs[i][j] = 11;
+#elif PARTY == 2
+inputs[i][j] = 7;
+#elif PARTY == 1
+inputs[i][j] = 5;
+#else
+inputs[i][j] = 3;
+#endif
+}
+}
+
+player_input = (DATATYPE*) inputs[PARTY];
+
+}
+#else
 void generateElements()
 {
 auto inputs = new DATATYPE[num_players][BITLENGTH];
@@ -152,4 +176,4 @@ if(j == i)
 player_input = (DATATYPE*) inputs[PARTY];
 
 }
-
+#endif
