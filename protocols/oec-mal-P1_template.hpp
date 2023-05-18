@@ -43,6 +43,43 @@ void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b , OEC_MAL_Share &c)
 c.r = XOR(getRandomVal(P013),getRandomVal(P123));
 DATATYPE r124 = getRandomVal(P013);
 /* DATATYPE r234 = getRandomVal(P123); //used for veryfying m3' sent by P3 -> probably not needed -> for verification needed */
+c.v = XOR( c.r,  XOR( XOR(AND(a.v,b.r), AND(b.v,a.r))  , r124));  
+/* DATATYPE m_2 = XOR(c.v, c.r); */
+send_to_live(P2,c.v);
+
+/* DATATYPE m3_prime = XOR( XOR(r234,cr) , AND( XOR(a.v,a.r) ,XOR(b.v,b.r))); //computationally wise more efficient to verify ab instead of m_3 prime */
+
+/* store_compare_view(P0,m3_prime); */
+c.m = XOR(c.v,getRandomVal(P123));
+/* c.v = XOR( AND(      XOR(a.v,a.r) , XOR(b.v,b.r) ) , c.v); */
+c.v = XOR(c.v, AND(a.v,b.v));
+
+}
+
+void complete_and(OEC_MAL_Share &c)
+{
+DATATYPE m_3 = receive_from_live(P2);
+c.v = XOR(c.v, m_3);
+
+/* c.m = XOR(c.m,m_3); */
+/* DATATYPE cm = XOR(c.m,m_3); */
+
+#if PROTOCOL == 10 || PROTOCOL == 12
+store_compare_view(P012,XOR(c.m,m_3));
+#elif PROTOCOL == 11
+store_compare_view(P0,XOR(c.m,m_3));
+#endif
+store_compare_view(P0,XOR(c.v,c.r));
+}
+
+#else
+//prepare AND -> send real value a&b to other P
+void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b , OEC_MAL_Share &c)
+{
+/* DATATYPE cr = XOR(getRandomVal(P013),getRandomVal(P123)); */
+c.r = XOR(getRandomVal(P013),getRandomVal(P123));
+DATATYPE r124 = getRandomVal(P013);
+/* DATATYPE r234 = getRandomVal(P123); //used for veryfying m3' sent by P3 -> probably not needed -> for verification needed */
 c.v = XOR(   XOR(AND(a.r,b.r), AND(a.v,b.v))  , r124);  
 DATATYPE m_2 = XOR(c.v, c.r);
 send_to_live(P2,m_2);
@@ -71,42 +108,6 @@ store_compare_view(P0,XOR(c.m,m_3));
 store_compare_view(P0,c.v);
 }
 
-#else
-//prepare AND -> send real value a&b to other P
-void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b , OEC_MAL_Share &c)
-{
-/* DATATYPE cr = XOR(getRandomVal(P013),getRandomVal(P123)); */
-c.r = XOR(getRandomVal(P013),getRandomVal(P123));
-DATATYPE r124 = getRandomVal(P013);
-/* DATATYPE r234 = getRandomVal(P123); //used for veryfying m3' sent by P3 -> probably not needed -> for verification needed */
-DATATYPE m_2 = XOR(   XOR(AND(a.r,b.r), AND(a.v,b.v))  , XOR(c.r,r124));  
-send_to_live(P2,m_2); 
-
-/* DATATYPE m3_prime = XOR( XOR(r234,cr) , AND( XOR(a.v,a.r) ,XOR(b.v,b.r))); //computationally wise more efficient to verify ab instead of m_3 prime */
-
-/* store_compare_view(P0,m3_prime); */
-
-c.v = XOR( XOR(      AND(a.v,b.r) , AND(b.v,a.r) ) , r124);
-c.m = XOR(m_2,getRandomVal(P123));
-
-}
-
-// NAND both real Values to receive sharing of ~ (a&b) 
-void complete_and(OEC_MAL_Share &c)
-{
-DATATYPE m_3 = receive_from_live(P2);
-c.v = XOR(c.v, m_3);
-
-/* c.m = XOR(c.m,m_3); */
-/* DATATYPE cm = XOR(c.m,m_3); */
-
-#if PROTOCOL == 10 || PROTOCOL == 12
-store_compare_view(P012,XOR(c.m,m_3));
-#elif PROTOCOL == 11
-store_compare_view(P0,XOR(c.m,m_3));
-#endif
-store_compare_view(P0,c.v);
-}
 
 #endif
 
@@ -147,8 +148,8 @@ for(int i = 0; i < l; i++)
     DATATYPE x_2 = XOR(x_1,x_3);
     a[i].r = x_2;
     send_to_live(P0,XOR(a[i].v,x_3));
-    send_to_live(P2,XOR(a[i].v,x_2));
-    a[i].v = XOR(a[i].v,x_3);
+    send_to_live(P2,XOR(a[i].v,x_1));
+    a[i].v = XOR(a[i].v,x_1);
 }
 }
 else if(id == P0)
@@ -190,10 +191,10 @@ if(id != PSELF)
     }
         if(id != P0)
             for(int i = 0; i < l; i++)
-                store_compare_view(P0,a[i].v);
+                store_compare_view(P0,XOR(a[i].v,a[i].r));
         if(id != P2)
             for(int i = 0; i < l; i++)
-                store_compare_view(P2,XOR(a[i].v,a[i].r));
+                store_compare_view(P2,a[i].v);
 
 }
 }

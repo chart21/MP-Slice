@@ -8,7 +8,11 @@
 struct OEC_MAL_Share{
     DATATYPE v;
     DATATYPE r;
+#if NEW_WAY == 1 && (PARTY == 0 || PARTY == 3)
+    //no value store needed
+#else
     DATATYPE m; // used for saving messages for verification
+#endif
 OEC_MAL_Share(){}
 OEC_MAL_Share(DATATYPE value, DATATYPE rando)
 {

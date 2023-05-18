@@ -52,7 +52,11 @@ DATATYPE r2 = getRandomVal(P123);
 /* DATATYPE r124 = getRandomVal(P013); // used for verification */
 /* DATATYPE r234 = getRandomVal(P123); // Probably sufficient to only generate with P2(-> P3 in paper) -> no because of verification */
 DATATYPE o1 = XOR( AND(a.r0,b.r0), getRandomVal(P013));
+#if NEW_WAY == 1
+DATATYPE o4 = XOR( XOR( AND(a.r0,b.r1) ,AND(a.r2,b.r0)),getRandomVal(P123));
+#else
 DATATYPE o4 = XOR( XOR( AND(a.r1,b.r1) ,AND(a.r2,b.r2)),getRandomVal(P123));
+#endif
 /* o4 = XOR(o4,o1); //computationally easier to let P3 do it here instead of P0 later */
 #if PROTOCOL == 12
 #if PRE == 1
@@ -90,12 +94,12 @@ void prepare_reveal_to_all(Dealer_Share a)
 {
 #if PRE == 1
     pre_send_to_live(P0, a.r2);
-    pre_send_to_live(P1, a.r2);
-    pre_send_to_live(P2, a.r1);
+    pre_send_to_live(P1, a.r0);
+    pre_send_to_live(P2, a.r0);
 #else
     send_to_live(P0, a.r2);
-    send_to_live(P1, a.r2);
-    send_to_live(P2, a.r1);
+    send_to_live(P1, a.r0);
+    send_to_live(P2, a.r0);
 #endif
 }    
 
@@ -135,8 +139,8 @@ if(id == PSELF)
     a[i].r1 = XOR(r013,r123);
     a[i].r2 = XOR(r023,r123);
     send_to_live(P0, XOR(a[i].r2,v));
-    send_to_live(P1, XOR(a[i].r2,v));
-    send_to_live(P2, XOR(a[i].r1,v));
+    send_to_live(P1, XOR(a[i].r0,v));
+    send_to_live(P2, XOR(a[i].r0,v));
     } 
 }
 else if(id == P0)

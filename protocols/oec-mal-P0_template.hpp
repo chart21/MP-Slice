@@ -43,6 +43,64 @@ void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
 {
 c.r = XOR(getRandomVal(P013),getRandomVal(P023));
 /* DATATYPE r124 = getRandomVal(P013); */
+/* DATATYPE o1 = XOR( x1y1, r124); */
+DATATYPE o1 = XOR(AND(a.r, b.r), getRandomVal(P013));
+
+#if PROTOCOL == 11
+c.v = XOR(c.r, XOR( AND(a.v,b.r), AND(b.v,a.r)));
+#else
+c.v = XOR( AND(a.v,b.r), AND(b.v,a.r));
+#endif
+
+/* DATATYPE m3_flat = AND(a.v,b.v); */
+
+/* c.m = XOR(x1y1, XOR( XOR(AND(a.v,b.v), AND( XOR(a.v, a.r), XOR(b.v, b.r))), c.r)); */
+#if PROTOCOL == 12
+store_compare_view(P2,o1);
+#else
+    #if PRE == 1
+        pre_send_to_live(P2, o1);
+    #else
+        send_to_live(P2, o1);
+    #endif
+#endif
+
+
+}
+
+void complete_and(OEC_MAL_Share &c)
+{
+#if PROTOCOL == 10 || PROTOCOL == 12
+#if PRE == 1
+DATATYPE o_4 = pre_receive_from_live(P3);
+#else
+DATATYPE o_4 = receive_from_live(P3);
+#endif
+#elif PROTOCOL == 11
+DATATYPE m_2XORm_3 = receive_from_live(P2);
+store_compare_view(P1, m_2XORm_3); // Verify if P_2 sent correct message m_2 XOR m_3
+store_compare_view(P3, XOR(m_2XORm_3,c.v)); // x2y2 + x3y3 + r234 should remain
+c.v = XOR(c.r,receive_from_live(P2)); // receive ab + c_1 + c_3 from P2 (P3 in paper), need to convert to ab + c_3, maybe conversion not needed in boolean domain?
+store_compare_view(P1, c.v); // Verify if P_2 sent correct message of ab
+#endif
+
+#if PROTOCOL == 10 || PROTOCOL == 12
+/* DATATYPE m3_prime = receive_from_live(P2); */
+c.v = XOR(c.v, o_4);
+
+/* c.m = XOR(c.m, o_4); */
+store_compare_view(P012,XOR(c.v, c.r));
+c.v = XOR(c.v, receive_from_live(P2));
+store_compare_view(P1, c.v); // P_2 has ab+c1, P1 has ab+c3 -> P1 needs to convert
+#endif
+}
+
+
+#else
+void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
+{
+c.r = XOR(getRandomVal(P013),getRandomVal(P023));
+/* DATATYPE r124 = getRandomVal(P013); */
 DATATYPE x1y1 = AND(a.r, b.r);
 /* DATATYPE o1 = XOR( x1y1, r124); */
 DATATYPE o1 = XOR( x1y1, getRandomVal(P013));
@@ -96,59 +154,8 @@ store_compare_view(P1, c.v); // to verify m_3 prime
 #endif
 }
 
-
-#else
-
-
-void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
-{
-c.r = XOR(getRandomVal(P013),getRandomVal(P023));
-/* DATATYPE r124 = getRandomVal(P013); */
-DATATYPE x1y1 = AND(a.r, b.r);
-/* DATATYPE o1 = XOR( x1y1, r124); */
-DATATYPE o1 = XOR( x1y1, getRandomVal(P013));
-c.v = XOR( AND(a.v,b.r), AND(b.v,a.r));
-/* DATATYPE m3_flat = AND(a.v,b.v); */
-c.m = XOR(x1y1, XOR( XOR(AND(a.v,b.v), AND( XOR(a.v, a.r), XOR(b.v, b.r))), c.r));
-#if PROTOCOL == 12
-store_compare_view(P2,o1);
-#else
-    #if PRE == 1
-        pre_send_to_live(P2, o1);
-    #else
-        send_to_live(P2, o1);
-    #endif
 #endif
 
-}
-
-void complete_and(OEC_MAL_Share &c)
-{
-#if PROTOCOL == 10 || PROTOCOL == 12
-#if PRE == 1
-DATATYPE o_4 = pre_receive_from_live(P3);
-#else
-DATATYPE o_4 = receive_from_live(P3);
-#endif
-#elif PROTOCOL == 11
-DATATYPE m_2XORm_3 = receive_from_live(P2);
-c.v = XOR(receive_from_live(P2),c.r); // receive ab + r_2 from P2 (P3 in paper), need to convert to ab + r_3
-store_compare_view(P1, m_2XORm_3); // Verify if P_2 sent correct message m_2 XOR m_3
-store_compare_view(P1, c.v); // Verify if P_2 sent correct message of ab
-store_compare_view(P3, XOR(m_2XORm_3,c.m)); // x2y2 + x3y3 + r234 should remain
-#endif
-
-#if PROTOCOL == 10 || PROTOCOL == 12
-/* DATATYPE m3_prime = receive_from_live(P2); */
-c.v = XOR(c.v, XOR( receive_from_live(P2), o_4));
-
-/* c.m = XOR(c.m, o_4); */
-store_compare_view(P012,XOR(c.m, o_4));
-store_compare_view(P1, c.v); // to verify m_3 prime
-#endif
-}
-
-#endif
 
 void prepare_reveal_to_all(OEC_MAL_Share a)
 {
@@ -167,7 +174,8 @@ send_to_live(P3, result);
 #else
 DATATYPE result = XOR(a.v, receive_from_live(P3));
 #endif
-store_compare_view(P0123, result);
+store_compare_view(P0123, result); 
+// Problem, P3 sends all the values -> send in circle
 return result;
 }
 
@@ -190,8 +198,8 @@ if(id == PSELF)
     DATATYPE x_3 = getRandomVal(P023);
     a[i].r = XOR(x_2, x_3);
     
-    send_to_live(P1,XOR(a[i].v, x_3));
-    send_to_live(P2,XOR( a[i].v, x_2));
+    send_to_live(P1,XOR(a[i].v, a[i].r));
+    send_to_live(P2,XOR( a[i].v, a[i].r));
     a[i].v = XOR(a[i].v,x_3);
     } 
 }

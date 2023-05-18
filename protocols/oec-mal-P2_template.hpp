@@ -58,6 +58,62 @@ void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
    DATATYPE o1 = receive_from_live(P0);
    store_compare_view(P3, o1);
 #endif
+   c.m = XOR( c.r, XOR(XOR(o1, AND(a.v, b.r)), AND(b.v, a.r)));
+   send_to_live(P1, c.m);
+
+
+   /* c.v = AND(XOR(a.v, a.r), XOR(b.v, b.r)); */
+   c.v = AND(a.v, b.v);
+
+#if PROTOCOL == 10 || PROTOCOL == 12
+   /* DATATYPE m3_prime = XOR(XOR(r234, c.r), c.v); */
+   /* DATATYPE m3_prime = XOR(XOR(r234, c.r), AND(XOR(a.v, a.r), XOR(b.v, b.r))); */
+   send_to_live(P0, XOR(r234 ,XOR(c.v,c.r)));
+#endif
+   c.v = XOR(c.v, c.m);
+   c.m = XOR(c.m, r234);
+}
+
+void complete_and(OEC_MAL_Share &c)
+{
+
+DATATYPE m2 = receive_from_live(P1);
+c.v = XOR(c.v, m2);
+/* c.m = XOR(c.m, m2); */
+/* DATATYPE cm = XOR(c.m, m2); */
+#if PROTOCOL == 11
+send_to_live(P0, XOR(c.m, m2)); // let P0 verify m_2 XOR m_3
+send_to_live(P0, XOR(c.v,c.r)); // let P0 obtain ab, Problem for arithmetic circuits: P0 wants ab+c3, P2 has ab+c1 -> P2 needs to add c_3, P1 needs to substract c_1 on receiving
+#endif
+
+#if PROTOCOL == 10 || PROTOCOL == 12
+store_compare_view(P012, XOR(c.m, m2));
+#endif
+/* store_compare_view(P0, c.v); */
+}
+
+
+#else
+
+void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
+{
+   c.r = XOR(getRandomVal(P023), getRandomVal(P123));
+   /* DATATYPE r234 = getRandomVal(P123); */
+   DATATYPE r234 =
+       getRandomVal(P123); // Probably sufficient to only generate with P3 ->
+                           // Probably not because of verification
+/* c.r = getRandomVal(P3); */
+#if PROTOCOL == 12
+#if PRE == 1
+   DATATYPE o1 = pre_receive_from_live(P3);
+#else
+   DATATYPE o1 = receive_from_live(P3);
+#endif
+   store_compare_view(P0, o1);
+#else
+   DATATYPE o1 = receive_from_live(P0);
+   store_compare_view(P3, o1);
+#endif
    DATATYPE m3_ex_cr = XOR(XOR(o1, AND(a.r, b.r)), AND(a.v, b.v));
    DATATYPE m3 = XOR(m3_ex_cr, c.r);
    send_to_live(P1, m3);
@@ -92,58 +148,6 @@ store_compare_view(P012, XOR(c.m, m2));
 /* store_compare_view(P0, c.v); */
 }
 
-
-#else
-
-void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
-{
-   c.r = XOR(getRandomVal(P023), getRandomVal(P123));
-   /* DATATYPE r234 = getRandomVal(P123); */
-   DATATYPE r234 =
-       getRandomVal(P123); // Probably sufficient to only generate with P3 ->
-                           // Probably not because of verification
-/* c.r = getRandomVal(P3); */
-#if PROTOCOL == 12
-#if PRE == 1
-   DATATYPE o1 = pre_receive_from_live(P3);
-#else
-   DATATYPE o1 = receive_from_live(P3);
-#endif
-   store_compare_view(P0, o1);
-#else
-   DATATYPE o1 = receive_from_live(P0);
-   store_compare_view(P3, o1);
-#endif
-   DATATYPE m3 = XOR(XOR(XOR(o1, c.r), AND(a.r, b.r)), AND(a.v, b.v));
-   send_to_live(P1, m3);
-
-#if PROTOCOL == 10 || PROTOCOL == 12
-   DATATYPE m3_prime = XOR(XOR(r234, c.r), AND(XOR(a.v, a.r), XOR(b.v, b.r)));
-   send_to_live(P0, m3_prime);
-#endif
-
-   c.v = XOR(o1, XOR(AND(a.v, b.r), AND(b.v, a.r)));
-   c.m = XOR(m3, r234);
-}
-
-void complete_and(OEC_MAL_Share &c)
-{
-
-DATATYPE m2 = receive_from_live(P1);
-c.v = XOR(c.v, m2);
-
-/* c.m = XOR(c.m, m2); */
-/* DATATYPE cm = XOR(c.m, m2); */
-#if PROTOCOL == 11
-send_to_live(P0, XOR(c.m, m2)); // let P0 verify m_2 XOR m_3
-send_to_live(P0, c.v); // let P0 obtain ab
-#endif
-
-#if PROTOCOL == 10 || PROTOCOL == 12
-store_compare_view(P012, XOR(c.m, m2));
-#endif
-/* store_compare_view(P0, c.v); */
-}
 
 #endif
 
@@ -182,8 +186,8 @@ for(int i = 0; i < l; i++)
     a[i].v = get_input_live();
     /* a[i].p1 = getRandomVal(0); *1/ */
     send_to_live(P0, XOR(a[i].v,x_3));
-    send_to_live(P1, XOR(a[i].v,x_3));
-    a[i].v = XOR(a[i].v,x_2);
+    send_to_live(P1, XOR(a[i].v,x_1));
+    a[i].v = XOR(a[i].v,x_1);
 }
 }
 else if(id == P0)
@@ -223,10 +227,10 @@ if(id != PSELF)
     }
         if(id != P0)
             for(int i = 0; i < l; i++)
-                store_compare_view(P0,a[i].v);
+                store_compare_view(P0,XOR(a[i].v,a[i].r));
         if(id != P1)
             for(int i = 0; i < l; i++)
-                store_compare_view(P1,XOR(a[i].v,a[i].r));
+                store_compare_view(P1,a[i].v);
 }
 
 }
