@@ -74,7 +74,7 @@ void complete_and(XOR_Share &c)
 #if VERIFY_BUFFER > 0
 for (int i = 0; i < VERIFY_BUFFER; i++)
 {
-    receive_from_live(PPREV, c);
+   c = receive_from_live(PPREV);
 
 }
 #endif

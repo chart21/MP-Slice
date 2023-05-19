@@ -85,7 +85,7 @@ void complete_and(DATATYPE c)
 #if VERIFY_BUFFER > 0
 for (int i = 0; i < VERIFY_BUFFER; i++)
 {
-    receive_from(PPREV);
+    receive_from_(PPREV);
 
 }
 #endif
