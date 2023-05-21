@@ -95,7 +95,7 @@ store_compare_view(P012, XOR(c.m, m2));
 #if FUNCTION_IDENTIFIER > 4
 void prepare_mult(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
 {
-   c.r = SUB(getRandomVal(P023), getRandomVal(P123));
+   c.r = ADD(getRandomVal(P023), getRandomVal(P123));
    /* DATATYPE r234 = getRandomVal(P123); */
    DATATYPE r234 =
        getRandomVal(P123); // Probably sufficient to only generate with P3 ->

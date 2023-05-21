@@ -28,16 +28,6 @@ DATATYPE Not(DATATYPE a)
    return a;
 }
 
-// Receive sharing of ~XOR(a,b) locally
-DATATYPE Xor(DATATYPE a, DATATYPE b)
-{
-   return a;
-}
-DATATYPE Add(DATATYPE a, DATATYPE b)
-{
-   return a;
-}
-
 //prepare AND -> send real value a&b to other P
 void prepare_and(DATATYPE a, DATATYPE b, DATATYPE &c)
 {
@@ -126,6 +116,170 @@ store_compare_view_init(P0);
 store_compare_view_init(P2);
 #endif
 }
+
+#if FUNCTION_IDENTIFIER == 8
+
+// Receive sharing of ~XOR(a,b) locally
+template <typename Func_add>
+DATATYPE Add(DATATYPE a, DATATYPE b, Func_add ADD)
+{
+   return a;
+}
+
+
+template <typename Func_add, typename Func_sub, typename Func_mul>
+void prepare_mult(DATATYPE a, DATATYPE b, DATATYPE &c, Func_add ADD, Func_sub SUB, Func_mul MUL)
+{
+    prepare_and(a,b,c);
+}
+
+template <typename Func_add, typename Func_sub>
+void complete_mult(DATATYPE &c, Func_add ADD, Func_sub SUB)
+{
+    complete_and(c);
+}
+
+
+void prepare_reveal_to_all(DATATYPE a)
+{
+    send_to_(PNEXT);
+}    
+
+
+template <typename Func_add, typename Func_sub>
+DATATYPE complete_Reveal(DATATYPE a, Func_add ADD, Func_sub SUB)
+{
+receive_from_(PPREV);
+store_compare_view_init(P0123);
+return a;
+}
+
+
+DATATYPE* alloc_Share(int l)
+{
+    return new DATATYPE[l];
+}
+
+
+
+void prepare_receive_from(DATATYPE a[], int id, int l)
+{
+if(id == PSELF)
+{
+#if PARTY == 0
+    for(int i = 0; i < l; i++)
+    {
+        send_to_(P1);
+        send_to_(P2);
+    }
+#elif PARTY == 1
+    for(int i = 0; i < l; i++)
+    {
+        send_to_(P0);
+        send_to_(P2);
+    }
+#elif PARTY == 2
+    for(int i = 0; i < l; i++)
+    {
+        send_to_(P0);
+        send_to_(P1);
+    }
+#else // PARTY == 3
+    for(int i = 0; i < l; i++)
+    {
+        send_to_(P0);
+        send_to_(P1);
+    }
+#endif
+}
+}
+void complete_receive_from(DATATYPE a[], int id, int l)
+{
+if(id != PSELF)
+{
+#if PARTY == 0
+    if(id == P1)
+    {
+    for(int i = 0; i < l; i++)
+    {
+    receive_from_(P1);
+    store_compare_view_init(P2);
+    }
+    }
+    else if(id == P2)
+    {
+    for(int i = 0; i < l; i++)
+    {
+    receive_from_(P2);
+    store_compare_view_init(P1);
+    }
+    }
+    else // id == P3
+    {
+    for(int i = 0; i < l; i++)
+    {
+    receive_from_(P3);
+    store_compare_view_init(P1);
+    }
+    }
+#elif PARTY == 1
+    if(id == P0)
+    {
+    for(int i = 0; i < l; i++)
+    {
+    receive_from_(P0);
+    store_compare_view_init(P2);
+    }
+    }
+    else if(id == P2)
+    {
+    for(int i = 0; i < l; i++)
+    {
+    receive_from_(P2);
+    store_compare_view_init(P0);
+    }
+    }
+    else // id == P3
+    {
+    for(int i = 0; i < l; i++)
+    {
+    receive_from_(P3);
+    store_compare_view_init(P0);
+    }
+    }
+#elif PARTY == 2
+    if(id == P0)
+    {
+    for(int i = 0; i < l; i++)
+    {
+    receive_from_(P0);
+    store_compare_view_init(P1);
+    }
+    }
+    else if(id == P1)
+    {
+    for(int i = 0; i < l; i++)
+    {
+    receive_from_(P1);
+    store_compare_view_init(P0);
+    }
+    } 
+#endif
+}
+}
+
+#else
+
+// Receive sharing of ~XOR(a,b) locally
+DATATYPE Xor(DATATYPE a, DATATYPE b)
+{
+   return a;
+}
+DATATYPE Add(DATATYPE a, DATATYPE b)
+{
+   return a;
+}
+
 
 void prepare_mult(DATATYPE a, DATATYPE b, DATATYPE &c)
 {
@@ -264,6 +418,8 @@ if(id != PSELF)
 #endif
 }
 }
+
+#endif
 
 void send()
 {

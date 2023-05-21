@@ -1,5 +1,5 @@
 #pragma once
-#define PROTOCOL 6
+#define PROTOCOL 9
 #if PROTOCOL < 7
 #define num_players 3
 #else
@@ -10,20 +10,37 @@
 #endif
 
 //0: search 1: XORNOTAND, 2: AND 1 comm round 3: AND 1000 comm rounds  4: debug 5: MULT_32 6: MULT64 7: Debug
-#define FUNCTION_IDENTIFIER 2
+#define FUNCTION_IDENTIFIER 5
+
+
+#define NEW_WAY 1
+
+#define DATTYPE 128 // Registersize to use for SIMD parallelization (Bitslicing/vectorization)
+
 #if FUNCTION_IDENTIFIER == 5 || FUNCTION_IDENTIFIER == 7
     #define MULT(a,b) MUL_SIGNED(a,b,32) 
     #define ADD(a,b) ADD_SIGNED(a,b,32)
     #define SUB(a,b) SUB_SIGNED(a,b,32)
+    
 #elif FUNCTION_IDENTIFIER == 6
     #define MULT(a,b) MUL_SIGNED(a,b,64)
     #define ADD(a,b) ADD_SIGNED(a,b,64)
     #define SUB(a,b) SUB_SIGNED(a,b,64)
+#elif FUNCTION_IDENTIFIER == 8
+    #if DATTYPE == 128
+        #define MULT32 _mm_mullo_epi32
+        #define ADD32 _mm_add_epi32
+        #define SUB32 _mm_sub_epi32
+    #elif DATTYPE == 256
+        #define MULT32 _mm256_mullo_epi32
+        #define ADD32 _mm256_add_epi32
+        #define SUB32 _mm256_sub_epi32
+    #elif DATTYPE == 512
+        #define MULT32 _mm512_mullo_epi32
+        #define ADD32 _mm512_add_epi32
+        #define SUB32 _mm512_sub_epi32
+    #endif
 #endif
-
-#define NEW_WAY 1
-// Registersize to use for SIMD parallelization (Bitslicing/vectorization)
-#define DATTYPE 128
 
 // Compress binary data into chars before sending them over the netowrk? Only relevant for DATTYPE = 1
 #define COMPRESS 0

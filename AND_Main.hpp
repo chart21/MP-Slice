@@ -21,7 +21,7 @@
 #include "networking/sockethelper.h"
 #include "networking/buffers.h"
 
-#if FUNCTION_IDENTIFIER == 2 || FUNCTION_IDENTIFIER == 5 || FUNCTION_IDENTIFIER == 6
+#if FUNCTION_IDENTIFIER == 2 || FUNCTION_IDENTIFIER == 5 || FUNCTION_IDENTIFIER == 6 || FUNCTION_IDENTIFIER == 8
 #define FUNCTION AND_BENCH_1
 #include "circuits/AND.hpp"
 #else

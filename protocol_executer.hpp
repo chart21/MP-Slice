@@ -18,7 +18,7 @@
 #include "searchMain_template.hpp"
 #elif FUNCTION_IDENTIFIER == 1
 #include "XORNOTAND_Main.hpp"
-#elif FUNCTION_IDENTIFIER == 2 || FUNCTION_IDENTIFIER == 3 || FUNCTION_IDENTIFIER == 5 || FUNCTION_IDENTIFIER == 6
+#elif FUNCTION_IDENTIFIER == 2 || FUNCTION_IDENTIFIER == 3 || FUNCTION_IDENTIFIER == 5 || FUNCTION_IDENTIFIER == 6 || FUNCTION_IDENTIFIER == 8
 #include "AND_Main.hpp"
 #elif FUNCTION_IDENTIFIER == 4 || FUNCTION_IDENTIFIER == 7
 #include "debug_main_template.hpp"

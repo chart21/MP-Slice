@@ -123,7 +123,7 @@ store_compare_view(P0,o4);
 
 c.r0 = ADD(r0,r1);
 c.r1 = SUB(r0,r2);
-c.r2 = SUB(r1,r2);
+c.r2 = ADD(r1,r2);
 
 }
 
