@@ -10,7 +10,7 @@
 #endif
 
 //0: search 1: XORNOTAND, 2: AND 1 comm round 3: AND 1000 comm rounds  4: debug 5: MULT_32 6: MULT64 7: Debug
-#define FUNCTION_IDENTIFIER 5
+#define FUNCTION_IDENTIFIER 2
 
 
 #define NEW_WAY 1
