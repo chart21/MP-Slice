@@ -36,7 +36,7 @@ OEC_MAL_Share Xor(OEC_MAL_Share a, OEC_MAL_Share b)
    return OEC_MAL_Share(XOR(a.v,b.v),XOR(a.r,b.r));
 }
 
-
+#if FUNCTION_IDENTIFIER < 5
 void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b , OEC_MAL_Share &c)
 {
 /* DATATYPE cr = XOR(getRandomVal(P013),getRandomVal(P123)); */
@@ -71,12 +71,14 @@ store_compare_view(P0,XOR(c.m,m_3));
 #endif
 store_compare_view(P0,XOR(c.v,c.r));
 }
+#endif
 
 #if FUNCTION_IDENTIFIER > 4
 void prepare_mult(OEC_MAL_Share a, OEC_MAL_Share b , OEC_MAL_Share &c)
 {
 /* DATATYPE cr = XOR(getRandomVal(P013),getRandomVal(P123)); */
-c.r = SUB(getRandomVal(P013),getRandomVal(P123));
+/* c.r = SUB(getRandomVal(P013),getRandomVal(P123)); */
+c.r = getRandomVal(P013);
 DATATYPE r124 = getRandomVal(P013);
 /* DATATYPE r234 = getRandomVal(P123); //used for veryfying m3' sent by P3 -> probably not needed -> for verification needed */
 c.v = SUB(ADD( ADD(MULT(a.v,b.r), MULT(b.v,a.r))  , r124),c.r);  
@@ -86,9 +88,17 @@ send_to_live(P2,c.v);
 /* DATATYPE m3_prime = XOR( XOR(r234,cr) , AND( XOR(a.v,a.r) ,XOR(b.v,b.r))); //computationally wise more efficient to verify ab instead of m_3 prime */
 
 /* store_compare_view(P0,m3_prime); */
-c.m = ADD(c.v,getRandomVal(P123));
+/* c.m = ADD(c.v,getRandomVal(P123)); */
+DATATYPE a1b1 = MULT(a.v,b.v);
+#if PROTOCOL == 10 || PROTOCOL == 12
+store_compare_view(P0,ADD(a1b1,getRandomVal(P123))); // compare a1b1 + r123_2 with P0
+#endif
 /* c.v = XOR( AND(      XOR(a.v,a.r) , XOR(b.v,b.r) ) , c.v); */
-c.v = SUB( MULT(a.v,b.v),c.v);
+#if PROTOCOL == 11
+c.m = ADD(c.v,getRandomVal(P123)); // m_2 + r234_2 store to compareview later
+#endif
+
+c.v = SUB( a1b1,c.v);
 
 }
 
@@ -100,12 +110,10 @@ c.v = SUB(c.v, m_3);
 /* c.m = XOR(c.m,m_3); */
 /* DATATYPE cm = XOR(c.m,m_3); */
 
-#if PROTOCOL == 10 || PROTOCOL == 12
-store_compare_view(P012,ADD(c.m,m_3));
-#elif PROTOCOL == 11
-store_compare_view(P0,ADD(c.m,m_3));
+#if PROTOCOL == 11
+store_compare_view(P0,ADD(c.m,m_3)); // compare m_2 + m_3 + r234_2
 #endif
-store_compare_view(P0,SUB(c.v,c.r)); //compare ab + c_3
+store_compare_view(P0,SUB(c.v,getRandomVal(P123))); //compare ab + c1 + r234_1
 }
 #endif
 

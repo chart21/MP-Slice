@@ -37,7 +37,7 @@ OEC_MAL_Share Xor(OEC_MAL_Share a, OEC_MAL_Share b)
 }
 
 
-
+#if FUNCTION_IDENTIFIER < 5
 void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
 {
    c.r = XOR(getRandomVal(P023), getRandomVal(P123));
@@ -90,14 +90,18 @@ store_compare_view(P012, XOR(c.m, m2));
 #endif
 /* store_compare_view(P0, c.v); */
 }
-
+#endif
 
 #if FUNCTION_IDENTIFIER > 4
 void prepare_mult(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
 {
-   c.r = ADD(getRandomVal(P023), getRandomVal(P123));
+    //1* get Random val
+    c.r = getRandomVal(P023);
+   /* c.r = ADD(getRandomVal(P023), getRandomVal(P123)); */
    /* DATATYPE r234 = getRandomVal(P123); */
-   DATATYPE r234 =
+   /* DATATYPE r234_1 = */
+   /*     getRandomVal(P123); // Probably sufficient to only generate with P3 -> */
+   DATATYPE r234_2 =
        getRandomVal(P123); // Probably sufficient to only generate with P3 ->
                            // Probably not because of verification
 /* c.r = getRandomVal(P3); */
@@ -112,20 +116,25 @@ void prepare_mult(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
    DATATYPE o1 = receive_from_live(P0);
    store_compare_view(P3, o1);
 #endif
-   c.m = SUB( ADD(SUB(MULT(a.v, b.r),o1), MULT(b.v, a.r)),c.r);
-   send_to_live(P1, c.m);
+   c.v = SUB( ADD(SUB(MULT(a.v, b.r),o1), MULT(b.v, a.r)),c.r);
+   send_to_live(P1, c.v);
 
 
    /* c.v = AND(XOR(a.v, a.r), XOR(b.v, b.r)); */
-   c.v = MULT(a.v, b.v);
+   DATATYPE a1b1 = MULT(a.v, b.v);
 
 #if PROTOCOL == 10 || PROTOCOL == 12
    /* DATATYPE m3_prime = XOR(XOR(r234, c.r), c.v); */
    /* DATATYPE m3_prime = XOR(XOR(r234, c.r), AND(XOR(a.v, a.r), XOR(b.v, b.r))); */
-   send_to_live(P0, ADD(r234 ,ADD(c.v,c.r)));
+   /* send_to_live(P0, ADD(r234 ,ADD(c.v,c.r))); */
+   send_to_live(P0, ADD(a1b1,r234_2));
 #endif
-   c.v = SUB(c.v, c.m);
-   c.m = ADD(c.m, r234);
+#if PROTOCOL == 11
+c.m = ADD(c.v, r234_2); // store m_2 + m_3 + r_234_2 to send P0 later
+#endif
+   c.v = SUB(a1b1, c.v);
+   /* c.m = ADD(c.m, r234); */
+
 }
 
 void complete_mult(OEC_MAL_Share &c)
@@ -136,12 +145,12 @@ c.v = SUB(c.v, m2);
 /* c.m = XOR(c.m, m2); */
 /* DATATYPE cm = XOR(c.m, m2); */
 #if PROTOCOL == 11
-send_to_live(P0, ADD(c.m, m2)); // let P0 verify m_2 XOR m_3
-send_to_live(P0, ADD(c.v,c.r)); // let P0 obtain ab, Problem for arithmetic circuits: P0 wants ab+c3, P2 has ab+c1 -> P2 needs to add c_3, P1 needs to substract c_1 on receiving
+send_to_live(P0, ADD(c.m, m2)); // let P0 verify m_2 XOR m_3, obtain m_2 + m_3 + r_234_2
+send_to_live(P0, ADD(c.v,getRandomVal(P123))); // let P0 obtain ab + c1 + r234_1
 #endif
 
 #if PROTOCOL == 10 || PROTOCOL == 12
-store_compare_view(P012, ADD(c.m, m2));
+store_compare_view(P012, ADD(getRandomVal(P123), c.v)); // compare ab + c1 + r234_1
 #endif
 /* store_compare_view(P0, c.v); */
 }

@@ -40,7 +40,7 @@ OEC_MAL_Share Xor(OEC_MAL_Share a, OEC_MAL_Share b)
 }
 void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
 {
-c.r = XOR(getRandomVal(P013),getRandomVal(P023));
+c.r = XOR(getRandomVal(P013),getRandomVal(P023)); // calculate c_1
 /* DATATYPE r124 = getRandomVal(P013); */
 /* DATATYPE o1 = XOR( x1y1, r124); */
 DATATYPE o1 = XOR(AND(a.r, b.r), getRandomVal(P013));
@@ -97,7 +97,7 @@ store_compare_view(P1, c.v); // P_2 has ab+c1, P1 has ab+c3 -> P1 needs to conve
 #if FUNCTION_IDENTIFIER > 4
 void prepare_mult(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
 {
-c.r = ADD(getRandomVal(P013),getRandomVal(P023));
+c.r = ADD(getRandomVal(P013),getRandomVal(P023)); // calculate c_1
 /* DATATYPE r124 = getRandomVal(P013); */
 /* DATATYPE o1 = XOR( x1y1, r124); */
 DATATYPE o1 = ADD(MULT(a.r, b.r), getRandomVal(P013));
@@ -136,8 +136,9 @@ DATATYPE o_4 = receive_from_live(P3);
 DATATYPE m_2XORm_3 = receive_from_live(P2);
 store_compare_view(P1, m_2XORm_3); // Verify if P_2 sent correct message m_2 XOR m_3
 store_compare_view(P3, SUB(m_2XORm_3,c.v)); // x1 y1 - x1 y3 - x 3 y1 - r234 should remain
-c.v = SUB(receive_from_live(P2),c.r); // receive ab + c_1 + c_3 from P2 (P3 in paper), need to convert to ab + c_3, maybe conversion not needed in boolean domain?
+c.v = receive_from_live(P2); // receive ab + c1 + r_234_1 from P2 (P3 in paper), need to convert to ab+ r234_1 (maybe not? and only for verify?)
 store_compare_view(P1, c.v); // Verify if P_2 sent correct message of ab
+c.v = SUB(c.v,c.r); // convert to ab + r234_1 (maybe not needed)
 #endif
 
 #if PROTOCOL == 10 || PROTOCOL == 12
@@ -145,9 +146,10 @@ store_compare_view(P1, c.v); // Verify if P_2 sent correct message of ab
 c.v = ADD(c.v, o_4);
 
 /* c.m = XOR(c.m, o_4); */
-store_compare_view(P012,SUB(c.v, c.r));
-c.v = SUB(receive_from_live(P2),c.v);
-store_compare_view(P1, c.v); // P_2 has ab+c1, P1 has ab+c3 -> P1 needs to convert
+DATATYPE m3_prime = receive_from_live(P2);
+c.v = SUB(m3_prime,c.v);
+store_compare_view(P012,ADD(c.v, c.r)); // compare ab + r_234_1 + c_1 with P2,P3
+store_compare_view(P1, m3_prime); // compare m_3 prime with P2
 #endif
 }
 
