@@ -104,6 +104,6 @@ int base_port = BASE_PORT; // temporary solution
 #define RECV_BUFFER 0
 
 // How many messages should be buffered until a combined hash is performed? 0 means all hashes are calculated at the very end of the protocol.
-#define VERIFY_BUFFER 0
+#define VERIFY_BUFFER 2
 // Print additional info?
 #define PRINT 0
