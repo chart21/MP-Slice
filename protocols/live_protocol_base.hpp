@@ -140,10 +140,10 @@ void perform_compare_view(int player_id)
 void store_compare_view(int player_id, DATATYPE element_to_compare)
 {
 #if VERIFY_BUFFER > 0
+    #if VERIFY_BUFFER > 1
 if(verify_buffer_index[player_id] == VERIFY_BUFFER)
-{
+    #endif
     perform_compare_view(player_id);
-}
 #endif
 verify_buffer[player_id][verify_buffer_index[player_id]] = element_to_compare;
 verify_buffer_index[player_id] +=1;
