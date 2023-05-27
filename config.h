@@ -56,7 +56,7 @@
 #define INIT 1
 
 // Use the online phase?
-#define LIVE 1
+#define LIVE 0
 
 // Use the offline phase?
 #define PRE 0
@@ -104,6 +104,6 @@ int base_port = BASE_PORT; // temporary solution
 #define RECV_BUFFER 0
 
 // How many messages should be buffered until a combined hash is performed? 0 means all hashes are calculated at the very end of the protocol.
-#define VERIFY_BUFFER 2
+#define VERIFY_BUFFER 0
 // Print additional info?
 #define PRINT 0
