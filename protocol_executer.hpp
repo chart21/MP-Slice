@@ -168,9 +168,9 @@ for(int t=0;t<(num_players-1);t++) { // ???
     #else
     p_init.finalize(ips); //TODO change to new version
     #endif
-    #if LIVE == 0
-        export_Details_to_file();
-    #endif
+    /* #if LIVE == 0 */
+    /*     export_Details_to_file(); */
+    /* #endif */
 #endif
 #if LIVE == 1 && INIT == 0 && NO_INI == 0
     init_from_file();
@@ -308,6 +308,8 @@ receiving_rounds = 0;
 
 }
 #endif
+
+
 #if LIVE == 1
 void live_circuit()
 {
@@ -475,6 +477,14 @@ init_circuit(ips);
 
 #if PRE == 1
     preprocess_circuit(ips);
+#endif
+
+#if PRE == 1 && LIVE == 0
+double dummy_time = 0.00;
+    printf("Time measured to initialize program: %fs \n", dummy_time);
+    printf("Time measured to perform computation clock: %fs \n", dummy_time);
+    printf("Time measured to perform computation getTime: %fs \n", dummy_time);
+    printf("Time measured to perform computation chrono: %fs \n", dummy_time);
 #endif
 
 #if LIVE == 1

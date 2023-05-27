@@ -59,7 +59,7 @@
 #define LIVE 0
 
 // Use the offline phase?
-#define PRE 0
+#define PRE 1
 
 // Allow sharing of inputs in offline phase
 #define SHARE_PREP 1
