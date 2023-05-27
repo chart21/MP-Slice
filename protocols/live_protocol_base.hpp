@@ -137,35 +137,35 @@ void perform_compare_view(int player_id)
     verify_buffer_index[player_id] = 0;
 }
 
-void store_compare_view(int player_id, DATATYPE element_to_compare)
-{
-#if VERIFY_BUFFER > 0
-if(verify_buffer_index[player_id] == VERIFY_BUFFER)
-{
-    perform_compare_view(player_id);
-}
-#endif
-verify_buffer[player_id][verify_buffer_index[player_id]] = element_to_compare;
-verify_buffer_index[player_id] +=1;
-}
-
 /* void store_compare_view(int player_id, DATATYPE element_to_compare) */
 /* { */
 /* #if VERIFY_BUFFER > 0 */
-/*     #if VERIFY_BUFFER == 1 */
-/*     #ifdef __SHA__ */
-/*     sha256_process_x86(hash_val[player_id], (uint8_t*) &element_to_compare, sizeof(DATATYPE)); */
-/*     #else */
-/*     sha256_process(hash_val[player_id], (uint8_t*) &element_to_compare, sizeof(DATATYPE)); */
-/*     #endif */
-/*         return; */
-/*         #endif */
 /* if(verify_buffer_index[player_id] == VERIFY_BUFFER) */
+/* { */
 /*     perform_compare_view(player_id); */
+/* } */
 /* #endif */
 /* verify_buffer[player_id][verify_buffer_index[player_id]] = element_to_compare; */
 /* verify_buffer_index[player_id] +=1; */
 /* } */
+
+void store_compare_view(int player_id, DATATYPE element_to_compare)
+{
+#if VERIFY_BUFFER > 0
+    #if VERIFY_BUFFER == 1
+    #ifdef __SHA__
+    sha256_process_x86(hash_val[player_id], (uint8_t*) &element_to_compare, sizeof(DATATYPE));
+    #else
+    sha256_process(hash_val[player_id], (uint8_t*) &element_to_compare, sizeof(DATATYPE));
+    #endif
+        return;
+        #endif
+if(verify_buffer_index[player_id] == VERIFY_BUFFER)
+    perform_compare_view(player_id);
+#endif
+verify_buffer[player_id][verify_buffer_index[player_id]] = element_to_compare;
+verify_buffer_index[player_id] +=1;
+}
 
 void compare_views() {
     #if DATTYPE >= 256
