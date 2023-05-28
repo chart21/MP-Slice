@@ -56,10 +56,10 @@
 #define INIT 1
 
 // Use the online phase?
-#define LIVE 0
+#define LIVE 1
 
 // Use the offline phase?
-#define PRE 1
+#define PRE 0
 
 // Allow sharing of inputs in offline phase
 #define SHARE_PREP 1
