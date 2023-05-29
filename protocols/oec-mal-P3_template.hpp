@@ -23,7 +23,7 @@ OEC_MAL3(bool optimized_sharing) {this->optimized_sharing = optimized_sharing;}
 
 Dealer_Share public_val(DATATYPE a)
 {
-    return Dealer_Share(SET_ALL_ZERO(),SET_ALL_ZERO(),SET_ALL_ZERO());
+    return Dealer_Share(SET_ALL_ZERO(),SET_ALL_ZERO());
 }
 
 Dealer_Share Not(Dealer_Share a)
@@ -35,7 +35,7 @@ Dealer_Share Not(Dealer_Share a)
 // Receive sharing of ~XOR(a,b) locally
 Dealer_Share Xor(Dealer_Share a, Dealer_Share b)
 {
-   return Dealer_Share(XOR(a.r0,b.r0),XOR(a.r1,b.r1),XOR(a.r2,b.r2));
+   return Dealer_Share(XOR(a.r0,b.r0),XOR(a.r1,b.r1));
 }
 
 
