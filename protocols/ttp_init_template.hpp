@@ -69,26 +69,26 @@ DATATYPE Xor(DATATYPE a, DATATYPE b)
 //prepare AND -> send real value a&b to other P
 void prepare_and(DATATYPE &a, DATATYPE &b, DATATYPE &c)
 {
-#if VERIFY_BUFFER > 0
-for (int i = 0; i < VERIFY_BUFFER; i++)
-{
-    send_to_(PNEXT);
+/* #if VERIFY_BUFFER < 0 */
+/* for (int i = 0; i < VERIFY_BUFFER; i++) */
+/* { */
+/*     send_to_(PNEXT); */
 
-}
-#endif
+/* } */
+/* #endif */
 //return u[player_id] * v[player_id];
 }
 
 // NAND both real Values to receive sharing of ~ (a&b) 
 void complete_and(DATATYPE c)
 {
-#if VERIFY_BUFFER > 0
-for (int i = 0; i < VERIFY_BUFFER; i++)
-{
-    receive_from_(PPREV);
+/* #if VERIFY_BUFFER > 0 */
+/* for (int i = 0; i < VERIFY_BUFFER; i++) */
+/* { */
+/*     receive_from_(PPREV); */
 
-}
-#endif
+/* } */
+/* #endif */
 }
 
 void prepare_reveal_to_all(DATATYPE a)

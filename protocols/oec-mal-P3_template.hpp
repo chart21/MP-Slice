@@ -41,19 +41,58 @@ Dealer_Share Xor(Dealer_Share a, Dealer_Share b)
 
 
 //prepare AND -> send real value a&b to other P
+/* void prepare_and(Dealer_Share a, Dealer_Share b, Dealer_Share &c) */
+/* { */
+/* /1* c.r0 = getRandomVal(P0); *1/ */
+/* /1* c.r1 = getRandomVal(P1); *1/ */
+/* /1* c.r2 = getRandomVal(P2); *1/ */
+/* DATATYPE r0 = getRandomVal(P013); */
+/* DATATYPE r1 = getRandomVal(P023); */
+/* DATATYPE r2 = getRandomVal(P123); */
+
+/* /1* DATATYPE r124 = getRandomVal(P013); // used for verification *1/ */
+/* /1* DATATYPE r234 = getRandomVal(P123); // Probably sufficient to only generate with P2(-> P3 in paper) -> no because of verification *1/ */
+/* DATATYPE o1 = XOR( AND(a.r0,b.r0), getRandomVal(P013)); */
+/* DATATYPE o4 = XOR( XOR( AND(a.r0,b.r1) ,AND(a.r2,b.r0)),getRandomVal(P123)); */
+/* /1* o4 = XOR(o4,o1); //computationally easier to let P3 do it here instead of P0 later *1/ */
+/* #if PROTOCOL == 12 */
+/* #if PRE == 1 */
+/* pre_send_to_live(P2, o1); */
+/* #else */
+/* send_to_live(P2, o1); */
+/* #endif */
+/* #else */
+/* store_compare_view(P2, o1); */
+/* #endif */
+
+
+/* #if PROTOCOL == 10 || PROTOCOL == 12 */
+/* #if PRE == 1 */
+/* pre_send_to_live(P0, o4); */
+/* #else */
+/* send_to_live(P0, o4); */
+/* #endif */
+/* #elif PROTOCOL == 11 */
+/* store_compare_view(P0,o4); */
+/* #endif */
+
+/* c.r0 = XOR(r0,r1); */
+/* c.r1 = XOR(r0,r2); */
+/* c.r2 = XOR(r1,r2); */
+
+/* } */
 void prepare_and(Dealer_Share a, Dealer_Share b, Dealer_Share &c)
 {
-/* c.r0 = getRandomVal(P0); */
-/* c.r1 = getRandomVal(P1); */
-/* c.r2 = getRandomVal(P2); */
-DATATYPE r0 = getRandomVal(P013);
-DATATYPE r1 = getRandomVal(P023);
-DATATYPE r2 = getRandomVal(P123);
+c.r0 = getRandomVal(P123); // r123_1
+c.r1 = XOR(getRandomVal(P023),getRandomVal(P013)); // x1 
 
 /* DATATYPE r124 = getRandomVal(P013); // used for verification */
 /* DATATYPE r234 = getRandomVal(P123); // Probably sufficient to only generate with P2(-> P3 in paper) -> no because of verification */
-DATATYPE o1 = XOR( AND(a.r0,b.r0), getRandomVal(P013));
-DATATYPE o4 = XOR( XOR( AND(a.r0,b.r1) ,AND(a.r2,b.r0)),getRandomVal(P123));
+
+DATATYPE x1y1 = AND(a.r1,b.r1);
+DATATYPE o1 = XOR( x1y1, getRandomVal(P013));
+DATATYPE o4 = XOR(XOR(XOR(x1y1, AND(a.r0,b.r1)) ,AND(a.r1,b.r0)),XOR(c.r0,getRandomVal(P123))); // r123_2
+/* DATATYPE o4 = ADD( SUB( MULT(a.r0,b.r1) ,MULT(a.r1,b.r0)),getRandomVal(P123)); */
 /* o4 = XOR(o4,o1); //computationally easier to let P3 do it here instead of P0 later */
 #if PROTOCOL == 12
 #if PRE == 1
@@ -75,10 +114,6 @@ send_to_live(P0, o4);
 #elif PROTOCOL == 11
 store_compare_view(P0,o4);
 #endif
-
-c.r0 = XOR(r0,r1);
-c.r1 = XOR(r0,r2);
-c.r2 = XOR(r1,r2);
 
 }
 

@@ -37,22 +37,64 @@ OEC_MAL_Share Xor(OEC_MAL_Share a, OEC_MAL_Share b)
 }
 
 #if FUNCTION_IDENTIFIER < 5
+/* void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b , OEC_MAL_Share &c) */
+/* { */
+/* /1* DATATYPE cr = XOR(getRandomVal(P013),getRandomVal(P123)); *1/ */
+/* c.r = XOR(getRandomVal(P013),getRandomVal(P123)); */
+/* DATATYPE r124 = getRandomVal(P013); */
+/* /1* DATATYPE r234 = getRandomVal(P123); //used for veryfying m3' sent by P3 -> probably not needed -> for verification needed *1/ */
+/* c.v = XOR( c.r,  XOR( XOR(AND(a.v,b.r), AND(b.v,a.r))  , r124)); */  
+/* /1* DATATYPE m_2 = XOR(c.v, c.r); *1/ */
+/* send_to_live(P2,c.v); */
+
+/* /1* DATATYPE m3_prime = XOR( XOR(r234,cr) , AND( XOR(a.v,a.r) ,XOR(b.v,b.r))); //computationally wise more efficient to verify ab instead of m_3 prime *1/ */
+
+/* /1* store_compare_view(P0,m3_prime); *1/ */
+/* c.m = XOR(c.v,getRandomVal(P123)); */
+/* /1* c.v = XOR( AND(      XOR(a.v,a.r) , XOR(b.v,b.r) ) , c.v); *1/ */
+/* c.v = XOR(c.v, AND(a.v,b.v)); */
+
+/* } */
+
+/* void complete_and(OEC_MAL_Share &c) */
+/* { */
+/* DATATYPE m_3 = receive_from_live(P2); */
+/* c.v = XOR(c.v, m_3); */
+
+/* /1* c.m = XOR(c.m,m_3); *1/ */
+/* /1* DATATYPE cm = XOR(c.m,m_3); *1/ */
+
+/* #if PROTOCOL == 10 || PROTOCOL == 12 */
+/* store_compare_view(P012,XOR(c.m,m_3)); */
+/* #elif PROTOCOL == 11 */
+/* store_compare_view(P0,XOR(c.m,m_3)); */
+/* #endif */
+/* store_compare_view(P0,XOR(c.v,c.r)); */
+/* } */
+
 void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b , OEC_MAL_Share &c)
 {
-/* DATATYPE cr = XOR(getRandomVal(P013),getRandomVal(P123)); */
-c.r = XOR(getRandomVal(P013),getRandomVal(P123));
+c.r = getRandomVal(P013);
 DATATYPE r124 = getRandomVal(P013);
 /* DATATYPE r234 = getRandomVal(P123); //used for veryfying m3' sent by P3 -> probably not needed -> for verification needed */
-c.v = XOR( c.r,  XOR( XOR(AND(a.v,b.r), AND(b.v,a.r))  , r124));  
+c.v = XOR(XOR( XOR(AND(a.v,b.r), AND(b.v,a.r))  , r124),c.r);  
 /* DATATYPE m_2 = XOR(c.v, c.r); */
 send_to_live(P2,c.v);
 
 /* DATATYPE m3_prime = XOR( XOR(r234,cr) , AND( XOR(a.v,a.r) ,XOR(b.v,b.r))); //computationally wise more efficient to verify ab instead of m_3 prime */
 
 /* store_compare_view(P0,m3_prime); */
-c.m = XOR(c.v,getRandomVal(P123));
+/* c.m = ADD(c.v,getRandomVal(P123)); */
+DATATYPE a1b1 = AND(a.v,b.v);
+#if PROTOCOL == 10 || PROTOCOL == 12
+store_compare_view(P0,XOR(a1b1,getRandomVal(P123))); // compare a1b1 + r123_2 with P0
+#endif
 /* c.v = XOR( AND(      XOR(a.v,a.r) , XOR(b.v,b.r) ) , c.v); */
-c.v = XOR(c.v, AND(a.v,b.v));
+#if PROTOCOL == 11
+c.m = XOR(c.v,getRandomVal(P123)); // m_2 + r234_2 store to compareview later
+#endif
+
+c.v = XOR( a1b1,c.v);
 
 }
 
@@ -61,15 +103,12 @@ void complete_and(OEC_MAL_Share &c)
 DATATYPE m_3 = receive_from_live(P2);
 c.v = XOR(c.v, m_3);
 
-/* c.m = XOR(c.m,m_3); */
-/* DATATYPE cm = XOR(c.m,m_3); */
 
-#if PROTOCOL == 10 || PROTOCOL == 12
-store_compare_view(P012,XOR(c.m,m_3));
-#elif PROTOCOL == 11
-store_compare_view(P0,XOR(c.m,m_3));
+#if PROTOCOL == 11
+store_compare_view(P0,XOR(c.m,m_3)); // compare m_2 + m_3 + r234_2
 #endif
-store_compare_view(P0,XOR(c.v,c.r));
+store_compare_view(P0,XOR(c.v,getRandomVal(P123))); //compare ab + c1 + r234_1
+
 }
 #endif
 
