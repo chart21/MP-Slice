@@ -23,7 +23,7 @@ OEC_MAL3_POST(bool optimized_sharing) {this->optimized_sharing = optimized_shari
 
 Dealer_Share public_val(DATATYPE a)
 {
-    return Dealer_Share(SET_ALL_ZERO(),SET_ALL_ZERO(),SET_ALL_ZERO());
+    return Dealer_Share(SET_ALL_ZERO(),SET_ALL_ZERO());
 }
 
 Dealer_Share Not(Dealer_Share a)
