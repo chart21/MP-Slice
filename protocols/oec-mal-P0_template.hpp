@@ -134,7 +134,7 @@ DATATYPE o_4 = receive_from_live(P3);
 #elif PROTOCOL == 11
 DATATYPE m_2XORm_3 = receive_from_live(P2);
 store_compare_view(P1, m_2XORm_3); // Verify if P_2 sent correct message m_2 XOR m_3
-store_compare_view(P3, SUB(m_2XORm_3,c.v)); // x1 y1 - x1 y3 - x 3 y1 - r234 should remain
+store_compare_view(P3, XOR(m_2XORm_3,c.v)); // x1 y1 - x1 y3 - x 3 y1 - r234 should remain
 c.v = receive_from_live(P2); // receive ab + c1 + r_234_1 from P2 (P3 in paper), need to convert to ab+ r234_1 (maybe not? and only for verify?)
 store_compare_view(P1, c.v); // Verify if P_2 sent correct message of ab
 c.v = XOR(c.v,c.r); // convert to ab + r234_1 (maybe not needed)
