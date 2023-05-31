@@ -1,5 +1,5 @@
 #pragma once
-#define PROTOCOL 11
+#define PROTOCOL 8
 #if PROTOCOL < 7
 #define num_players 3
 #else
@@ -71,7 +71,7 @@
 #define INPUT 'r'
 
 // Number of inputs (depends on the problem)
-#define NUM_INPUTS 1000
+#define NUM_INPUTS 100000
 
 // Bitlength of integers
 #define BITLENGTH 64

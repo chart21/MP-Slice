@@ -40,6 +40,9 @@ DATATYPE Xor(DATATYPE a, DATATYPE b)
 void prepare_and(DATATYPE a, DATATYPE b, DATATYPE &c)
 {
 send_to_(P2);
+#if PROTOCOL == 10 || PROTOCOL == 12
+store_compare_view_init(P0); // compare a1b1 + r123_2 with P0
+#endif
 
 //return u[player_id] * v[player_id];
 }
@@ -48,10 +51,9 @@ send_to_(P2);
 void complete_and(DATATYPE &c)
 {
     receive_from_(P2);
-    store_compare_view_init(P0);
-#if PROTOCOL == 10 || PROTOCOL == 12 || PROTOCOL == 8
+/* #if PROTOCOL == 10 || PROTOCOL == 12 || PROTOCOL == 8 */
 store_compare_view_init(P012);
-#endif
+/* #endif */
 #if PROTOCOL == 11 || PROTOCOL == 8
 store_compare_view_init(P0);
 #endif
