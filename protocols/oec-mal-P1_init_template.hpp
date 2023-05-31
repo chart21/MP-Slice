@@ -51,10 +51,13 @@ store_compare_view_init(P0); // compare a1b1 + r123_2 with P0
 void complete_and(DATATYPE &c)
 {
     receive_from_(P2);
-/* #if PROTOCOL == 10 || PROTOCOL == 12 || PROTOCOL == 8 */
+#if PROTOCOL == 10 || PROTOCOL == 12 || PROTOCOL == 8
 store_compare_view_init(P012);
-/* #endif */
+#endif
 #if PROTOCOL == 11 || PROTOCOL == 8
+store_compare_view_init(P0);
+#endif
+#if PROTOCOL == 11
 store_compare_view_init(P0);
 #endif
 }

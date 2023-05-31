@@ -106,9 +106,11 @@ c.v = XOR(c.v, m_3);
 
 #if PROTOCOL == 11
 store_compare_view(P0,XOR(c.m,m_3)); // compare m_2 + m_3 + r234_2
+store_compare_view(P0,XOR(c.v,getRandomVal(P123))); //compare ab + c1 + r234_1
 #endif
+#if PROTOCOL == 10 || PROTOCOL == 12
 store_compare_view(P012,XOR(c.v,getRandomVal(P123))); //compare ab + c1 + r234_1
-
+#endif
 }
 #endif
 
