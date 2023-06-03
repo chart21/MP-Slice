@@ -5,20 +5,26 @@ helpFunction()
    echo -e "\t-p Party number or all for running locally"
    echo -e "\t-a IP address of lower index player "
    echo -e "\t-b IP address of higher index player "
+   echo -e "\t-x Compiler (g++/clang++/..)"
    exit 1 # Exit script after printing help
 }
 
-while getopts "p:a:b:" opt
+while getopts "p:a:b:x:" opt
 do
    case "$opt" in
       p ) PARTY="$OPTARG" ;;
       a ) IP1="$OPTARG" ;;
       b ) IP2="$OPTARG" ;;
+      x ) COMPILER="$OPTARG" ;;
       ? ) helpFunction ;; # Print helpFunction in case parameter is non-existent
    esac
 done
 
 comp="g++"
+if [ ! -z "$COMPILER" ]
+then
+comp="$COMPILER"
+fi
 
 flags="-march=native -Ofast -std=c++2a -pthread -lssl -lcrypto"
 

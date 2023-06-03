@@ -7,11 +7,11 @@ helpFunction()
    echo -e "\t-b IP address of player 1 (if ip matches player_id can be empty)"
    echo -e "\t-c IP address of player 2 (if ip matches player_id can be empty)"
    echo -e "\t-d IP address of player 3 (if ip matches player_id can be empty)"
-
+   echo -e "\t-x Compiler (g++/clang++/..)"
    exit 1 # Exit script after printing help
 }
 
-while getopts "p:a:b:c:d:" opt
+while getopts "p:a:b:c:d:x:" opt
 do
    case "$opt" in
       p ) O_PARTY="$OPTARG" ;;
@@ -19,11 +19,16 @@ do
       b ) IP2="$OPTARG" ;;
       c ) IP3="$OPTARG" ;;
       d ) IP4="$OPTARG" ;;
+      x ) COMPILER="$OPTARG" ;;
       ? ) helpFunction ;; # Print helpFunction in case parameter is non-existent
    esac
 done
 
 comp="g++"
+if [ ! -z "$COMPILER" ]
+then
+comp="$COMPILER"
+fi
 
 flags="-march=native -Ofast -std=c++2a -pthread -lssl -lcrypto"
 
