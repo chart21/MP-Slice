@@ -1,5 +1,5 @@
 #pragma once
-#define PROTOCOL 10
+#define PROTOCOL 2
 #if PROTOCOL < 7
 #define num_players 3
 #else
@@ -10,7 +10,7 @@
 #endif
 
 //0: search 1: XORNOTAND, 2: AND 1 comm round 3: AND 1000 comm rounds  4: debug 5: MULT_32 6: MULT64 7: Debug 9: Mult_32 1000 comm rounds 10: Mult64 1000 comm rounds
-#define FUNCTION_IDENTIFIER 9
+#define FUNCTION_IDENTIFIER 2
 
 
 #define NEW_WAY 1
@@ -65,7 +65,7 @@
 #define SHARE_PREP 1
 
 // Party ID (starting from 0)
-#define PARTY 3
+#define PARTY 2
 
 // Use random inputs or inputs from a file? TODO: File inputs to be implemented
 #define INPUT 'r'

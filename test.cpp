@@ -6,6 +6,7 @@
 #include "arch/AES.h"
 #include "arch/AES_BS_SHORT.h"
 /* #include "arch/AES_BS.h" */
+#include "arch/SSE.h"
 #include "circuits/xorshift.h"
 #include "arch/SHA_256.h"
 #include "config.h"
@@ -319,6 +320,28 @@ std::cout << "Signed 64-bit Mult DATTYPE Throughput in Gbps:" << DATTYPE / (((do
 /* delete[] d; */
 delete[] e;
 delete[] f;
+
+
+uint64_t* data = NEW(uint64_t[DATTYPE*1000000000]);
+int multiplier = DATTYPE / 64;
+DATATYPE* ortho_data = NEW (DATATYPE[DATTYPE*1000000000]);
+finish21 = std::chrono::high_resolution_clock::now();
+for (int i = 0; i < 1000000000; i+=DATTYPE) 
+{
+    orthogonalize(data+i,ortho_data+i);
+}
+finish22 = std::chrono::high_resolution_clock::now();
+for (int i = 0; i < 1000000000; i+=DATTYPE) 
+{
+    unorthogonalize(ortho_data+i,data+i);
+}
+finish23 = std::chrono::high_resolution_clock::now();
+
+delete[] data;
+delete[] ortho_data;
+
+std::cout << "Orthogonalize Throughput in Gbps: " << DATTYPE / (((double) std::chrono::duration_cast<std::chrono::milliseconds>(finish22 - finish21).count() * factor)  / 1000) << std::endl;
+std::cout << "Unorthogonalize Throughput in Gbps: " << DATTYPE / (((double) std::chrono::duration_cast<std::chrono::milliseconds>(finish23 - finish22).count() * factor)  / 1000) << std::endl;
 
 std::cout << m[0] << std::endl;
 std::cout << plain__[0][0] << std::endl;
