@@ -1,5 +1,5 @@
 #pragma once
-#define PROTOCOL 10
+#define PROTOCOL 8
 #if PROTOCOL < 7
 #define num_players 3
 #else
@@ -10,12 +10,12 @@
 #endif
 
 //0: search 1: XORNOTAND, 2: AND 1 comm round 3: AND 1000 comm rounds  4: debug 5: MULT_32 6: MULT64 7: Debug 9: Mult_32 1000 comm rounds 10: Mult64 1000 comm rounds
-#define FUNCTION_IDENTIFIER 5
+#define FUNCTION_IDENTIFIER 2
 
 
 #define NEW_WAY 1
 
-#define DATTYPE 64 // Registersize to use for SIMD parallelization (Bitslicing/vectorization)
+#define DATTYPE 8 // Registersize to use for SIMD parallelization (Bitslicing/vectorization)
 
 #if FUNCTION_IDENTIFIER == 5 || FUNCTION_IDENTIFIER == 7 || FUNCTION_IDENTIFIER == 9
     #define MULT(a,b) MUL_SIGNED(a,b,32) 
@@ -104,6 +104,6 @@ int base_port = BASE_PORT; // temporary solution
 #define RECV_BUFFER 0
 
 // How many messages should be buffered until a combined hash is performed? 0 means all hashes are calculated at the very end of the protocol.
-#define VERIFY_BUFFER 0
+#define VERIFY_BUFFER 7
 // Print additional info?
 #define PRINT 0

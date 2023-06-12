@@ -73,6 +73,10 @@ orthogonalize(gen_seeds, srng[link_id]);
             }
     
 #elif RANDOM_ALGORITHM == 2
+
+
+
+
 #if DATTYPE >= 128
     int incr = (DATTYPE -1) / 64 + 1;
 #else 
@@ -84,6 +88,12 @@ int incr = (sizeof(COUNT_TYPE) - 1) /64 +1;
             gen_keys[i][j] = link_seed * ((i+1)*j); // replace with independant seeds in the future
         }
     }
+#if USE_SSL_AES
+    for (int i = 0; i < 11; i++) {
+    key[link_id] = EVP_CIPHER_CTX_new();
+    EVP_EncryptInit_ex(key[link_id], EVP_aes_128_cbc(), NULL, (unsigned char*) gen_keys[i], (unsigned char*) gen_keys[i]);
+    }
+#else
     for (int i = 0; i < 11; i++) {
     memcpy(&key[link_id][i], gen_keys[i], incr*sizeof(uint64_t));
     }
@@ -97,7 +107,7 @@ int incr = (sizeof(COUNT_TYPE) - 1) /64 +1;
 
 
 #endif
-
+#endif
 #if MAL == 1
 
     // Ensure all players have the same initial state

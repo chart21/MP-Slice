@@ -4,13 +4,13 @@
 #include "../circuits/xorshift.h"
 #elif RANDOM_ALGORITHM == 1
 #include "../arch/AES_BS_SHORT.h"
-#elif RANDOM_ALGORITHM == 2
-#include "../arch/AES.h"
 #endif
 #include "../networking/buffers.h"
 #include <stdint.h>
 
 #if RANDOM_ALGORITHM == 2
+#if defined(__VAES__) || defined(__SSE2__)
+#include "../arch/AES.h"
     #if DATTYPE <= 64
 #include <x86intrin.h>
 #include <immintrin.h>
@@ -41,6 +41,13 @@
     #endif
 COUNT_TYPE key[num_players*multiplier][11]{0};
     #endif
+#else
+#define USE_SSL_AES 1
+#include "../arch/AES_SSL.h"
+#define COUNT_TYPE uint64_t
+EVP_CIPHER_CTX* key[num_players*multiplier];
+#endif
+
 #endif
 
 
@@ -68,14 +75,25 @@ DATATYPE getRandomVal(int link_id)
     num_generated[link_id] += 1;
     return cipher[link_id][num_generated[link_id] -1];
 #elif RANDOM_ALGORITHM == 2
+    #if USE_SSL_AES == 1
+    if(num_generated[link_id] > BUFFER_SIZE - 1)
+    {
+        num_generated[link_id] = 0;
+        counter[link_id][0] += 1;
+        DO_ENC_BLOCK( (unsigned char*)counter[link_id], key[link_id]);
+    }
+        num_generated[link_id] += 1;
+    return ((DATATYPE*) (counter[link_id]))[num_generated[link_id] -1];
+    
+    #else 
+
     #if DATTYPE >= 128
     DO_ENC_BLOCK(counter[link_id], key[link_id]);
     counter[link_id] += 1;
     return counter[link_id];
     #else
-        int bufferlimit = BUFFER_SIZE - 1;
     
-    if(num_generated[link_id] > bufferlimit - 1)
+    if(num_generated[link_id] > BUFFER_SIZE - 1)
     {
         num_generated[link_id] = 0;
         COUNT_TYPE vectorized_counter{0};
@@ -88,6 +106,7 @@ DATATYPE getRandomVal(int link_id)
     num_generated[link_id] += 1;
     return counter[link_id][num_generated[link_id] -1];
     #endif
+#endif
 #endif
 }
 
