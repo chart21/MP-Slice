@@ -91,7 +91,7 @@ c.r1 = XOR(getRandomVal(P023),getRandomVal(P013)); // x1
 
 DATATYPE x1y1 = AND(a.r1,b.r1);
 DATATYPE o1 = XOR( x1y1, getRandomVal(P013));
-DATATYPE o4 = XOR(XOR(XOR(x1y1, AND(a.r0,b.r1)) ,AND(a.r1,b.r0)),XOR(c.r0,getRandomVal(P123))); // r123_2
+DATATYPE o4 = XOR(XOR(XOR(x1y1, AND(a.r0,b.r1)) ,AND(a.r1,b.r0)),XOR(c.r0,getRandomVal(P123_2))); // r123_2
 /* DATATYPE o4 = ADD( SUB( MULT(a.r0,b.r1) ,MULT(a.r1,b.r0)),getRandomVal(P123)); */
 /* o4 = XOR(o4,o1); //computationally easier to let P3 do it here instead of P0 later */
 #if PROTOCOL == 12
@@ -132,7 +132,7 @@ c.r1 = ADD(getRandomVal(P023),getRandomVal(P013)); // x1
 
 DATATYPE x1y1 = MULT(a.r1,b.r1);
 DATATYPE o1 = ADD( x1y1, getRandomVal(P013));
-DATATYPE o4 = ADD(SUB(SUB(x1y1, MULT(a.r0,b.r1)) ,MULT(a.r1,b.r0)),SUB(c.r0,getRandomVal(P123))); // r123_2
+DATATYPE o4 = ADD(SUB(SUB(x1y1, MULT(a.r0,b.r1)) ,MULT(a.r1,b.r0)),SUB(getRandomVal(P123_2),c.r0)); // r123_2
 /* DATATYPE o4 = ADD( SUB( MULT(a.r0,b.r1) ,MULT(a.r1,b.r0)),getRandomVal(P123)); */
 /* o4 = XOR(o4,o1); //computationally easier to let P3 do it here instead of P0 later */
 #if PROTOCOL == 12

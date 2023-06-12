@@ -87,11 +87,11 @@ send_to_live(P2,c.v);
 /* c.m = ADD(c.v,getRandomVal(P123)); */
 DATATYPE a1b1 = AND(a.v,b.v);
 #if PROTOCOL == 10 || PROTOCOL == 12
-store_compare_view(P0,XOR(a1b1,getRandomVal(P123))); // compare a1b1 + r123_2 with P0
+store_compare_view(P0,XOR(a1b1,getRandomVal(P123_2))); // compare a1b1 + r123_2 with P0
 #endif
 /* c.v = XOR( AND(      XOR(a.v,a.r) , XOR(b.v,b.r) ) , c.v); */
 #if PROTOCOL == 11
-c.m = XOR(c.v,getRandomVal(P123)); // m_2 + r234_2 store to compareview later
+c.m = XOR(c.v,getRandomVal(P123_2)); // m_2 + r234_2 store to compareview later
 #endif
 
 c.v = XOR( a1b1,c.v);
@@ -132,11 +132,11 @@ send_to_live(P2,c.v);
 /* c.m = ADD(c.v,getRandomVal(P123)); */
 DATATYPE a1b1 = MULT(a.v,b.v);
 #if PROTOCOL == 10 || PROTOCOL == 12
-store_compare_view(P0,ADD(a1b1,getRandomVal(P123))); // compare a1b1 + r123_2 with P0
+store_compare_view(P0,ADD(a1b1,getRandomVal(P123_2))); // compare a1b1 + r123_2 with P0
 #endif
 /* c.v = XOR( AND(      XOR(a.v,a.r) , XOR(b.v,b.r) ) , c.v); */
 #if PROTOCOL == 11
-c.m = ADD(c.v,getRandomVal(P123)); // m_2 + r234_2 store to compareview later
+c.m = ADD(c.v,getRandomVal(P123_2)); // m_2 + r234_2 store to compareview later
 #endif
 
 c.v = SUB( a1b1,c.v);
@@ -154,7 +154,7 @@ c.v = SUB(c.v, m_3);
 #if PROTOCOL == 11
 store_compare_view(P0,ADD(c.m,m_3)); // compare m_2 + m_3 + r234_2
 #endif
-store_compare_view(P012,SUB(c.v,getRandomVal(P123))); //compare ab + c1 + r234_1
+store_compare_view(P012,ADD(c.v,getRandomVal(P123))); //compare ab + c1 + r234_1
 }
 #endif
 

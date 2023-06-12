@@ -60,6 +60,7 @@
     #define P013 5
     #define P023 6
     #define P123 7
+    #define P123_2 3 // Trick for Protocols 10-12
 
     #if PARTY == 0
         #define P0 3

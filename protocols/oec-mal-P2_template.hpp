@@ -98,7 +98,7 @@ void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
    /* DATATYPE r234_1 = */
    /*     getRandomVal(P123); // Probably sufficient to only generate with P3 -> */
    DATATYPE r234_2 =
-       getRandomVal(P123); // Probably sufficient to only generate with P3 ->
+       getRandomVal(P123_2); // Probably sufficient to only generate with P3 ->
                            // Probably not because of verification
 /* c.r = getRandomVal(P3); */
 #if PROTOCOL == 12
@@ -160,7 +160,7 @@ void prepare_mult(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
    /* DATATYPE r234_1 = */
    /*     getRandomVal(P123); // Probably sufficient to only generate with P3 -> */
    DATATYPE r234_2 =
-       getRandomVal(P123); // Probably sufficient to only generate with P3 ->
+       getRandomVal(P123_2); // Probably sufficient to only generate with P3 ->
                            // Probably not because of verification
 /* c.r = getRandomVal(P3); */
 #if PROTOCOL == 12
