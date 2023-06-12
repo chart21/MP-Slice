@@ -1,5 +1,5 @@
 #pragma once
-#define PROTOCOL 8
+#define PROTOCOL 5
 #if PROTOCOL < 7
 #define num_players 3
 #else
@@ -15,7 +15,7 @@
 
 #define NEW_WAY 1
 
-#define DATTYPE 8 // Registersize to use for SIMD parallelization (Bitslicing/vectorization)
+#define DATTYPE 64 // Registersize to use for SIMD parallelization (Bitslicing/vectorization)
 
 #if FUNCTION_IDENTIFIER == 5 || FUNCTION_IDENTIFIER == 7 || FUNCTION_IDENTIFIER == 9
     #define MULT(a,b) MUL_SIGNED(a,b,32) 
@@ -71,7 +71,7 @@
 #define INPUT 'r'
 
 // Number of inputs (depends on the problem)
-#define NUM_INPUTS 100000
+#define NUM_INPUTS 1000000
 
 // Bitlength of integers
 #define BITLENGTH 64
@@ -86,12 +86,12 @@ int base_port = BASE_PORT; // temporary solution
 #define USE_SSL 0
 
 // Number of parallel processes to use
-#define PROCESS_NUM 1
+#define PROCESS_NUM 3
 
-// 0 = xorshift, 1 = AES_BS, 2 = AES hardware module
+// 0 = xorshift, 1 = AES_BS, 2 = AES_NI
 #define RANDOM_ALGORITHM 2 
 
-#define ARM 0 // 1 if running on ARM processor, 0 otherwise. Can speed up SHA_256 hashing
+#define ARM 1 // 1 if ARM processor, 0 otherwise. Can speed up Sha hashing.
 
 // Timeout in seconds when connecting to a socket
 #define CONNECTION_TIMEOUT 30 
@@ -100,12 +100,12 @@ int base_port = BASE_PORT; // temporary solution
 #define CONNECTION_RETRY 5
 
 // How many gates should be buffered until sending them to the receiving party? 0 means the data of an entire communication round is buffered
-#define SEND_BUFFER 0
+#define SEND_BUFFER 10000
 
 // How many reciving messages should be buffered until the main thread is signaled that data is ready? 0 means that all data of a communication round needs to be ready before the main thread is signaled.
-#define RECV_BUFFER 0
+#define RECV_BUFFER 10000
 
 // How many messages should be buffered until a combined hash is performed? 0 means all hashes are calculated at the very end of the protocol.
-#define VERIFY_BUFFER 0
+#define VERIFY_BUFFER 8
 // Print additional info?
 #define PRINT 0
