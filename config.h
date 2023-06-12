@@ -71,7 +71,7 @@
 #define INPUT 'r'
 
 // Number of inputs (depends on the problem)
-#define NUM_INPUTS 10000000
+#define NUM_INPUTS 10000
 
 // Bitlength of integers
 #define BITLENGTH 64
@@ -86,12 +86,12 @@ int base_port = BASE_PORT; // temporary solution
 #define USE_SSL 0
 
 // Number of parallel processes to use
-#define PROCESS_NUM 5
+#define PROCESS_NUM 1
 
 // 0 = xorshift, 1 = AES_BS, 2 = AES_NI
 #define RANDOM_ALGORITHM 2 
 
-#define ARM 1 // 1 if ARM processor, 0 otherwise. Can speed up Sha hashing.
+#define ARM 0 // 1 if ARM processor, 0 otherwise. Can speed up Sha hashing.
 
 // Timeout in seconds when connecting to a socket
 #define CONNECTION_TIMEOUT 30 

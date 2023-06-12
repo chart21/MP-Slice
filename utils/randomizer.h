@@ -50,6 +50,18 @@ EVP_CIPHER_CTX* key[num_players*multiplier];
 
 #endif
 
+void init_buffers(int link_id)
+{
+#if RANDOM_ALGORITHM == 0
+    num_generated[link_id] = 64;
+#elif RANDOM_ALGORITHM == 1
+    num_generated[link_id] = 128;
+#elif RANDOM_ALGORITHM == 2
+    #if DATTYPE <= 64
+    num_generated[link_id] = BUFFER_SIZE;
+    #endif
+#endif
+}
 
 DATATYPE getRandomVal(int link_id)
 {

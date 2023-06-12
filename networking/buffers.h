@@ -42,7 +42,7 @@ DATATYPE key[num_players*multiplier][11]{0};
 #else
 #define BUFFER_SIZE 128/DATTYPE 
 #if USE_SSL_AES == 1
-DATATYPE counter[num_players*multiplier][2] = {0};
+uint64_t counter[num_players*multiplier][2] = {0};
 #else
 DATATYPE counter[num_players*multiplier][BUFFER_SIZE] = {0};
 #endif

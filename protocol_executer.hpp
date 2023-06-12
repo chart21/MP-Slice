@@ -80,7 +80,7 @@ orthogonalize(gen_seeds, srng[link_id]);
 #if DATTYPE >= 128
     int incr = (DATTYPE -1) / 64 + 1;
 #else 
-int incr = (sizeof(COUNT_TYPE) - 1) /64 +1;
+int incr = (sizeof(COUNT_TYPE)*8 - 1) /64 +1;
 #endif
     uint64_t gen_keys[11][incr];
     for (int i = 0; i < 11; i++) {
@@ -108,6 +108,11 @@ int incr = (sizeof(COUNT_TYPE) - 1) /64 +1;
 
 #endif
 #endif
+
+    for (int i = 0; i < 11; i++) {
+        init_buffers(link_id);;
+    }
+
 #if MAL == 1
 
     // Ensure all players have the same initial state
