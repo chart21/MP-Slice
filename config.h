@@ -88,8 +88,10 @@ int base_port = BASE_PORT; // temporary solution
 // Number of parallel processes to use
 #define PROCESS_NUM 1
 
-// 0 = xorshift, 1 = AES_BS, 2 = AES_NI
+// 0 = xorshift, 1 = AES_BS, 2 = AES hardware module
 #define RANDOM_ALGORITHM 2 
+
+#define ARM 0 // 1 if running on ARM processor, 0 otherwise. Can speed up SHA_256 hashing
 
 // Timeout in seconds when connecting to a socket
 #define CONNECTION_TIMEOUT 30 
@@ -104,6 +106,6 @@ int base_port = BASE_PORT; // temporary solution
 #define RECV_BUFFER 0
 
 // How many messages should be buffered until a combined hash is performed? 0 means all hashes are calculated at the very end of the protocol.
-#define VERIFY_BUFFER 7
+#define VERIFY_BUFFER 0
 // Print additional info?
 #define PRINT 0

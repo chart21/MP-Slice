@@ -5,7 +5,8 @@
 #if MAL == 1
 #ifdef __SHA__
 #include "../arch/SHA_256_x86.h"
-#else 
+#elif ARM == 1
+#else
 #include "../arch/SHA_256.h"
 #endif
 #endif
@@ -131,6 +132,8 @@ void perform_compare_view(int player_id)
         return;
     #ifdef __SHA__
     sha256_process_x86(hash_val[player_id], (uint8_t*) verify_buffer[player_id],sizeof(DATATYPE)*verify_buffer_index[player_id]);
+    #elif ARM == 1
+    sha256_process_arm(hash_val[player_id], (uint8_t*) verify_buffer[player_id],sizeof(DATATYPE)*verify_buffer_index[player_id]);
     #else
     sha256_process(hash_val[player_id], (uint8_t*) verify_buffer[player_id],sizeof(DATATYPE)*verify_buffer_index[player_id]);
     #endif
