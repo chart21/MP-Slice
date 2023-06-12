@@ -6,7 +6,6 @@
 #include "arch/AES.h"
 #include "arch/AES_BS_SHORT.h"
 /* #include "arch/AES_BS.h" */
-#include "arch/SSE.h"
 #include "circuits/xorshift.h"
 #include "arch/SHA_256.h"
 #include "config.h"
@@ -322,16 +321,16 @@ delete[] e;
 delete[] f;
 
 
-uint64_t* data = NEW(uint64_t[DATTYPE*1000000000]);
+uint64_t* data = NEW(uint64_t[1000000000]);
 int multiplier = DATTYPE / 64;
-DATATYPE* ortho_data = NEW (DATATYPE[DATTYPE*1000000000]);
+DATATYPE* ortho_data = NEW (DATATYPE[1000000000]);
 finish21 = std::chrono::high_resolution_clock::now();
-for (int i = 0; i < 1000000000; i+=DATTYPE) 
+for (int i = 0; i < 1000000000/DATTYPE; i+=DATTYPE) 
 {
     orthogonalize(data+i,ortho_data+i);
 }
 finish22 = std::chrono::high_resolution_clock::now();
-for (int i = 0; i < 1000000000; i+=DATTYPE) 
+for (int i = 0; i < 1000000000/DATTYPE; i+=DATTYPE) 
 {
     unorthogonalize(ortho_data+i,data+i);
 }
