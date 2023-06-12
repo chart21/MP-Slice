@@ -6,6 +6,7 @@
 #ifdef __SHA__
 #include "../arch/SHA_256_x86.h"
 #elif ARM == 1
+#include "../arch/SHA_256_arm.h"
 #else
 #include "../arch/SHA_256.h"
 #endif
