@@ -77,7 +77,7 @@ void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b , OEC_MAL_Share &c)
 c.r = getRandomVal(P013);
 DATATYPE r124 = getRandomVal(P013);
 /* DATATYPE r234 = getRandomVal(P123); //used for veryfying m3' sent by P3 -> probably not needed -> for verification needed */
-c.v = XOR(XOR( XOR(AND(a.v,b.r), AND(b.v,a.r))  , r124),c.r);  
+c.v = XOR( XOR(AND(a.v,b.r), AND(b.v,a.r))  , r124);  
 /* DATATYPE m_2 = XOR(c.v, c.r); */
 send_to_live(P2,c.v);
 
@@ -122,7 +122,7 @@ void prepare_mult(OEC_MAL_Share a, OEC_MAL_Share b , OEC_MAL_Share &c)
 c.r = getRandomVal(P013);
 DATATYPE r124 = getRandomVal(P013);
 /* DATATYPE r234 = getRandomVal(P123); //used for veryfying m3' sent by P3 -> probably not needed -> for verification needed */
-c.v = SUB(ADD( ADD(MULT(a.v,b.r), MULT(b.v,a.r))  , r124),c.r);  
+c.v = ADD( ADD(MULT(a.v,b.r), MULT(b.v,a.r))  , r124);  
 /* DATATYPE m_2 = XOR(c.v, c.r); */
 send_to_live(P2,c.v);
 

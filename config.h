@@ -1,5 +1,5 @@
 #pragma once
-#define PROTOCOL 10
+#define PROTOCOL 12
 #if PROTOCOL < 7
 #define num_players 3
 #else
@@ -10,7 +10,7 @@
 #endif
 
 //0: search 1: XORNOTAND, 2: AND 1 comm round 3: AND 1000 comm rounds  4: debug 5: MULT_32 6: MULT64 7: Debug 9: Mult_32 1000 comm rounds 10: Mult64 1000 comm rounds
-#define FUNCTION_IDENTIFIER 0
+#define FUNCTION_IDENTIFIER 2
 
 
 #define NEW_WAY 1
@@ -100,12 +100,12 @@ int base_port = BASE_PORT; // temporary solution
 #define CONNECTION_RETRY 5
 
 // How many gates should be buffered until sending them to the receiving party? 0 means the data of an entire communication round is buffered
-#define SEND_BUFFER 10000
+#define SEND_BUFFER 0
 
 // How many reciving messages should be buffered until the main thread is signaled that data is ready? 0 means that all data of a communication round needs to be ready before the main thread is signaled.
-#define RECV_BUFFER 10000
+#define RECV_BUFFER 0
 
 // How many messages should be buffered until a combined hash is performed? 0 means all hashes are calculated at the very end of the protocol.
-#define VERIFY_BUFFER 8
+#define VERIFY_BUFFER 0
 // Print additional info?
 #define PRINT 0

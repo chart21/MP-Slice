@@ -112,7 +112,7 @@ void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
    DATATYPE o1 = receive_from_live(P0);
    store_compare_view(P3, o1);
 #endif
-   c.v = XOR( XOR(XOR(AND(a.v, b.r),o1), AND(b.v, a.r)),c.r);
+   c.v = XOR(XOR(AND(a.v, b.r),o1), AND(b.v, a.r));
    send_to_live(P1, c.v);
 
 
@@ -174,7 +174,7 @@ void prepare_mult(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
    DATATYPE o1 = receive_from_live(P0);
    store_compare_view(P3, o1);
 #endif
-   c.v = SUB( ADD(SUB(MULT(a.v, b.r),o1), MULT(b.v, a.r)),c.r);
+   c.v = ADD(SUB(MULT(a.v, b.r),o1), MULT(b.v, a.r));
    send_to_live(P1, c.v);
 
 

@@ -100,7 +100,7 @@ void prepare_and(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
 c.r = XOR(getRandomVal(P013),getRandomVal(P023)); // calculate c_1
 /* DATATYPE r124 = getRandomVal(P013); */
 /* DATATYPE o1 = XOR( x1y1, r124); */
-DATATYPE o1 = XOR(AND(a.r, b.r), getRandomVal(P013));
+DATATYPE o1 = XOR(c.r, XOR(AND(a.r, b.r), getRandomVal(P013)));
 
 #if PROTOCOL == 11
 c.v = XOR(XOR( AND(a.v,b.r), AND(b.v,a.r)),c.r);
@@ -160,7 +160,7 @@ void prepare_mult(OEC_MAL_Share a, OEC_MAL_Share b, OEC_MAL_Share &c)
 c.r = ADD(getRandomVal(P013),getRandomVal(P023)); // calculate c_1
 /* DATATYPE r124 = getRandomVal(P013); */
 /* DATATYPE o1 = XOR( x1y1, r124); */
-DATATYPE o1 = ADD(MULT(a.r, b.r), getRandomVal(P013));
+DATATYPE o1 = ADD(c.r, ADD(MULT(a.r, b.r), getRandomVal(P013)));
 
 #if PROTOCOL == 11
 c.v = SUB(ADD( MULT(a.v,b.r), MULT(b.v,a.r)),c.r);

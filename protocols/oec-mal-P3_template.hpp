@@ -89,12 +89,11 @@ c.r1 = XOR(getRandomVal(P023),getRandomVal(P013)); // x1
 /* DATATYPE r124 = getRandomVal(P013); // used for verification */
 /* DATATYPE r234 = getRandomVal(P123); // Probably sufficient to only generate with P2(-> P3 in paper) -> no because of verification */
 
-DATATYPE x1y1 = AND(a.r1,b.r1);
-DATATYPE o1 = XOR( x1y1, getRandomVal(P013));
+DATATYPE o1 = XOR(c.r1,XOR( AND(a.r1,b.r1), getRandomVal(P013)));
 #if PROTOCOL == 11
-DATATYPE o4 = XOR(XOR(XOR(x1y1, AND(a.r0,b.r1)) ,AND(a.r1,b.r0)),getRandomVal(P123_2)); // r123_2
+DATATYPE o4 = XOR(XOR(AND(a.r1, XOR(b.r0,b.r1)) ,AND(a.r1,b.r0)),getRandomVal(P123_2)); // ay1 + bx1 + x1y1 + r234_2 should remain
 #else
-DATATYPE o4 = XOR(XOR(XOR(x1y1, AND(a.r0,b.r1)) ,AND(a.r1,b.r0)),XOR(c.r0,getRandomVal(P123_2))); // ay1 + bx1 + x1y1 + r234_2 should remain
+DATATYPE o4 = XOR(XOR(AND(a.r1, XOR(b.r0,b.r1)) ,AND(a.r1,b.r0)),XOR(c.r0,getRandomVal(P123_2))); // ay1 + bx1 + x1y1 + r234_2 should remain
 #endif
 /* DATATYPE o4 = ADD( SUB( MULT(a.r0,b.r1) ,MULT(a.r1,b.r0)),getRandomVal(P123)); */
 /* o4 = XOR(o4,o1); //computationally easier to let P3 do it here instead of P0 later */
@@ -134,13 +133,14 @@ c.r1 = ADD(getRandomVal(P023),getRandomVal(P013)); // x1
 /* DATATYPE r124 = getRandomVal(P013); // used for verification */
 /* DATATYPE r234 = getRandomVal(P123); // Probably sufficient to only generate with P2(-> P3 in paper) -> no because of verification */
 
-DATATYPE x1y1 = MULT(a.r1,b.r1);
-DATATYPE o1 = ADD( x1y1, getRandomVal(P013));
+/* DATATYPE o1 = ADD( x1y1, getRandomVal(P013)); */
+DATATYPE o1 = ADD(c.r1, ADD(MULT(a.r1,b.r1), getRandomVal(P013)));
 
 #if PROTOCOL == 11
-DATATYPE o4 = ADD(SUB(SUB(x1y1, MULT(a.r0,b.r1)) ,MULT(a.r1,b.r0)),getRandomVal(P123_2)); // r123_2
+/* DATATYPE o4 = ADD(SUB(SUB(x1y1, MULT(a.r0,b.r1)) ,MULT(a.r1,b.r0)),getRandomVal(P123_2)); // r123_2 */
+DATATYPE o4 = ADD(SUB(MULT(a.r1, SUB(b.r0,b.r1)) ,MULT(b.r1,a.r0)),getRandomVal(P123_2)); // r123_2
 #else
-DATATYPE o4 = ADD(SUB(SUB(x1y1, MULT(a.r0,b.r1)) ,MULT(a.r1,b.r0)),SUB(getRandomVal(P123_2),c.r0)); // r123_2
+DATATYPE o4 = ADD(SUB(MULT(a.r1, SUB(b.r0,b.r1)) ,MULT(b.r1,a.r0)),SUB(getRandomVal(P123_2),c.r0)); // r123_2
 #endif
 
 /* DATATYPE o4 = ADD( SUB( MULT(a.r0,b.r1) ,MULT(a.r1,b.r0)),getRandomVal(P123)); */
