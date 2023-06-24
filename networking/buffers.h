@@ -29,25 +29,6 @@ DATATYPE* player_input;
 #else
     #define multiplier 1
 #endif
-#if RANDOM_ALGORITHM == 0
-DATATYPE srng[num_players*multiplier][64]{0};
-#elif RANDOM_ALGORITHM == 1
-DATATYPE counter[num_players*multiplier][128]{0};
-DATATYPE cipher[num_players*multiplier][128]{0};
-DATATYPE key[num_players*multiplier][11][128]{0};
-#elif RANDOM_ALGORITHM == 2
-#if DATTYPE >= 128
-DATATYPE counter[num_players*multiplier]{0};
-DATATYPE key[num_players*multiplier][11]{0};
-#else
-#define BUFFER_SIZE 128/DATTYPE 
-#if USE_SSL_AES == 1
-uint64_t counter[num_players*multiplier][2] = {0};
-#else
-DATATYPE counter[num_players*multiplier][BUFFER_SIZE] = {0};
-#endif
-#endif
-#endif
 #if MAL == 1
 DATATYPE* verify_buffer[num_players*multiplier]; // Verify buffer for each player
 uint64_t verify_buffer_index[num_players*multiplier] = {0};

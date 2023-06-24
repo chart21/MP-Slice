@@ -15,7 +15,7 @@
 
 #define NEW_WAY 1
 
-#define DATTYPE 64 // Registersize to use for SIMD parallelization (Bitslicing/vectorization)
+#define DATTYPE 128 // Registersize to use for SIMD parallelization (Bitslicing/vectorization)
 
 #if FUNCTION_IDENTIFIER == 5 || FUNCTION_IDENTIFIER == 7 || FUNCTION_IDENTIFIER == 9
     #define MULT(a,b) MUL_SIGNED(a,b,32) 

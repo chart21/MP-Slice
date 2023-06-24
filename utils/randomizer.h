@@ -11,11 +11,11 @@
 #if RANDOM_ALGORITHM == 2
 #if defined(__VAES__) || defined(__SSE2__)
 #include "../arch/AES.h"
-    #if DATTYPE <= 64
 #include <x86intrin.h>
 #include <immintrin.h>
 #include <memory>
     #if defined(__VAES__) && defined(__AVX512F__) && defined (__AVX512VL__)
+#define BUF 512
 #define MM_XOR _mm512_xor_si512
 #define MM_AES_ENC _mm512_aesenc_epi128
 #define MM_AES_DEC _mm512_aesdec_epi128
@@ -24,6 +24,7 @@
 #define COUNT_TYPE __m512i
 /* #define load _mm512_load_epi64 */
     #elif defined(__VAES__) && defined(__AVX2__)
+#define BUF 256
 #define MM_XOR _mm256_xor_si256
 #define MM_AES_ENC _mm256_aesenc_epi128
 #define MM_AES_DEC _mm256_aesdec_epi128
@@ -32,6 +33,7 @@
 #define COUNT_TYPE __m256i
 /* #define load _mm256_load_epi64 */
     #elif defined __SSE2__
+#define BUF 128
 #define MM_XOR _mm_xor_si128
 #define MM_AES_ENC _mm_aesenc_si128
 #define MM_AES_DEC _mm_aesdec_si128
@@ -40,7 +42,6 @@
 #define COUNT_TYPE __m128i
     #endif
 COUNT_TYPE key[num_players*multiplier][11]{0};
-    #endif
 #else
 #define USE_SSL_AES 1
 #include "../arch/AES_SSL.h"
@@ -49,6 +50,28 @@ EVP_CIPHER_CTX* key[num_players*multiplier];
 #endif
 
 #endif
+
+#if RANDOM_ALGORITHM == 0
+DATATYPE srng[num_players*multiplier][64]{0};
+#elif RANDOM_ALGORITHM == 1
+DATATYPE counter[num_players*multiplier][128]{0};
+DATATYPE cipher[num_players*multiplier][128]{0};
+DATATYPE key[num_players*multiplier][11][128]{0};
+#elif RANDOM_ALGORITHM == 2
+#if DATTYPE == BUF
+DATATYPE counter[num_players*multiplier]{0};
+/* DATATYPE key[num_players*multiplier][11]{0}; */
+#else
+#define BUFFER_SIZE BUF/DATTYPE 
+#if USE_SSL_AES == 1
+uint64_t counter[num_players*multiplier][2] = {0};
+#else
+DATATYPE counter[num_players*multiplier][BUFFER_SIZE] = {0};
+#endif
+#endif
+#endif
+
+
 
 void init_buffers(int link_id)
 {
@@ -99,7 +122,7 @@ DATATYPE getRandomVal(int link_id)
     
     #else 
 
-    #if DATTYPE >= 128
+    #if DATTYPE == BUF
     DO_ENC_BLOCK(counter[link_id], key[link_id]);
     counter[link_id] += 1;
     return counter[link_id];
