@@ -1,0 +1,189 @@
+4
+---TIMING--- 0s single ortho
+---TIMING--- 0.009147s generating random inputs
+200200
+4
+---TIMING--- 0s single ortho
+---TIMING--- 0.009285s generating random inputs
+200200
+4
+---TIMING--- 0s single ortho
+---TIMING--- 0.009226s generating random inputs
+200200
+0000000100000000000000000000000000000000000000000000000000000000
+Initialzing circuit ...
+Time measured to initialize program: 0.124926s 
+Player 2: Attempting to connect to Player 0 ... 
+Player 2: Attempting to connect to Player 1 ... 
+Waiting for connections...
+Player 2: Connected to Player 0 
+Got connection from 127.0.0.1
+Player 2: Connected to Player 1 
+Waiting for connections...
+Got connection from 127.0.0.1
+server 4 
+All parties connected sucessfully, starting protocol and timer! 
+Preprocessing phase ...
+Connection closed to 127.0.0.1
+Connection closed to 127.0.0.1
+received 66060296 bytes from player 0 in round 1 out of 1 
+Time measured to perform preprocessing clock: 0.015338s 
+Time measured to perform preprocessing getTime: 0.155837s 
+Time measured to perform preprocessing chrono: 0.155836s 
+Player 2: Attempting to connect to Player 0 ... 
+Player 2: Attempting to connect to Player 1 ... 
+Waiting for connections...
+Waiting for connections...
+Player 2: Connected to Player 1 
+Player 2: Connected to Player 0 
+Got connection from 127.0.0.1
+Got connection from 127.0.0.1
+server 4 
+All parties connected sucessfully, starting protocol and timer! 
+received 512 bytes from player 1 in round 1 out of 8 
+Time spent waiting for data chrono: 0.000049s 
+sent 16777216 bytes to player 1 in round 2 out of 8 
+received 16777216 bytes from player 1 in round 2 out of 8 
+Time spent waiting for data chrono: 0.033829s 
+received 8388608 bytes from player 1 in round 3 out of 8 
+Time spent waiting for data chrono: 0.000000s 
+sent 8388608 bytes to player 1 in round 3 out of 8 
+sent 4194304 bytes to player 1 in round 4 out of 8 
+received 4194304 bytes from player 1 in round 4 out of 8 
+Time spent waiting for data chrono: 0.006492s 
+received 2097152 bytes from player 1 in round 5 out of 8 
+Time spent waiting for data chrono: 0.000000s 
+sent 2097152 bytes to player 1 in round 5 out of 8 
+sent 1048576 bytes to player 1 in round 6 out of 8 
+received 1048576 bytes from player 1 in round 6 out of 8 
+Time spent waiting for data chrono: 0.002101s 
+received 524288 bytes from player 1 in round 7 out of 8 
+Time spent waiting for data chrono: 0.000000s 
+sent 524288 bytes to player 1 in round 7 out of 8 
+Time spent waiting for data chrono: 0.000000s 
+00000001
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+Time measured to perform computation clock: 0.220193s 
+Time measured to perform computation getTime: 0.225372s 
+Time measured to perform computation chrono: 0.225372s 
+0000000100000000000000000000000000000000000000000000000000000000
+Initialzing circuit ...
+Time measured to initialize program: 0.104769s 
+Player 0: Attempting to connect to Player 1 ... 
+Player 0: Attempting to connect to Player 2 ... 
+Waiting for connections...
+Waiting for connections...
+Got connection from 127.0.0.1
+Player 0: Connected to Player 1 
+Got connection from 127.0.0.1
+Player 0: Connected to Player 2 
+client 4 
+All parties connected sucessfully, starting protocol and timer! 
+Preprocessing phase ...
+sent 8 bytes to player 1 in round 1 out of 1 
+Connection closed to 127.0.0.1
+sent 66060296 bytes to player 2 in round 1 out of 1 
+Connection closed to 127.0.0.1
+Time measured to perform preprocessing clock: 0.135789s 
+Time measured to perform preprocessing getTime: 0.135959s 
+Time measured to perform preprocessing chrono: 0.135958s 
+Player 0: Attempting to connect to Player 1 ... 
+Player 0: Attempting to connect to Player 2 ... 
+Waiting for connections...
+Player 0: Connected to Player 1 
+Waiting for connections...
+Got connection from 127.0.0.1
+Got connection from 127.0.0.1
+Player 0: Connected to Player 2 
+client 4 
+All parties connected sucessfully, starting protocol and timer! 
+Time spent waiting for data chrono: 0.000000s 
+Time spent waiting for data chrono: 0.000000s 
+Time spent waiting for data chrono: 0.000000s 
+Time spent waiting for data chrono: 0.000000s 
+Time spent waiting for data chrono: 0.000000s 
+Time spent waiting for data chrono: 0.000000s 
+Time spent waiting for data chrono: 0.000000s 
+Connection closed to 127.0.0.1
+Connection closed to 127.0.0.1
+received 8 bytes from player 2 in round 8 out of 8 
+Time spent waiting for data chrono: 0.122301s 
+00010100
+00110110
+00100100
+00101010
+11100100
+10000001
+01100001
+00100101
+Time measured to perform computation clock: 0.103554s 
+Time measured to perform computation getTime: 0.225515s 
+Time measured to perform computation chrono: 0.225514s 
+0000000100000000000000000000000000000000000000000000000000000000
+Initialzing circuit ...
+Time measured to initialize program: 0.123114s 
+Player 1: Attempting to connect to Player 0 ... 
+Player 1: Attempting to connect to Player 2 ... 
+Player 1: Connected to Player 0 
+Waiting for connections...
+Waiting for connections...
+Got connection from 127.0.0.1
+Got connection from 127.0.0.1
+Player 1: Connected to Player 2 
+client 4 
+All parties connected sucessfully, starting protocol and timer! 
+Preprocessing phase ...
+Connection closed to 127.0.0.1
+Connection closed to 127.0.0.1
+received 8 bytes from player 0 in round 1 out of 1 
+Time measured to perform preprocessing clock: 0.000250s 
+Time measured to perform preprocessing getTime: 0.136048s 
+Time measured to perform preprocessing chrono: 0.136047s 
+Player 1: Attempting to connect to Player 0 ... 
+Player 1: Attempting to connect to Player 2 ... 
+Waiting for connections...
+Waiting for connections...
+Got connection from 127.0.0.1
+Player 1: Connected to Player 0 
+Got connection from 127.0.0.1
+Player 1: Connected to Player 2 
+client 4 
+All parties connected sucessfully, starting protocol and timer! 
+Time spent waiting for data chrono: 0.000000s 
+sent 512 bytes to player 2 in round 1 out of 8 
+received 16777216 bytes from player 2 in round 2 out of 8 
+Time spent waiting for data chrono: 0.000000s 
+sent 16777216 bytes to player 2 in round 2 out of 8 
+sent 8388608 bytes to player 2 in round 3 out of 8 
+received 8388608 bytes from player 2 in round 3 out of 8 
+Time spent waiting for data chrono: 0.010020s 
+received 4194304 bytes from player 2 in round 4 out of 8 
+Time spent waiting for data chrono: 0.000000s 
+sent 4194304 bytes to player 2 in round 4 out of 8 
+sent 2097152 bytes to player 2 in round 5 out of 8 
+received 2097152 bytes from player 2 in round 5 out of 8 
+Time spent waiting for data chrono: 0.002251s 
+received 1048576 bytes from player 2 in round 6 out of 8 
+Time spent waiting for data chrono: 0.000000s 
+sent 1048576 bytes to player 2 in round 6 out of 8 
+sent 524288 bytes to player 2 in round 7 out of 8 
+received 524288 bytes from player 2 in round 7 out of 8 
+Time spent waiting for data chrono: 0.000824s 
+Time spent waiting for data chrono: 0.000000s 
+00000001
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+Time measured to perform computation clock: 0.245937s 
+Time measured to perform computation getTime: 0.225734s 
+Time measured to perform computation chrono: 0.225733s 
